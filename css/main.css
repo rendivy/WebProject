@@ -16,10 +16,6 @@ html {
   text-shadow: none;
 }
 
-/*
- * A better looking default horizontal rule
- */
-
 hr {
   display: block;
   height: 1px;

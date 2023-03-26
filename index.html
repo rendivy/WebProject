@@ -1,42 +1,94 @@
-<!doctype html>
-<html class="no-js" lang="">
-
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <title></title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Place favicon.ico in the root directory -->
-
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/main.css">
-
-  <meta name="theme-color" content="#fafafa">
-</head>
-
-
+  <meta charset="UTF-8">
+  <title>Responsive Sidebar</title>
+  <link rel="stylesheet" href="style.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <head>
+    <meta charset="UTF-8">
+    <title>Responsive Sidebar</title>
+    <link rel="stylesheet" href=style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  </head>
 <body>
+<div class="sidebar">
+  <div class="logo_details">
+    <a href="index.html">
+      <div class="logo_name">Beautiful Algorithm</div>
+    </a>
+    <i class="bx bx-menu" id="btn"></i>
+  </div>
+  <ul class="nav-list">
+    <li>
+      <a href="#">
+        <i class="bx bxs-star"></i>
+        <span class="link_name">A-Star</span>
+      </a>
+      <span class="tooltip">A-Star</span>
+    </li>
+    <li>
+      <a href="clustering/index.html">
+        <i class="bx bx-exclude"></i>
+        <span class="link_name">Cluster Algorithm</span>
+      </a>
+      <span class="tooltip">Cluster Algorithm</span>
+    </li>
+    <li>
+      <a href="№">
+        <i class="bx bx-dna"></i>
+        <span class="link_name">Genetic Algorithm</span>
+      </a>
+      <span class="tooltip">Genetic Algorithm</span>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bx-run"></i>
+        <span class="link_name">Ant Algorithm</span>
+      </a>
+      <span class="tooltip">Ant Algorithm</span>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bxs-leaf"></i>
+        <span class="link_name">Tree Algorithm</span>
+      </a>
+      <span class="tooltip">Tree Algorithm</span>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bx-math"></i>
+        <span class="link_name">Neuron model</span>
+      </a>
+      <span class="tooltip">Neuron model</span>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bx-user"></i>
+        <span class="link_name">Team</span>
+      </a>
+      <span class="tooltip">Team</span>
+    </li>
+  </ul>
+</div>
 
-  <!-- Add your site or application content here -->
-  <p>Hello world! This is HTML5 Boilerplate.</p>
-  <script src="js/vendor/modernizr-3.11.2.min.js"></script>
-  <script src="js/plugins.js"></script>
-  <script src="js/main.js"></script>
 
-  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-  <script>
-    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
-    ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
-  </script>
-  <script src="https://www.google-analytics.com/analytics.js" async></script>
+<section class="home-section">
+  <body>
+  <div class="container text-center my-4">
+    <div class="row">
+      <div class="col-lg-7 col-md-8 mx-auto">
+        <div class="text">Проект по созданию веб-приложения выполенный в рамках курса основы Программирования в 6-ом модуле</div>
+        <p> </p>
+      </div>
+    </div>
+  </div>
+  </body>
+</section>
+
+
+
+<script src="script.js"></script>
 </body>
-
 </html>
+

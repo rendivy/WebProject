@@ -1,85 +1,87 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Responsive Sidebar</title>
-  <link rel="stylesheet" href="../style.css">
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <title>Cluster Algorithm</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="cluster-style.css"/>
 </head>
 <body>
 <div class="sidebar">
-  <div class="logo_details">
-    <a href="../index.html">
-      <div class="logo_name">Beautiful Algorithm</div>
-    </a>
-    <i class="bx bx-menu" id="btn"></i>
-  </div>
-  <ul class="nav-list">
-    <li>
-      <a href="#">
-        <i class="bx bxs-star"></i>
-        <span class="link_name">A-Star</span>
-      </a>
-      <span class="tooltip">A-Star</span>
-    </li>
-    <li>
-      <a href="index.html">
-        <i class="bx bx-exclude"></i>
-        <span class="link_name">Cluster Algorithm</span>
-      </a>
-      <span class="tooltip">Cluster Algorithm</span>
-    </li>
-    <li>
-      <a href="clustering/index.html">
-        <i class="bx bx-dna"></i>
-        <span class="link_name">Genetic Algorithm</span>
-      </a>
-      <span class="tooltip">Genetic Algorithm</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bx-run"></i>
-        <span class="link_name">Ant Algorithm</span>
-      </a>
-      <span class="tooltip">Ant Algorithm</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bxs-leaf"></i>
-        <span class="link_name">Tree Algorithm</span>
-      </a>
-      <span class="tooltip">Tree Algorithm</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bx-math"></i>
-        <span class="link_name">Neuron model</span>
-      </a>
-      <span class="tooltip">Neuron model</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bx-user"></i>
-        <span class="link_name">Team</span>
-      </a>
-      <span class="tooltip">Team</span>
-    </li>
-  </ul>
+    <div class="logo_details">
+        <a href="../index.html">
+            <div class="logo_name">Beautiful Algorithm</div>
+        </a>
+        <i class="bx bx-menu" id="btn"></i>
+    </div>
+    <ul class="nav-list">
+        <li>
+            <a href="#">
+                <i class="bx bxs-star"></i>
+                <span class="link_name">A-Star</span>
+            </a>
+            <span class="tooltip">A-Star</span>
+        </li>
+        <li>
+            <a href="index.html">
+                <i class="bx bx-exclude"></i>
+                <span class="link_name">Cluster Algorithm</span>
+            </a>
+            <span class="tooltip">Cluster Algorithm</span>
+        </li>
+        <li>
+            <a href="clustering/index.html">
+                <i class="bx bx-dna"></i>
+                <span class="link_name">Genetic Algorithm</span>
+            </a>
+            <span class="tooltip">Genetic Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-run"></i>
+                <span class="link_name">Ant Algorithm</span>
+            </a>
+            <span class="tooltip">Ant Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bxs-leaf"></i>
+                <span class="link_name">Tree Algorithm</span>
+            </a>
+            <span class="tooltip">Tree Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-math"></i>
+                <span class="link_name">Neuron model</span>
+            </a>
+            <span class="tooltip">Neuron model</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-user"></i>
+                <span class="link_name">Team</span>
+            </a>
+            <span class="tooltip">Team</span>
+        </li>
+    </ul>
 </div>
 
-<section class="home-section">
-  <body>
-  <div class="container text-center my-4">
-    <div class="row">
-      <div class="col-lg-7 col-md-8 mx-auto">
-        <div class="text">Сделаем вид, что здесь есть проект)</div>
-        <p> </p>
-      </div>
-    </div>
-  </div>
-  </body>
-</section>
 
+<section class="home-section">
+        <div class="wrapper">
+            <canvas id="canvas" width="800px" height="730px"></canvas>
+            <script src="canvasDrawer.js"></script>
+            <div class="container-buttons">
+                <button class="buttonStyle" onclick="canvas.clear()">Очистить</button>
+                <button class="buttonStyle" onclick=ClusteringKmeans(0)>Кластеризация К-средних</button>
+            </div>
+        </div>
+    </section>
 
 
 <script src="../script.js"></script>

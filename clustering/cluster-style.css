@@ -1,0 +1,45 @@
+#canvas {
+    background-color: #ffffff;
+    border: 5px solid #0067ac;
+    border-radius: 25px;
+    position: absolute;
+    margin-top: 20px;
+    left: 50%;
+    display: flex;
+    transform: translate(-50%);
+}
+
+
+.container-buttons {
+    display: flex;
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.buttonStyle{
+    border-radius: 25px;
+    font-family: "Open Sans", serif;
+    font-size: 24px;
+    background: #004f83;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.faq{
+  display: flex;
+  flex-direction: column;
+  margin-left: 100px;
+  border-color:  #1f7e7e;
+  border-radius: 10px;
+}
+
+
+
+

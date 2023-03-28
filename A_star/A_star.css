@@ -1,0 +1,26 @@
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.table_container {
+  display: block;
+  width: 600px;
+  height: 600px;
+  margin: 200px auto;
+}
+
+.button {
+  margin-right: 10px;
+}
+
+.change_size {
+  margin-right: 10px;
+}
+
+body {
+  background-color: #e4e9f7;
+}

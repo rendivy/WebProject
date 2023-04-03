@@ -1,5 +1,5 @@
 import {generateMaze} from "./mazeGeneration.js"
-import {bfs} from "./algorithm.js";
+import {AStar} from "./algorithm.js";
 
 import {
   table,
@@ -9,91 +9,86 @@ import {
   createTable
 } from "./fieldCreation.js";
 
-import {
-  pressedButtons
-} from "./mazeTransformations.js";
+let isBuilt = false;
+const tableContainer = document.querySelector('.table-container');
 
-document.getElementById('change_size_button').addEventListener('click', () => {
 
-  pressedButtons.isBuilt = false;
-  pressedButtons.isChangeStart = false;
-  pressedButtons.isChangeFinish = false;
-  pressedButtons.isMatrixEditing = false;
+export const buttons = {
+  generateMaze: document.getElementById('generate-maze'),
+  changeStart: document.getElementById('change-start'),
+  changeFinish: document.getElementById('change-finish'),
+  clear: document.getElementById('clear'),
+  editMaze: document.getElementById('edit-maze'),
+  launch: document.getElementById('launch'),
+  slider:  document.getElementById("slider")
+}
 
-  const newSize = parseInt(document.getElementById('change_size_number').value);
-  if (!isNaN(newSize) && newSize >= 5 && newSize <= 50) {
-    document.querySelector('.table_container').removeChild(table);
-    createTable(newSize);
-  } else {
-    alert("Значение должно быть от 5 до 50!")
-  }
+function setInactive() {
+  buttons.changeStart.classList.remove('active');
+  buttons.changeFinish.classList.remove('active');
+  buttons.editMaze.classList.remove('active');
+  isBuilt = false;
+}
+
+
+buttons.slider.addEventListener("input", () => {
+  document.querySelector(".size-display span").textContent = `Размерность поля: ${buttons.slider.value}`;
+  setInactive();
+  tableContainer.removeChild(table);
+  createTable(buttons.slider.value);
 });
 
-document.getElementById('generate_maze').addEventListener('click', () => {
-  pressedButtons.isBuilt = false;
-  pressedButtons.isChangeStart = false;
-  pressedButtons.isChangeFinish = false;
-  pressedButtons.isMatrixEditing = false;
 
+buttons.generateMaze.addEventListener('click', () => {
+  setInactive();
   if (size != null) {
     generateMaze(table, size);
   }
 });
 
-document.getElementById('change_start').addEventListener('click', () => {
-  if (pressedButtons.isBuilt) {
-    pressedButtons.isBuilt = false;
-    document.querySelector('.table_container').removeChild(table);
+buttons.changeStart.addEventListener('click', () => {
+  if (isBuilt) {
+    tableContainer.removeChild(table);
     createTable(size);
   }
 
-  pressedButtons.isChangeFinish = false;
-  pressedButtons.isChangeStart = true;
-  pressedButtons.isMatrixEditing = false;
+  setInactive();
+  buttons.changeStart.classList.add('active');
 });
 
-document.getElementById('change_finish').addEventListener('click', () => {
-  if (pressedButtons.isBuilt) {
-    pressedButtons.isBuilt = false;
-    document.querySelector('.table_container').removeChild(table);
+buttons.changeFinish.addEventListener('click', () => {
+  if (isBuilt) {
+    tableContainer.removeChild(table);
     createTable(size);
   }
 
-  pressedButtons.isChangeFinish = true;
-  pressedButtons.isChangeStart = false;
-  pressedButtons.isMatrixEditing = false;
+  setInactive();
+  buttons.changeFinish.classList.add('active');
 });
 
-document.getElementById('clear').addEventListener('click', () => {
-  pressedButtons.isBuilt = false;
-  pressedButtons.isChangeStart = false;
-  pressedButtons.isChangeFinish = false;
-  pressedButtons.isMatrixEditing = false;
+buttons.editMaze.addEventListener('click', () => {
+  if (isBuilt) {
+    tableContainer.removeChild(table);
+    createTable(size);
+  }
 
-  document.querySelector('.table_container').removeChild(table);
+  setInactive();
+  buttons.editMaze.classList.add('active');
+});
+
+buttons.clear.addEventListener('click', () => {
+  setInactive();
+
+  tableContainer.removeChild(table);
   createTable(size);
 });
 
-document.getElementById('edit_maze').addEventListener('click', () => {
-  if (pressedButtons.isBuilt) {
-    pressedButtons.isBuilt = false;
-    document.querySelector('.table_container').removeChild(table);
-    createTable(size);
-  }
+buttons.launch.addEventListener('click', () => {
+  setInactive();
 
-  pressedButtons.isChangeStart = false;
-  pressedButtons.isChangeFinish = false;
-  pressedButtons.isMatrixEditing = true;
-});
-
-document.getElementById('launch').addEventListener('click', () => {
-  pressedButtons.isChangeStart = false;
-  pressedButtons.isChangeFinish = false;
-  pressedButtons.isMatrixEditing = false;
-
-  if (start.x != null && finish.x != null) {
-    bfs();
-    pressedButtons.isBuilt = true;
+  if (start.x != null && finish.x != null && !isBuilt) {
+    AStar();
+    isBuilt = true;
   }
 })
 

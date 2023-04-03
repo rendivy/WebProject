@@ -46,14 +46,13 @@ export function generateMaze(table, size) {
     let index = getRandomNumber(0, followingCells.length - 1);
     let cell = followingCells[index];
 
-    if (table.rows[cell.x].cells[cell.y].style.background == passColor) {
+    if (table.rows[cell.x].cells[cell.y].style.background === passColor) {
       followingCells.splice(index, 1);
       continue;
     }
 
     table.rows[cell.x].cells[cell.y].style.background = passColor;
     followingCells.splice(index, 1);
-
 
     const direction = {
       LEFT: 1,
@@ -69,25 +68,25 @@ export function generateMaze(table, size) {
         let index = getRandomNumber(0, d.length - 1);
         switch (d[index]) {
           case direction.LEFT:
-            if (cell.y - 2 >= 0 && table.rows[cell.x].cells[cell.y - 2].style.background == passColor) {
+            if (cell.y - 2 >= 0 && table.rows[cell.x].cells[cell.y - 2].style.background === passColor) {
               table.rows[cell.x].cells[cell.y - 1].style.background = passColor;
               break outerLoop;
             }
             break;
           case direction.RIGHT:
-            if (cell.y + 2 < size && table.rows[cell.x].cells[cell.y + 2].style.background == passColor) {
+            if (cell.y + 2 < size && table.rows[cell.x].cells[cell.y + 2].style.background === passColor) {
               table.rows[cell.x].cells[cell.y + 1].style.background = passColor;
               break outerLoop;
             }
             break;
           case direction.UP:
-            if (cell.x - 2 >= 0 && table.rows[cell.x - 2].cells[cell.y].style.background == passColor) {
+            if (cell.x - 2 >= 0 && table.rows[cell.x - 2].cells[cell.y].style.background === passColor) {
               table.rows[cell.x - 1].cells[cell.y].style.background = passColor;
               break outerLoop;
             }
             break;
           case direction.DOWN:
-            if (cell.x + 2 < size && table.rows[cell.x + 2].cells[cell.y].style.background == passColor) {
+            if (cell.x + 2 < size && table.rows[cell.x + 2].cells[cell.y].style.background === passColor) {
               table.rows[cell.x + 1].cells[cell.y].style.background = passColor;
               break outerLoop;
             }
@@ -96,16 +95,16 @@ export function generateMaze(table, size) {
         d.splice(index, 1);
       }
 
-    if (cell.y - 2 >= 0 && table.rows[cell.x].cells[cell.y - 2].style.background == wallColor) {
+    if (cell.y - 2 >= 0 && table.rows[cell.x].cells[cell.y - 2].style.background === wallColor) {
       followingCells.push({x: cell.x, y: cell.y - 2});
     }
-    if (cell.y + 2 < size && table.rows[cell.x].cells[cell.y + 2].style.background == wallColor) {
+    if (cell.y + 2 < size && table.rows[cell.x].cells[cell.y + 2].style.background === wallColor) {
       followingCells.push({x: cell.x, y: cell.y + 2});
     }
-    if (cell.x - 2 >= 0 && table.rows[cell.x - 2].cells[cell.y].style.background == wallColor) {
+    if (cell.x - 2 >= 0 && table.rows[cell.x - 2].cells[cell.y].style.background === wallColor) {
       followingCells.push({x: cell.x - 2, y: cell.y});
     }
-    if (cell.x + 2 < size && table.rows[cell.x + 2].cells[cell.y].style.background == wallColor) {
+    if (cell.x + 2 < size && table.rows[cell.x + 2].cells[cell.y].style.background === wallColor) {
       followingCells.push({x: cell.x + 2, y: cell.y});
     }
   }

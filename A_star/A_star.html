@@ -70,17 +70,19 @@
 
 
 <div class="container">
+  <div class="table-container"></div>
   <div class="buttons">
-    <input type="number" class="change_size" id="change_size_number" min="5" max="50" value="10">
-    <input type="button" class="change_size" id="change_size_button" value="Изменить">
-    <input type="button" class="button" id="generate_maze" value="Сгенерировать лабиринт">
+    <div class="size-display">
+      <span class="change-size">Размерность поля: 10</span>
+      <input type="range" class="change-size" id="slider" min="5" max="50" value="10" step="1">
+    </div>
+    <input type="button" class="button" id="generate-maze" value="Сгенерировать лабиринт">
     <input type="button" class="button" id="launch" value="Запустить">
-    <input type="button" class="button" id="edit_maze" value="Редактировать">
-    <input type="button" class="button" id="change_start" value="Выбрать старт">
-    <input type="button" class="button" id="change_finish" value="Выбрать финиш">
+    <input type="button" class="button" id="edit-maze" value="Редактировать">
+    <input type="button" class="button" id="change-start" value="Выбрать старт">
+    <input type="button" class="button" id="change-finish" value="Выбрать финиш">
     <input type="button" class="button" id="clear" value="Очистить">
   </div>
-  <div class="table_container"></div>
 </div>
 
 <script type="module" src="main.js"></script>

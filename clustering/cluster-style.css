@@ -5,10 +5,16 @@
     position: absolute;
     margin-top: 20px;
     left: 50%;
-    display: flex;
     transform: translate(-50%);
+    width: 60vw;
+    height: 90vh;
 }
 
+.slider {
+    width: 70%;
+    height: 10px;
+    background-color: #ddd;
+}
 
 .container-buttons {
     display: flex;
@@ -21,9 +27,21 @@
     align-items: center;
 }
 
+.btn-group {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
-.buttonStyle{
-    border-radius: 25px;
+
+.buttonStyle {
+    width: 150px;
+    border-radius: 10px;
     font-family: "Open Sans", serif;
     font-size: 24px;
     background: #004f83;
@@ -41,5 +59,20 @@
 }
 
 
+.btn-group button {
+    background: #004f83; /* Green background */
+    border: 3px solid black; /* Green border */
+    color: white; /* White text */
+    font-size: 20px;
+    padding: 10px 24px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon */
+    width: 70%; /* Set a width if needed */
+    display: block; /* Make the buttons appear below each other */
+}
 
 
+
+/* Add a background color on hover */
+.btn-group button:hover {
+    background-color: #21947e;
+}

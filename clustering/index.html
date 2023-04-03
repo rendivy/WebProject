@@ -20,7 +20,7 @@
     </div>
     <ul class="nav-list">
         <li>
-            <a href="#">
+            <a href="../A_star/A_star.html">
                 <i class="bx bxs-star"></i>
                 <span class="link_name">A-Star</span>
             </a>
@@ -72,17 +72,20 @@
 </div>
 
 
-<section class="home-section">
-        <div class="wrapper">
-            <canvas id="canvas" width="800px" height="730px"></canvas>
-            <script src="canvasDrawer.js"></script>
-            <div class="container-buttons">
-                <button class="buttonStyle" onclick="canvas.clear()">Очистить</button>
-                <button class="buttonStyle" onclick=ClusteringKmeans(0)>Кластеризация К-средних</button>
-            </div>
-        </div>
-    </section>
 
+<div class="wrapper">
+    <canvas id="canvas" width="800px" height="800px"></canvas>
+    <div class="btn-group">
+        <button class="buttonStyle" onclick="canvas.clear()">Очистить</button>
+        <button class="buttonStyle" onclick=clusterMeans(0)>Кластеризация К-средних</button>
+        <label for="centroid-slider"></label><input type="range" min="1" max="10" value="2" class="slider" id="centroid-slider">
+        <span id="sliderValue"></span>
+    </div>
+</div>
+
+
+<script src="ui/drawAlgorithm.js"></script>
+<script src="canvasDrawer.js"></script>
 
 <script src="../script.js"></script>
 </body>

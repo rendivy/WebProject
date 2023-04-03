@@ -43,9 +43,9 @@ function createGraph(graph) {
     for (let j = 0; j < size; j++) {
       graph[i].push([]);
       if (
-        table.rows[i].cells[j].style.background == passColor ||
-        table.rows[i].cells[j].style.background == finishColor ||
-        table.rows[i].cells[j].style.background == startColor
+        table.rows[i].cells[j].style.background === passColor ||
+        table.rows[i].cells[j].style.background === finishColor ||
+        table.rows[i].cells[j].style.background === startColor
       ) {
         addEdges(graph, i, j);
       }

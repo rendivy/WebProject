@@ -21,23 +21,23 @@ body {
 }
 
 .change-start-hover:hover {
-    background-color: yellow;
-    transition: background-color;
+    background-color: yellow !important;
+    transition: background-color 0.5s ease !important;
 }
 
 .change-finish-hover:hover {
-    background-color: red;
-    transition: background-color;
+    background-color: red !important;
+    transition: background-color 0.3s ease !important;
 }
 
 .edit-wall-hover:hover {
-    background-color: white;
-    transition: background-color;
+    background-color: white !important;
+    transition: background-color 0.3s ease !important;
 }
 
 .edit-cell-hover:hover {
-    background-color: gray;
-    transition: background-color;
+    background-color: gray !important;
+    transition: background-color 0.3s ease !important;
 }
 
 /*--------- buttons ---------*/
@@ -111,8 +111,7 @@ body {
     cursor: not-allowed;
 }
 
-
-span {
+span.change-size {
     margin-top: 20px;
 }
 

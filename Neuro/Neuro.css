@@ -7,12 +7,30 @@
     vertical-align: middle;
     left: 50%;
     display: flex;
-    transform: scale(5);
+    transform: scale(7);
+    border: 2px solid #ccc; /* толщина, цвет и стиль рамки */
 }
 
 .answer{
   display: inline;
+  position: relative;
+  top: 50%;
+  left:46%;
+  transform: translateY(115px);
 }
+
+.button {
+  text-align: center;
+  font-size: 20px;
+  margin: 10px;
+  width: 300px;
+  background-color: white;
+  border-radius: 10px;
+  flex-grow: 1;
+  border-radius: 10px;
+  border: 2px solid blueviolet;
+}
+
 
 .numberCircle {
   display: inline-block;
@@ -30,7 +48,6 @@
 }
 
 .home-section-neuro{
-    background-image: url("backimage.png");
     position: relative;
     display: flex;
     align-items: center;
@@ -47,7 +64,7 @@
     display: flex;
     position: fixed;
     top: 50%;
-    right: 20px;
+    right: 16%;
     transform: translateY(-50%);
     flex-direction: column;
     justify-content: center;

@@ -59,7 +59,7 @@ body {
     border-radius: 10px;
     flex-grow: 1;
     border-radius: 10px;
-    border: 2px solid blueviolet;
+    border: 2px solid #004f83;
 }
 
 .button:not(:disabled):active {
@@ -97,7 +97,7 @@ body {
     background-color: white;
     margin-bottom: 20px;
     border-radius: 10px;
-    border: 2px solid blueviolet;
+    border: 2px solid #004f83;
 }
 
 .change-size {
@@ -110,7 +110,6 @@ body {
 .change-size:disabled {
     cursor: not-allowed;
 }
-
 
 span.change-size {
     margin-top: 20px;

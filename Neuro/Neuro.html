@@ -2,13 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>A* algorithm</title>
+    <title>Cluster Algorithm</title>
+    <script src = "load.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="A_star.css">
+    <link rel="stylesheet" href="neuro.css"/>
 </head>
-
 <body>
 <div class="sidebar">
     <div class="logo_details">
@@ -19,21 +21,21 @@
     </div>
     <ul class="nav-list">
         <li>
-            <a href="A_star.html">
+            <a href="#">
                 <i class="bx bxs-star"></i>
                 <span class="link_name">A-Star</span>
             </a>
             <span class="tooltip">A-Star</span>
         </li>
         <li>
-            <a href="../clustering/index.html">
+            <a href="index.html">
                 <i class="bx bx-exclude"></i>
                 <span class="link_name">Cluster Algorithm</span>
             </a>
             <span class="tooltip">Cluster Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="clustering/index.html">
                 <i class="bx bx-dna"></i>
                 <span class="link_name">Genetic Algorithm</span>
             </a>
@@ -70,29 +72,25 @@
     </ul>
 </div>
 
-<div class="container">
-    <div class="table-container"></div>
-    <div class="buttons">
-        <div class="size-display">
-            <span class="change-size">Размерность поля: 10</span>
-            <input type="range" class="change-size" id="slider" min="5" max="50" value="10" step="1">
+
+<section class="home-section-neuro">
+    <div class="wrapper">
+        <canvas id="canvas" width="50px" height="50px"></canvas>
+        <script src="draw.js"></script>
+        <div class="container-buttons">
+            <button id="button-clear" class = "buttonStyle">Clear</button>
+            <button id="button-predict" class = "buttonStyle">Predict</button>
+            <script src = "Predict.js"></script>
         </div>
-        <input type="button" class="button" id="generate-maze" value="Сгенерировать лабиринт">
-        <input type="button" class="button" id="launch" value="Запустить">
-        <input type="button" class="button" id="edit-maze" value="Редактировать">
-        <input type="button" class="button" id="change-start" value="Выбрать старт">
-        <input type="button" class="button" id="change-finish" value="Выбрать финиш">
-        <input type="button" class="button" id="clear" value="Очистить">
     </div>
-</div>
+    <section class = "answer">
+        <div id="output1" class = "numberCircle"></div>
+        <div id="output2" class = "numberCircle"></div>
+        <div id="output3" class = "numberCircle"></div>
+    </section>
+</section>
 
-<script type="module" src="main.js"></script>
-<script type="module" src="colors.js"></script>
-<script type="module" src="fieldCreation.js"></script>
-<script type="module" src="mazeGeneration.js"></script>
-<script type="module" src="mazeTransformations.js"></script>
-<script type="module" src="algorithm.js"></script>
-<script type="module" src="../script.js"></script>
-
+<script src="../script.js"></script>
 </body>
 </html>
+

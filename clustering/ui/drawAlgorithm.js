@@ -1,6 +1,5 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const circleColor = "#000000FF";
 let dots = [];
 
 canvas.addEventListener("mousedown", handleMouseDown);

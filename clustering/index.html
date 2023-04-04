@@ -48,14 +48,14 @@
             <span class="tooltip">Ant Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="decision_tree/decision_tree.html">
                 <i class="bx bxs-leaf"></i>
                 <span class="link_name">Tree Algorithm</span>
             </a>
             <span class="tooltip">Tree Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="../Neuro/Neuro.html">
                 <i class="bx bx-math"></i>
                 <span class="link_name">Neuron model</span>
             </a>
@@ -74,15 +74,16 @@
 
 
 <div class="container">
-    <canvas id="canvas" width="600px" height="600px"></canvas>
+    <canvas id="canvas" width="800px" height="800px"></canvas>
     <div class="btn-group">
         <div class="buttons">
             <div class="size-display">
-                <span class="change-size">Количество кластеров: <span id="centroid-display">10</span></span>
+                <span class="change-size">Количество кластеров:&nbsp;<span id="centroid-display">10</span></span>
                 <input type="range" class="change-size" id="centroid-slider" min="1" max="10" value="1" step="1">
             </div>
             <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick=clusterMeans(0) value="Кластеризация k-means">
+            <input type="button" class="button" onclick=clusterMeans(0) value="Алгоритм кластеризации">
+            <input type="button" class="button" onclick=clusterMeans(0) value="Иерархический алгоритм">
         </div>
     </div>
 </div>

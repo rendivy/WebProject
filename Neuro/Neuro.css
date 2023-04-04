@@ -1,0 +1,77 @@
+#canvas {
+    background-color: #000000;
+    border-radius: 0%;
+    position: absolute;
+    margin: auto;
+    margin-top: -150px;
+    vertical-align: middle;
+    left: 50%;
+    display: flex;
+    transform: scale(5);
+}
+
+.answer{
+  display: inline;
+}
+
+.numberCircle {
+  display: inline-block;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  padding: 14px;
+
+  background: #fff;
+  border: 2px solid #666;
+  color: #666;
+  text-align: center;
+
+  font: 32px Arial, sans-serif;
+}
+
+.home-section-neuro{
+    background-image: url("backimage.png");
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--color-body);
+    min-height: 100vh;
+    top:0;
+    left:78px;
+    width: calc(100% - 78px);
+    transition: all .5s ease;
+    z-index: 2;
+  }
+
+.container-buttons {
+    display: flex;
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonStyle{
+    border-radius: 25px;
+    font-family: "Open Sans", serif;
+    font-size: 24px;
+    background: #004f83;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.faq{
+  display: flex;
+  flex-direction: column;
+  margin-left: 100px;
+  border-color:  #1f7e7e;
+  border-radius: 10px;
+}
+
+
+
+

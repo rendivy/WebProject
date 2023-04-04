@@ -1,118 +1,118 @@
 body {
-  background-color: #e4e9f7;
-  font-family: 'Open Sans', sans-serif;
+    background-color: #e4e9f7;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin-left: 140px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-left: 140px;
 }
 
 /*--------- table ---------*/
 
 
 .table-container {
-  width: 650px;
-  height: 650px;
+    width: 650px;
+    height: 650px;
 }
 
 .change-start-hover:hover {
-  background-color: yellow;
-  transition: background-color;
+    background-color: yellow;
+    transition: background-color;
 }
 
 .change-finish-hover:hover {
-  background-color: red;
-  transition: background-color;
+    background-color: red;
+    transition: background-color;
 }
 
 .edit-wall-hover:hover {
-  background-color: white;
-  transition: background-color;
+    background-color: white;
+    transition: background-color;
 }
 
 .edit-cell-hover:hover {
-  background-color: gray;
-  transition: background-color;
+    background-color: gray;
+    transition: background-color;
 }
 
 /*--------- buttons ---------*/
 
 .buttons {
-  display: flex;
-  flex-direction: column;
-  height: 650px;
-  justify-content: center;
-  align-items: center;
-  margin-left: 90px;
+    display: flex;
+    flex-direction: column;
+    height: 650px;
+    justify-content: center;
+    align-items: center;
+    margin-left: 90px;
 }
 
 .button {
-  text-align: center;
-  font-size: 20px;
-  width: 300px;
-  background-color: white;
-  border-radius: 10px;
-  flex-grow: 1;
-  border-radius: 10px;
-  border: 2px solid blueviolet;
+    text-align: center;
+    font-size: 20px;
+    width: 300px;
+    background-color: white;
+    border-radius: 10px;
+    flex-grow: 1;
+    border-radius: 10px;
+    border: 2px solid #004f83;
 }
 
 .button:not(:disabled):active {
-  transform: translateY(2px);
-  box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+    transform: translateY(2px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 }
 
 .button:hover {
-  background-color: deepskyblue;
-  transition: background-color 0.6s ease;
+    background-color: deepskyblue;
+    transition: background-color 0.6s ease;
 }
 
 .button:disabled {
-  background-color: white;
-  transition: none;
-  cursor: not-allowed;
+    background-color: white;
+    transition: none;
+    cursor: not-allowed;
 }
 
 .button:not(:last-child) {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .active {
-  background-color: deepskyblue
+    background-color: deepskyblue
 }
 
 /*--------- slider ---------*/
 
 .size-display {
-  text-align: center;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  background-color: white;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  border: 2px solid blueviolet;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    background-color: white;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 2px solid #004f83;
 }
 
 .change-size {
-  font-size: 20px;
-  width: 250px;
-  margin-bottom: 20px;
-  background-color: white;
+    font-size: 20px;
+    width: 250px;
+    margin-bottom: 20px;
+    background-color: white;
 }
 
 .change-size:disabled {
-  cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 
 span {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 

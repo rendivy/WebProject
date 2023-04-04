@@ -1,7 +1,7 @@
 import {passColor} from "./colors.js";
+import {buttons} from "./main.js";
 
 import {
-  pressedButtons,
   chooseStart,
   chooseFinish,
   editMaze
@@ -34,18 +34,20 @@ export function createTable(sizeTable) {
       cell.style.width = `${100 / size}%`;
       cell.style.height = `${100 / size}%`;
       cell.style.border = '2px solid black';
+
       cell.addEventListener('click', () => {
-        if (pressedButtons.isChangeStart) {
+        if (buttons.changeStart.classList.contains('active')) {
           chooseStart(i, j);
-        } else if (pressedButtons.isChangeFinish) {
+        } else if (buttons.changeFinish.classList.contains('active')) {
           chooseFinish(i, j);
-        } else if (pressedButtons.isMatrixEditing) {
+        } else if (buttons.editMaze.classList.contains('active')) {
           editMaze(i, j);
         }
       });
+
       row.appendChild(cell);
     }
     table.appendChild(row);
   }
-  document.querySelector('.table_container').appendChild(table);
+  document.querySelector('.table-container').appendChild(table);
 }

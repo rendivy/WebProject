@@ -19,7 +19,7 @@ export let pressedButtons = {
 }
 
 export function chooseStart(i, j) {
-  if (table.rows[i].cells[j].style.background != passColor) return;
+  if (table.rows[i].cells[j].style.background !== passColor) return;
   if (start.x == null && start.y == null) {
     table.rows[i].cells[j].style.background = startColor;
     pressedButtons.isChangeStart = false;
@@ -35,7 +35,7 @@ export function chooseStart(i, j) {
 }
 
 export function chooseFinish(i, j) {
-  if (table.rows[i].cells[j].style.background != passColor) return;
+  if (table.rows[i].cells[j].style.background !== passColor) return;
   if (finish.x == null && finish.y == null) {
     table.rows[i].cells[j].style.background = finishColor;
     pressedButtons.isChangeFinish = false;
@@ -51,9 +51,9 @@ export function chooseFinish(i, j) {
 }
 
 export function editMaze(i, j) {
-  if (table.rows[i].cells[j].style.background == passColor) {
+  if (table.rows[i].cells[j].style.background === passColor) {
     table.rows[i].cells[j].style.background = wallColor;
-  } else if (table.rows[i].cells[j].style.background == wallColor) {
+  } else if (table.rows[i].cells[j].style.background === wallColor) {
     table.rows[i].cells[j].style.background = passColor;
   }
 }

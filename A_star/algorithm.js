@@ -1,37 +1,61 @@
+import {buttons} from "./main.js";
+
 import {
-  table, size, start, finish
+  table,
+  size,
+  start,
+  finish
 } from "./fieldCreation.js";
 
 import {
-  finishColor, passColor, startColor, pathСolor, bypassableColor
+  finishColor,
+  passColor,
+  startColor,
+  pathColor,
+  bypassableColor,
+  currentColor
 } from "./colors.js";
+
+function heuristic(a, b) {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+function getLowestFValue(set, map) {
+  let lowest = set[0];
+  for (let i = 1; i < set.length; i++) {
+    if (map.get(set[i]) < map.get(lowest)) {
+      lowest = set[i];
+    }
+  }
+  return lowest;
+}
 
 function addEdges(graph, i, j) {
   if (j - 1 >= 0 && table && (
-    table.rows[i].cells[j - 1].style.background == passColor ||
-    table.rows[i].cells[j - 1].style.background == finishColor ||
-    table.rows[i].cells[j - 1].style.background == startColor
+    table.rows[i].cells[j - 1].style.background === passColor ||
+    table.rows[i].cells[j - 1].style.background === finishColor ||
+    table.rows[i].cells[j - 1].style.background === startColor
   )) {
     graph[i][j].push({x: i, y: j - 1});
   }
   if (j + 1 < size && (
-    table.rows[i].cells[j + 1].style.background == passColor ||
-    table.rows[i].cells[j + 1].style.background == finishColor ||
-    table.rows[i].cells[j + 1].style.background == startColor
+    table.rows[i].cells[j + 1].style.background === passColor ||
+    table.rows[i].cells[j + 1].style.background === finishColor ||
+    table.rows[i].cells[j + 1].style.background === startColor
   )) {
     graph[i][j].push({x: i, y: j + 1});
   }
   if (i - 1 >= 0 && (
-    table.rows[i - 1].cells[j].style.background == passColor ||
-    table.rows[i - 1].cells[j].style.background == finishColor ||
-    table.rows[i - 1].cells[j].style.background == startColor
+    table.rows[i - 1].cells[j].style.background === passColor ||
+    table.rows[i - 1].cells[j].style.background === finishColor ||
+    table.rows[i - 1].cells[j].style.background === startColor
   )) {
     graph[i][j].push({x: i - 1, y: j});
   }
   if (i + 1 < size && (
-    table.rows[i + 1].cells[j].style.background == passColor ||
-    table.rows[i + 1].cells[j].style.background == finishColor ||
-    table.rows[i + 1].cells[j].style.background == startColor
+    table.rows[i + 1].cells[j].style.background === passColor ||
+    table.rows[i + 1].cells[j].style.background === finishColor ||
+    table.rows[i + 1].cells[j].style.background === startColor
   )) {
     graph[i][j].push({x: i + 1, y: j});
   }
@@ -43,9 +67,9 @@ function createGraph(graph) {
     for (let j = 0; j < size; j++) {
       graph[i].push([]);
       if (
-        table.rows[i].cells[j].style.background == passColor ||
-        table.rows[i].cells[j].style.background == finishColor ||
-        table.rows[i].cells[j].style.background == startColor
+        table.rows[i].cells[j].style.background === passColor ||
+        table.rows[i].cells[j].style.background === finishColor ||
+        table.rows[i].cells[j].style.background === startColor
       ) {
         addEdges(graph, i, j);
       }
@@ -54,51 +78,68 @@ function createGraph(graph) {
 }
 
 
-async function showTheWay(way, x, y) {
-  for (let i = 0; i < way.length; i++) {
-    if (
-      !((way[i].x == start.x && way[i].y == start.y) ||
-        (way[i].x == finish.x && way[i].y == finish.y))
-    )
-      table.rows[way[i].x].cells[way[i].y].style.background = pathСolor;
-    await new Promise(resolve => setTimeout(resolve, 30));
-  }
-}
+export async function AStar() {
 
-export async function bfs() {
+  for (let i of Object.values(buttons)) {
+    i.disabled = true;
+  }
+
   const graph = [];
-  const q = [];
-  const way = new Array(size * size);
+  const queue = [];
+  const fValues = new Map();
+  const ways = new Array(size * size);
   for (let i = 0; i < size * size; i++) {
-    way[i] = [];
+    ways[i] = [];
   }
 
   createGraph(graph);
-  way[start.x * size + start.y].push(start);
-  q.push(start);
+  ways[start.x * size + start.y].push(start);
+  queue.push(start);
 
-  while (q.length != 0) {
-    let current = q[0];
-    q.shift();
+  while (queue.length) {
+    let current = getLowestFValue(queue, fValues);
+    queue.splice(queue.indexOf(current), 1);
 
     for (let i = 0; i < graph[current.x][current.y].length; i++) {
-      let temp = graph[current.x][current.y][i];
-      if (way[temp.x * size + temp.y].length == 0) {
+      let neighbor = graph[current.x][current.y][i];
 
-        way[temp.x * size + temp.y] = way[current.x * size + current.y].slice();
-        way[temp.x * size + temp.y].push(temp);
-        q.push(temp);
+      if (ways[neighbor.x * size + neighbor.y].length === 0) {
 
-        if (temp.x == finish.x && temp.y == finish.y) {
-          showTheWay(way[temp.x * size + temp.y], temp.x, temp.y);
+        ways[neighbor.x * size + neighbor.y] = ways[current.x * size + current.y].slice();
+        ways[neighbor.x * size + neighbor.y].push(neighbor);
+        queue.push(neighbor);
+
+        if (neighbor.x === finish.x && neighbor.y === finish.y) {
+          let route = ways[neighbor.x * size + neighbor.y];
+          for (let i = 0; i < route.length; i++) {
+            if (
+              !((route[i].x === start.x && route[i].y === start.y) ||
+                (route[i].x === finish.x && route[i].y === finish.y))
+            )
+              table.rows[route[i].x].cells[route[i].y].style.background = pathColor;
+            await new Promise(resolve => setTimeout(resolve, 30));
+          }
+
+          for (let i of Object.values(buttons)) {
+            i.disabled = false;
+          }
+
           return;
         }
 
-        table.rows[temp.x].cells[temp.y].style.background = bypassableColor;
-        await new Promise(resolve => setTimeout(resolve, 75));
+        fValues.set(neighbor, ways[current.x * size + current.y].length + 1 + heuristic(neighbor, finish));
+        table.rows[neighbor.x].cells[neighbor.y].style.background = currentColor;
+        await new Promise(resolve => setTimeout(resolve, 60));
+        table.rows[neighbor.x].cells[neighbor.y].style.background = bypassableColor;
       }
     }
   }
 
+  for (let i of Object.values(buttons)) {
+    i.disabled = false;
+  }
+
+
   alert("Пути нет!");
 }
+

@@ -4,36 +4,108 @@ function clusterMeans() {
     drawDots();
 
     if (dots.length < centroidCount) {
-        alert('Котик, количество кластеров не может быть больше, чем количество точек :3')
+        alert('Количество кластеров не может быть больше, чем количество точек');
     } else {
-        runKMeans(centroidCount);
+        const colors = generateColors(centroidCount);
+        const initialCentroids = kMeansPlusPlus(dots, centroidCount);
+        const {dotCentroidMap, centroids} = runKMeans(dots, initialCentroids, colors);
+        drawDots();
+
+        for (let i = 0; i < dotCentroidMap.length; i++) {
+            drawDot(dots[i][0], dots[i][1], colors[dotCentroidMap[i]]);
+        }
     }
 }
 
-function runKMeans(centroidCount) {
-    const centroids = initializeCentroids(centroidCount);
-    const dotCentroidMap = assignDotsToCentroids(dots, centroids);
-    const colors = generateColors(centroidCount);
-    drawDots();
+function runKMeans(dots, centroids, colors) {
+    let oldCentroids = [];
+    let dotCentroidMap = assignDotsToCentroids(dots, centroids);
 
+    while (!centroidsEqual(oldCentroids, centroids)) {
+        oldCentroids = [...centroids];
+        centroids = updateCentroids(dots, dotCentroidMap, centroids.length);
 
-    for (let i = 0; i < dotCentroidMap.length; i++) {
-        drawDot(dots[i][0], dots[i][1], colors[dotCentroidMap[i]]);
+        if (centroidsEqual(oldCentroids, centroids)) {
+            break;
+        }
+
+        dotCentroidMap = assignDotsToCentroids(dots, centroids);
+        drawDots();
+
+        for (let i = 0; i < dotCentroidMap.length; i++) {
+            drawDot(dots[i][0], dots[i][1], colors[dotCentroidMap[i]]);
+        }
     }
+
+    return {dotCentroidMap, centroids};
 }
-function initializeCentroids(count) {
-    const step = Math.floor(dots.length / count);
+
+function updateCentroids(dots, dotCentroidMap, centroidCount) {
     const centroids = [];
+    const centroidCounts = new Array(centroidCount).fill(0);
 
-    for (let i = 0; i < dots.length; i += step) {
-        centroids.push(dots[i]);
+    for (let i = 0; i < centroidCount; i++) {
+        centroids.push([0, 0]);
+    }
+
+    for (let i = 0; i < dots.length; i++) {
+        const centroidIndex = dotCentroidMap[i];
+        centroids[centroidIndex][0] += dots[i][0];
+        centroids[centroidIndex][1] += dots[i][1];
+        centroidCounts[centroidIndex]++;
+    }
+
+    for (let i = 0; i < centroidCount; i++) {
+        if (centroidCounts[i] > 0) {
+            centroids[i][0] /= centroidCounts[i];
+            centroids[i][1] /= centroidCounts[i];
+        } else {
+            centroids[i] = dots[Math.floor(Math.random() * dots.length)];
+        }
     }
 
     return centroids;
 }
 
+function kMeansPlusPlus(dots, k) {
+    const centroids = [dots[Math.floor(Math.random() * dots.length)]];
+
+    while (centroids.length < k) {
+        let maxDistance = 0;
+        let nextCentroid = null;
+
+        for (let i = 0; i < dots.length; i++) {
+            const distance = distanceToClosestCentroid(dots[i], centroids);
+
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                nextCentroid = dots[i];
+            }
+        }
+
+        centroids.push(nextCentroid);
+    }
+
+    return centroids;
+}
+
+function distanceToClosestCentroid(dot, centroids) {
+    let minDistance = Infinity;
+
+    for (let i = 0; i < centroids.length; i++) {
+        const distance = Math.sqrt((dot[0] - centroids[i][0]) ** 2 + (dot[1] - centroids[i][1]) ** 2);
+
+        if (distance < minDistance) {
+            minDistance = distance;
+        }
+    }
+
+    return minDistance;
+}
+
 function assignDotsToCentroids(dots, centroids) {
     const dotCentroidMap = [];
+
     for (let i = 0; i < dots.length; i++) {
         let minDistance = Infinity;
         let closestCentroidIndex = null;
@@ -53,6 +125,35 @@ function assignDotsToCentroids(dots, centroids) {
     return dotCentroidMap;
 }
 
+function centroidsEqual(centroids1, centroids2) {
+    if (centroids1.length !== centroids2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < centroids1.length; i++) {
+        if (centroids1[i][0] !== centroids2[i][0] || centroids1[i][1] !== centroids2[i][1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+function drawDot(x, y, color) {
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 4;
+    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.stroke();
+}
+
+
 function generateColors(count) {
     const colors = [];
     for (let i = 0; i < count; i++) {
@@ -65,12 +166,3 @@ function generateColors(count) {
     return colors;
 }
 
-function drawDot(x, y, color) {
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.strokeStyle = "#000000";
-    ctx.arc(x, y, 15, 0, Math.PI * 2);
-    ctx.strokeStyle = "#000000" ;
-    ctx.fill();
-    ctx.stroke();
-}

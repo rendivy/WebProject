@@ -8,7 +8,7 @@ function clusterMeans() {
     } else {
         const colors = generateColors(centroidCount);
         const initialCentroids = kMeansPlusPlus(dots, centroidCount);
-        const { dotCentroidMap, centroids } = runKMeans(dots, initialCentroids, colors);
+        const {dotCentroidMap, centroids} = runKMeans(dots, initialCentroids, colors);
         drawDots();
 
         for (let i = 0; i < dotCentroidMap.length; i++) {
@@ -37,7 +37,7 @@ function runKMeans(dots, centroids, colors) {
         }
     }
 
-    return { dotCentroidMap, centroids };
+    return {dotCentroidMap, centroids};
 }
 
 function updateCentroids(dots, dotCentroidMap, centroidCount) {

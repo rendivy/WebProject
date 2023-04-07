@@ -30,7 +30,8 @@ body {
     height: 650px;
     justify-content: center;
     align-items: center;
-    margin-left: 90px;
+    margin-right: 100px;
+    margin-top:20%;
 }
 
 .button {

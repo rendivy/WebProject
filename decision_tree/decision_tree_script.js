@@ -3,6 +3,10 @@ import { parseCSV } from "./parseCSV.js";
 import { DataSetEntity } from './Entity/DataSetEntity.js';
 import { Node } from './DecisionTree.js';
 
+let dataSetTeaching;
+let dataSet;
+let root;
+const splitCoff = 0.8;
 function getDistance(x1, x2, y1, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
@@ -41,8 +45,6 @@ function draw(element, element2, index) {
     sheet.append(number);
 }
 
-let dataSet;
-let root;
 const treeBlock = document.querySelector('.tree');
 
 function createTree(node, level) {
@@ -67,6 +69,7 @@ function createTree(node, level) {
 document.getElementById('build-tree').onclick = function ()
 {
     root.buildTree(root);
+    console.log(root);
     const level = document.createElement('div');
     const element = document.createElement('div');
     element.innerHTML = root.nodeName;
@@ -81,6 +84,7 @@ document.getElementById('build-tree').onclick = function ()
 
 document.getElementById('predict').onclick = function ()
 {
+    debugger;
     console.log(root.predict(root, ["Выше","Дома","На месте","Нет"]));
 }
 
@@ -113,7 +117,10 @@ document.getElementById('file-upload-input').onchange = function ()
             console.log("Invalid Signature");
             return;
         }
-        dataSet = new DataSetEntity(parsed, parsed[0].length - 1, []);
+        let split = splitDataSet(parsed);
+        console.log(split);
+        dataSet = new DataSetEntity(split.mainArray, parsed[0].length - 1, []);
+        dataSetTeaching = new DataSetEntity(split.teachingArray, parsed[0].length - 1, []);
         let errors = validateDataSet(dataSet);
         if (errors.length !== 0) {
             console.log("DataSet - ERROR");
@@ -122,6 +129,24 @@ document.getElementById('file-upload-input').onchange = function ()
             console.log("DataSet - OK");
         }
         root = new Node("root",null, dataSet, null, -1, null, -1);
+        console.log(dataSet);
+        console.log(dataSetTeaching);
     };
     reader.readAsText(file);
+}
+
+function splitDataSet(array){
+    let tempArray = array.map((item) => item.slice());
+    let mainArray = [];
+    let teachingArray = [];
+    teachingArray.push(tempArray[0], tempArray[1]);
+    let splitIndex = Math.floor(tempArray.length * splitCoff);
+    for(let i = 0; i < tempArray.length; i++){
+        if(i > splitIndex){
+            teachingArray.push(tempArray[i]);
+        } else {
+            mainArray.push(tempArray[i]);
+        }
+    }
+    return {teachingArray, mainArray};
 }

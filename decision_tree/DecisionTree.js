@@ -2,6 +2,7 @@ import {DataSetEntity} from "./Entity/DataSetEntity.js";
 
 const MAX_DEPTH = 10;
 const MIN_COUNT_EXAMPLES_IN_NODE = 1;
+let id = 0;
 class Node{
   constructor(nodeName, attributeNumber, data, parent, depth, parameter, gain) {
     //имя аттрибута по коротому произошло разбиение
@@ -20,6 +21,7 @@ class Node{
     this.depth = depth + 1;
     //прирост информации, необходим для разбиения и для обрезки
     this.gain = gain;
+    this.nodeID = id++;
     this.wasLeaf = false;
     this.wasPainted = false;
   }
@@ -116,6 +118,10 @@ class Node{
             return this.predict(root.branches[1], line);
         }
     }
+  }
+
+  pruningTree(root){
+
   }
 
   splitNumeric(data, attributeNumber) {
@@ -266,15 +272,16 @@ class Node{
 
   createDataSetEntity(data, attributes, typeAttributes){
     let array =  [];
+    let tempData = data.map((item) => [item[0].slice(), item[1]]);
     let atr = attributes.slice();
     let typeAtr = typeAttributes.slice();
     array.push(atr);
     array.push(typeAtr);
     array[0].push('class');
     array[1].push('type');
-    for (let i = 0; i < data.length; i++) {
-      array.push(data[i][0]);
-      array[i + 2].push(data[i][1]);
+    for (let i = 0; i < tempData.length; i++) {
+      array.push(tempData[i][0]);
+      array[i + 2].push(tempData[i][1]);
     }
     return new DataSetEntity(array, atr.length - 1, []);
   }

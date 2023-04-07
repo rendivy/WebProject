@@ -5,39 +5,11 @@ body {
 
 .container {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    /*flex-direction: row;*/
+    justify-content: flex-end;
     align-items: center;
     height: 100vh;
     margin-left: 140px;
-}
-
-/*--------- table ---------*/
-
-
-.table-container {
-    width: 650px;
-    height: 650px;
-}
-
-.change-start-hover:hover {
-    background-color: yellow !important;
-    transition: background-color 0.5s ease !important;
-}
-
-.change-finish-hover:hover {
-    background-color: red !important;
-    transition: background-color 0.3s ease !important;
-}
-
-.edit-wall-hover:hover {
-    background-color: white !important;
-    transition: background-color 0.3s ease !important;
-}
-
-.edit-cell-hover:hover {
-    background-color: gray !important;
-    transition: background-color 0.3s ease !important;
 }
 
 /*--------- buttons ---------*/
@@ -48,8 +20,10 @@ body {
     height: 650px;
     justify-content: center;
     align-items: center;
-    margin-left: 90px;
+    /*margin-left: 90px;*/
+    margin-right: 5%;
 }
+
 
 .button {
     text-align: center;
@@ -61,6 +35,11 @@ body {
     border-radius: 10px;
     border: 2px solid #004f83;
 }
+
+/*
+file-button сделать в виде кнопки, которая при нажатии открывает файловый менеджер
+*/
+
 
 .button:not(:disabled):active {
     transform: translateY(2px);
@@ -85,6 +64,7 @@ body {
 .active {
     background-color: deepskyblue
 }
+
 
 /*--------- slider ---------*/
 
@@ -114,4 +94,3 @@ body {
 span.change-size {
     margin-top: 20px;
 }
-

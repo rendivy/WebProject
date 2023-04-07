@@ -72,11 +72,9 @@
 </div>
 
 <div class="container">
-    <div class = "block" id = "field" style = "display: none">
+    <div class = "block" id = "field">
         <h2>Дерево решений</h2>
-        <div id = "fieldContainer">
-            <ul class = "tree" id = "0"></ul>
-        </div>
+        <div class="tree"></div>
     </div>
     <div class="buttons">
         <input type="button" class="button" id="build-tree" value="Построить дерево">
@@ -88,15 +86,13 @@
     </div>
 </div>
 
-<script type="module" src="main.js"></script>
+<script type="module" src="decision_tree_script.js"></script>
 <script type="module" src="parseCSV.js"></script>
 <script type="module" src="validate.js"></script>
 <script type="module" src="DecisionTree.js"></script>
 <script type="module" src="Entity/DataSetEntity.js"></script>
-<script type="module" src="TestData/testDataSet.js"></script>
-<script type="module" src="decision_tree_script.js"></script>
+<!--<script type="module" src="TestData/testDataSet.js"></script>-->
 <script type="module" src="../script.js"></script>
-
 </body>
 
 </html>

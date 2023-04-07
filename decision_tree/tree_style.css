@@ -1,83 +1,112 @@
-.tree {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    margin: auto;
-    text-align: center;
-    display: table;
+.block{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    justify-content: center;
+    align-items: center;
 }
 
-.tree ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    display: table;
+.tree{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+.tree__level{
     width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
-.tree li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    display: table-cell;
-    padding: 5px 0 0 0;
-    vertical-align: top;
+.tree__node{
+    width: 20px;
+    height: 20px;
 }
 
-.tree li:before {
-    outline: solid 1px #666;
-    content: "";
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
+/*.tree {*/
+/*    list-style: none;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    position: relative;*/
+/*    margin: auto;*/
+/*    text-align: center;*/
+/*    display: table;*/
+/*}*/
 
-.tree li:first-child:before {
-    left: 50%;
-}
+/*.tree ul {*/
+/*    list-style: none;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    position: relative;*/
+/*    display: table;*/
+/*    width: 100%;*/
+/*}*/
 
-.tree li:last-child:before {
-    right: 50%;
-}
+/*.tree li {*/
+/*    list-style: none;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    position: relative;*/
+/*    display: table-cell;*/
+/*    padding: 5px 0 0 0;*/
+/*    vertical-align: top;*/
+/*}*/
 
-.tree span {
-    font-size: 14px;
-    font-weight: normal;
-    border: solid .1em #666;
-    border-radius: .2em;
-    display: inline-block;
-    margin: 0 5px 5px;
-    padding: 5px 15px;
-    position: relative;
-}
+/*.tree li:before {*/
+/*    outline: solid 1px #666;*/
+/*    content: "";*/
+/*    left: 0;*/
+/*    position: absolute;*/
+/*    right: 0;*/
+/*    top: 0;*/
+/*}*/
 
-.tree ul:before, .tree code:before, .tree span:before {
-    outline: solid 1px #666;
-    content: "";
-    height: 5px;
-    left: 50%;
-    position: absolute;
-}
+/*.tree li:first-child:before {*/
+/*    left: 50%;*/
+/*}*/
 
-.tree ul:before {
-    top: -5px;
-}
+/*.tree li:last-child:before {*/
+/*    right: 50%;*/
+/*}*/
 
-.tree code:before, .tree span:before {
-    top: -6px;
-}
+/*.tree span {*/
+/*    font-size: 14px;*/
+/*    font-weight: normal;*/
+/*    border: solid .1em #666;*/
+/*    border-radius: .2em;*/
+/*    display: inline-block;*/
+/*    margin: 0 5px 5px;*/
+/*    padding: 5px 15px;*/
+/*    position: relative;*/
+/*}*/
 
-.tree>li {
-    margin-top: 0;
-}
+/*.tree ul:before, .tree code:before, .tree span:before {*/
+/*    outline: solid 1px #666;*/
+/*    content: "";*/
+/*    height: 5px;*/
+/*    left: 50%;*/
+/*    position: absolute;*/
+/*}*/
 
-.tree>li:before, .tree>li:after, .tree>li>code:before, .tree>li>span:before {
-    outline: none;
-}
+/*.tree ul:before {*/
+/*    top: -5px;*/
+/*}*/
+
+/*.tree code:before, .tree span:before {*/
+/*    top: -6px;*/
+/*}*/
+
+/*.tree>li {*/
+/*    margin-top: 0;*/
+/*}*/
+
+/*.tree>li:before, .tree>li:after, .tree>li>code:before, .tree>li>span:before {*/
+/*    outline: none;*/
+/*}*/
 
 .paramName {
     background-color: rgb(237,238,240);

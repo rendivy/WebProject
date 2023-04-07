@@ -1,4 +1,4 @@
-const { DataSetEntity } = require('./Entity/DataSetEntity.js');
+import { DataSetEntity } from './Entity/DataSetEntity.js';
 function validateDataSet(dataSet){
   let attributes = dataSet.getAttributes();
   let typeAttributes = dataSet.getTypeAttributes();
@@ -130,4 +130,4 @@ function convertObject(object, typeAttributes){
   }
 }
 
-module.exports = { validateDataSet, validateObject };
+export { validateDataSet, validateObject };

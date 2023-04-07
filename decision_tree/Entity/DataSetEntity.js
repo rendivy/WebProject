@@ -79,4 +79,4 @@ class DataSetEntity {
 
 }
 
-module.exports = { DataSetEntity };
+export { DataSetEntity };

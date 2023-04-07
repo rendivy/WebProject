@@ -1,5 +1,4 @@
-const { getData } = require('./TestData/testDataSet.js');
-const { DataSetEntity } = require('./Entity/DataSetEntity.js');
+import {DataSetEntity} from "./Entity/DataSetEntity.js";
 
 const MAX_DEPTH = 10;
 const MIN_COUNT_EXAMPLES_IN_NODE = 1;
@@ -57,10 +56,10 @@ class Node{
     let split;
     if(node.data.getTypeAttributes()[bestAttribute.bestAttributeNumber] === 'int'
       || node.data.getTypeAttributes()[bestAttribute.bestAttributeNumber] === 'float') {
-      node.parameter = "Разделяем по: " + this.getThreshold(this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber));
+      node.parameter = this.getThreshold(this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber));
       split = this.splitNumeric(node.data, bestAttribute.bestAttributeNumber);
     }else{
-      node.parameter = "Разделяем по: " + this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber);
+      node.parameter = this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber);
       split = this.splitCategorical(node.data, bestAttribute.bestAttributeNumber);
     }
 
@@ -81,7 +80,6 @@ class Node{
   }
 
   printTree(root){
-    //выведи в виде дерева
     if(root.wasPainted){
       return;
     }
@@ -98,6 +96,25 @@ class Node{
     if (root.branches === undefined) return;
     for(let i = 0; i < root.branches.length; i++){
       this.printTree(root.branches[i]);
+    }
+  }
+
+  predict(root, line){
+    if(root.wasLeaf){
+      return root.nodeName;
+    }
+    if(root.data.getTypeAttributes()[root.attributeNumber] === 'string'){
+        for(let i = 0; i < root.parameter.length; i++){
+            if(root.parameter[i] === line[root.attributeNumber]){
+                return this.predict(root.branches[i], line);
+            }
+        }
+    }else{
+        if(line[root.attributeNumber] < root.parameter){
+            return this.predict(root.branches[0], line);
+        }else{
+            return this.predict(root.branches[1], line);
+        }
     }
   }
 
@@ -263,4 +280,4 @@ class Node{
   }
 }
 
-module.exports = { Node };
+export {Node};

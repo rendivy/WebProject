@@ -1,8 +1,8 @@
-const { parseCSV } = require('./parseCSV.js');
-const { DataSetEntity } = require('./Entity/DataSetEntity.js');
-const { validateDataSet } = require('./validate.js');
-const { getTestDataSet } = require('./TestData/testDataSet.js');
-const { Node } = require('./DecisionTree.js');
+import { parseCSV } from './parseCSV.js';
+import { DataSetEntity } from './Entity/DataSetEntity.js';
+import { validateDataSet } from './validate.js';
+import { getTestDataSet } from './TestData/testDataSet.js';
+import { Node } from './DecisionTree.js';
 function main() {
   /*let text = "a,b,c";
   let parsed = parseCSV(text);*/

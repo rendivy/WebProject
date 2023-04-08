@@ -46,7 +46,7 @@ function validateDataSet(dataSet){
 
     else if(typeAttributes[i] === "float"){
       for (let j = 0; j < data.length; j++) {
-        if(!Number.isInteger(parseFloat(data[j][i]))){
+        if(!Number.isInteger(parseInt(data[j][i]))){
           errors.push("Element is not float. It is " + data[j][i] + ". String number is " + (j + 1) + " Attribute number is " + (i + 1));
         }
       }
@@ -54,8 +54,7 @@ function validateDataSet(dataSet){
 
     else if(typeAttributes[i] === "string"){
       for (let j = 0; j < data.length; j++) {
-        if(Number.isInteger(parseInt(data[j][i])) ||
-           Number.isInteger(parseFloat(data[j][i]))){
+        if(Number.isInteger(parseInt(data[j][i]))){
           errors.push("Element is not string. It is " + data[j][i] + ". String number is " + (j + 1) + " Attribute number is " + (i + 1));
         }
       }

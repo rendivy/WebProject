@@ -19,16 +19,20 @@
 .line {
     position: absolute;
     z-index: 1;
-    height: 1px;
-    background-color: red;
+    height: 2px;
+    background-color: #004f83;
     transform-origin: 0 0;
 }
 
 .number{
     position: absolute;
     display: flex;
-    justify-content: space-around;
+    background-color: #e4e9f7;
+    color: #205C56;
+    z-index: 2;
+    justify-content: center;
     align-items: center;
+
 }
 
 .tree__level{
@@ -36,116 +40,33 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-}
-
-.tree__node{
-    width: 20px;
-    height: 20px;
+    padding-bottom: 100px;
 }
 
 .tree__element {
+    display: flex;
+    justify-content: center;
     background-color: #e4e9f7;
     position: relative;
     z-index: 2;
     margin: 0 10px;
+    color: maroon;
+    font-weight: 800;
+    border: 2px solid #004f83;
+    border-radius: 25px;
+    width: 110px;
 }
 
 .tree__leaf__element{
+    display: flex;
+    justify-content: center;
     background-color: #e4e9f7;
     position: relative;
     z-index: 2;
     margin: 0 10px;
-}
-
-/*.tree {*/
-/*    list-style: none;*/
-/*    margin: 0;*/
-/*    padding: 0;*/
-/*    position: relative;*/
-/*    margin: auto;*/
-/*    text-align: center;*/
-/*    display: table;*/
-/*}*/
-
-/*.tree ul {*/
-/*    list-style: none;*/
-/*    margin: 0;*/
-/*    padding: 0;*/
-/*    position: relative;*/
-/*    display: table;*/
-/*    width: 100%;*/
-/*}*/
-
-/*.tree li {*/
-/*    list-style: none;*/
-/*    margin: 0;*/
-/*    padding: 0;*/
-/*    position: relative;*/
-/*    display: table-cell;*/
-/*    padding: 5px 0 0 0;*/
-/*    vertical-align: top;*/
-/*}*/
-
-/*.tree li:before {*/
-/*    outline: solid 1px #666;*/
-/*    content: "";*/
-/*    left: 0;*/
-/*    position: absolute;*/
-/*    right: 0;*/
-/*    top: 0;*/
-/*}*/
-
-/*.tree li:first-child:before {*/
-/*    left: 50%;*/
-/*}*/
-
-/*.tree li:last-child:before {*/
-/*    right: 50%;*/
-/*}*/
-
-/*.tree span {*/
-/*    font-size: 14px;*/
-/*    font-weight: normal;*/
-/*    border: solid .1em #666;*/
-/*    border-radius: .2em;*/
-/*    display: inline-block;*/
-/*    margin: 0 5px 5px;*/
-/*    padding: 5px 15px;*/
-/*    position: relative;*/
-/*}*/
-
-/*.tree ul:before, .tree code:before, .tree span:before {*/
-/*    outline: solid 1px #666;*/
-/*    content: "";*/
-/*    height: 5px;*/
-/*    left: 50%;*/
-/*    position: absolute;*/
-/*}*/
-
-/*.tree ul:before {*/
-/*    top: -5px;*/
-/*}*/
-
-/*.tree code:before, .tree span:before {*/
-/*    top: -6px;*/
-/*}*/
-
-/*.tree>li {*/
-/*    margin-top: 0;*/
-/*}*/
-
-/*.tree>li:before, .tree>li:after, .tree>li>code:before, .tree>li>span:before {*/
-/*    outline: none;*/
-/*}*/
-
-.paramName {
-    background-color: rgb(237,238,240);
-}
-
-.finalNode {
-    background-color: rgb(224, 255, 225);
-}
-
-.current {
-    background-color: rgb(224, 246, 255);
+    color: black;
+    font-weight: 800;
+    border: 2px solid #004f83;
+    border-radius: 25px;
+    width: 110px;
 }

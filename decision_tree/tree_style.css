@@ -7,6 +7,7 @@
 }
 
 .tree{
+    position: relative;
     width: 90%;
     display: flex;
     flex-direction: column;
@@ -16,13 +17,15 @@
 }
 
 .line {
-    width: 100%;
+    position: absolute;
+    z-index: 1;
     height: 1px;
-    background-color: #000;
+    background-color: red;
+    transform-origin: 0 0;
 }
 
 .number{
-    width: 100%;
+    position: absolute;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -41,10 +44,16 @@
 }
 
 .tree__element {
+    background-color: #e4e9f7;
+    position: relative;
+    z-index: 2;
     margin: 0 10px;
 }
 
 .tree__leaf__element{
+    background-color: #e4e9f7;
+    position: relative;
+    z-index: 2;
     margin: 0 10px;
 }
 

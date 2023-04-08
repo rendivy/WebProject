@@ -10,7 +10,7 @@ const splitCoff = 0.8;
 function getDistance(x1, x2, y1, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
-
+const treeBlock = document.querySelector('.tree');
 function draw(element, element2, index) {
     const line = document.createElement("div");
     const number = document.createElement("div");
@@ -32,17 +32,21 @@ function draw(element, element2, index) {
         line.style.transform = `rotate(${cos + 90}deg)`;
     }
 
+    line.style.width = `${length}px`;
     line.style.left = `${element.x}px`;
     line.style.top = `${element.y}px`;
-    line.style.width = `${length}px`;
     line.classList.add("line");
+
     number.classList.add("number");
     number.innerHTML = index;
-    document.body.appendChild(line);
-    document.body.appendChild(number);
+    number.style.left = `${(element.x + element2.x) / 2}px`;
+    number.style.top = `${(element.y + element2.y) / 2 - 18}px`;
+
+    treeBlock.appendChild(line);
+    treeBlock.appendChild(number);
 }
 
-const treeBlock = document.querySelector('.tree');
+
 
 function renderTree(root, container) {
     const queue = [root];
@@ -81,9 +85,22 @@ function renderLines(root) {
             if (nodes[i].branches) {
                 queue.push(...nodes[i].branches);
                 for (let j = 0; j < nodes[i].branches.length; j++) {
+                    const parent = document.getElementById(`${nodes[i].nodeID}`)
+                    const child = document.getElementById(`${nodes[i].branches[j].nodeID}`)
+
+                    console.log(parent, child)
+                    const element = {
+                        x: parent.offsetLeft + parent.offsetWidth / 2,
+                        y: parent.offsetTop + parent.offsetHeight / 2
+                    };
+                    const element2 = {
+                        x: child.offsetLeft + child.offsetWidth / 2,
+                        y: child.offsetTop + child.offsetHeight / 2
+                    }
+                    console.log(element, element2)
                     draw(
-                        document.getElementById(nodes[i].nodeID).getBoundingClientRect(),
-                        document.getElementById(nodes[i].branches[j].nodeID).getBoundingClientRect(),
+                        element,
+                        element2,
                         nodes[i].parameter[j]
                     );
                 }
@@ -97,7 +114,7 @@ document.getElementById('build-tree').onclick = function ()
     root.buildTree(root);
     console.log(root);
     renderTree(root, treeBlock);
-    debugger;
+    //debugger;
     renderLines(root);
 }
 

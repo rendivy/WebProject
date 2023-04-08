@@ -77,18 +77,17 @@
     <div class="btn-group">
         <canvas id="canvas" width="800px" height="800px"></canvas>
         <div class="buttons">
+            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
             <div class="size-display">
                 <span class="change-size">Количество кластеров:&nbsp;<span id="centroid-display">10</span></span>
                 <input type="range" class="change-size" id="centroid-slider" min="1" max="10" value="1" step="1">
             </div>
-            <div class="size-display">
-                <span class="change-size">Количество кластеров:&nbsp;</span>
-                <input type="range" class="change-size" min="1" max="10" value="1" step="1">
-            </div>
-            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
             <input type="button" class="button" onclick=clusterMeans(0) value="Алгоритм кластеризации">
-            <input type="button" class="button" onclick= runDBSCAN() value="Алгоритм DBSCAN">
-            <input type="button" class="button" onclick=clusterMeans(0) value="Иерархический алгоритм">
+            <div class="size-display">
+                <span class="change-size">Выберите кол-во точек, для образования одного кластера:&nbsp;<span id="dbscan-display">1</span></span>
+                <input type="range" class="change-size" id="dbscan-slider" min="1" max="10" value="1" step="1">
+            </div>
+            <input type="button" class="button" onclick=runDBSCAN() value="Алгоритм DBSCAN">
             <input type="button" class="button" onclick=clusterMeans(0) value="Иерархический алгоритм">
         </div>
     </div>
@@ -96,10 +95,11 @@
 
 
 <script  src="ui/drawK-means.js"></script>
-<script src="k-means.js"></script>
+<script src="data/k-means.js"></script>
 <script src="data/getSliderValue.js"></script>
-<script src = dbScan.js></script>
+<script src = data/dbScan.js></script>
 <script src="../script.js"></script>
+<script src="data/dbSCANSlider.js"></script>
 </body>
 </html>
 

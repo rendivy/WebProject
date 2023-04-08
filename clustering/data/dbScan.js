@@ -1,15 +1,16 @@
-// Определение переменных
 const eps = 100;
-const minPts = 7;
-const noise = new Set();
-const clusters = [];
-const visited = new Set();
+let noise = new Set();
+let clusters = [];
+let visited = new Set();
 
 function runDBSCAN() {
-    const {clusters, noise} = dbscan();
+    dbscanStructClear()
+    let sliderPts = document.getElementById("dbscan-slider");
+    let minPts = sliderPts.value;
+    const {clusters, noise} = dbscan(minPts);
     colorClusters(clusters, noise);
 }
-function dbscan() {
+function dbscan(minPts) {
     for (let i = 0; i < dots.length; i++) {
         const point = dots[i];
         if (visited.has(point)) {
@@ -22,7 +23,7 @@ function dbscan() {
         } else {
             const cluster = new Set();
             clusters.push(cluster);
-            expandCluster(cluster, point, neighbors);
+            expandCluster(cluster, point, neighbors, minPts);
         }
     }
 
@@ -38,7 +39,7 @@ function rangeQuery(point) {
 }
 
 
-function expandCluster(cluster, point, neighbors) {
+function expandCluster(cluster, point, neighbors, minPts) {
     cluster.add(point);
     visited.add(point);
 
@@ -66,17 +67,20 @@ function colorClusters(clusters, noise) {
             const cluster = clusters[j];
             if (cluster.has(dots[i])) {
                 inCluster = true;
-                ctx.fillStyle = clusterColors[j];
+                ctx.strokeStyle = clusterColors[j];
+                ctx.lineWidth = 5;
                 drawCircle(dots[i][0], dots[i][1]);
                 break;
             }
         }
         if (!inCluster && noise.has(dots[i])) {
             ctx.fillStyle = noiseColor;
+            ctx.strokeStyle = noiseColor;
             drawCircle(dots[i][0], dots[i][1]);
         }
     }
 }
+
 
 // Функция для получения случайного цвета
 function getRandomColor() {
@@ -88,6 +92,10 @@ function getRandomColor() {
     return color;
 }
 
+function dbscanStructClear(){
+    noise = new Set();
+    clusters = [];
+    visited = new Set();
+}
 
 
-// Определение функции runDBSCAN(), которая запускает алгоритм dbscan() и раскрашивает точки на

@@ -20,6 +20,8 @@ function handleMouseDown(e) {
     drawCircle(x, y);
 }
 
+
+
 function drawDots() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#000000";
@@ -39,6 +41,10 @@ function drawCircle(x, y) {
 canvas.clear = function () {
     ctx.clearRect(0,0, 15000, 15000);
     dots.length = 0;
+    clusters.length = 0;
+    noise.size = 0;
+    visited.size = 0;
+
 }
 
 resizeCanvas();

@@ -1,14 +1,14 @@
 function clusterMeans() {
-    const slider = document.getElementById("centroid-slider");
-    const centroidCount = slider.value;
+    let slider = document.getElementById("centroid-slider");
+    let centroidCount = slider.value;
     drawDots();
 
     if (dots.length < centroidCount) {
         alert('Количество кластеров не может быть больше, чем количество точек');
     } else {
-        const colors = generateColors(centroidCount);
-        const initialCentroids = kMeansPlusPlus(dots, centroidCount);
-        const {dotCentroidMap, centroids} = runKMeans(dots, initialCentroids, colors);
+        let colors = generateColors(centroidCount);
+        let initialCentroids = kMeansPlusPlus(dots, centroidCount);
+        let {dotCentroidMap} = runKMeans(dots, initialCentroids, colors);
         drawDots();
 
         for (let i = 0; i < dotCentroidMap.length; i++) {

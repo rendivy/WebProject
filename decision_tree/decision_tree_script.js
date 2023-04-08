@@ -14,7 +14,6 @@ function getDistance(x1, x2, y1, y2) {
 function draw(element, element2, index) {
     const line = document.createElement("div");
     const number = document.createElement("div");
-
     const length = getDistance(element.x, element2.x, element.y, element2.y);
     let sin =
         (Math.asin(Math.abs(element.y - element2.y) / length) * 180) / Math.PI;
@@ -33,36 +32,63 @@ function draw(element, element2, index) {
         line.style.transform = `rotate(${cos + 90}deg)`;
     }
 
+    line.style.left = `${element.x}px`;
+    line.style.top = `${element.y}px`;
     line.style.width = `${length}px`;
-    line.style.left = `${element.x + 3}px`;
-    line.style.top = `${element.y + 3}px`;
-    line.classList.add("ant-algorithm__line");
-
-    number.innerText = index;
-    number.classList.add("ant-algorithm__index");
-
-    sheet.append(line);
-    sheet.append(number);
+    line.classList.add("line");
+    number.classList.add("number");
+    number.innerHTML = index;
+    document.body.appendChild(line);
+    document.body.appendChild(number);
 }
 
 const treeBlock = document.querySelector('.tree');
 
-function createTree(node, level) {
-    //const level = document.createElement('div');
-    for (let i = 0; i < node.branches.length; i++) {
-        const element = document.createElement('div');
-        element.innerHTML = node.branches[i].nodeName;
-        element.classList.add('tree__element');
-        level.appendChild(element);
-        treeBlock.appendChild(level);
-        const coords1 = {x: node.clientX -
-                Math.ceil(event.currentTarget.getBoundingClientRect().x) +
-                1}
+function renderTree(root, container) {
+    const queue = [root];
+    while (queue.length) {
+        const nodes = queue.splice(0, queue.length);
+        const level = document.createElement('div');
+        level.classList.add('tree__level');
+        for (let i = 0; i < nodes.length; i++) {
+            if(nodes[i].branches === undefined) {
+                const element = document.createElement('div');
+                element.innerHTML = nodes[i].nodeName;
+                element.setAttribute('id', nodes[i].nodeID);
+                element.classList.add('tree__leaf__element');
+                level.appendChild(element);
+                continue;
+            }
+            if (nodes[i].branches) {
+                const element = document.createElement('div');
+                element.innerHTML = nodes[i].nodeName;
+                element.setAttribute('id', nodes[i].nodeID);
+                element.classList.add('tree__element');
+                level.appendChild(element);
+                queue.push(...nodes[i].branches);
+            }
+        }
+        container.appendChild(level);
     }
-    const newLevel = document.createElement('div');
-    newLevel.classList.add('tree__level');
-    for (let i = 0; i < node.branches.length; i++) {
-        createTree(node.branches[i], newLevel);
+
+}
+
+function renderLines(root) {
+    const queue = [root];
+    while (queue.length) {
+        const nodes = queue.splice(0, queue.length);
+        for (let i = 0; i < nodes.length; i++) {
+            if (nodes[i].branches) {
+                queue.push(...nodes[i].branches);
+                for (let j = 0; j < nodes[i].branches.length; j++) {
+                    draw(
+                        document.getElementById(nodes[i].nodeID).getBoundingClientRect(),
+                        document.getElementById(nodes[i].branches[j].nodeID).getBoundingClientRect(),
+                        nodes[i].parameter[j]
+                    );
+                }
+            }
+        }
     }
 }
 
@@ -70,16 +96,9 @@ document.getElementById('build-tree').onclick = function ()
 {
     root.buildTree(root);
     console.log(root);
-    const level = document.createElement('div');
-    const element = document.createElement('div');
-    element.innerHTML = root.nodeName;
-    element.classList.add('tree__element');
-    level.appendChild(element);
-    level.classList.add('tree__level');
-    treeBlock.appendChild(level);
-    const newLevel = document.createElement('div');
-    newLevel.classList.add('tree__level');
-    createTree(root, newLevel);
+    renderTree(root, treeBlock);
+    debugger;
+    renderLines(root);
 }
 
 document.getElementById('predict').onclick = function ()

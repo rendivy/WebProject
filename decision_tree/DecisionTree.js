@@ -121,7 +121,6 @@ class Node{
   }
 
   pruningTree(root){
-
   }
 
   splitNumeric(data, attributeNumber) {

@@ -1,9 +1,10 @@
-const { getData } = require('./TestData/testDataSet.js');
-const { DataSetEntity } = require('./Entity/DataSetEntity.js');
+import {DataSetEntity} from "./Entity/DataSetEntity.js";
 
-const MAX_DEPTH = 10;
+const MAX_DEPTH = 5;
 const MIN_COUNT_EXAMPLES_IN_NODE = 1;
+let id = 0;
 class Node{
+
   constructor(nodeName, attributeNumber, data, parent, depth, parameter, gain) {
     //имя аттрибута по коротому произошло разбиение
     this.nodeName = nodeName;
@@ -21,6 +22,7 @@ class Node{
     this.depth = depth + 1;
     //прирост информации, необходим для разбиения и для обрезки
     this.gain = gain;
+    this.nodeID = id++;
     this.wasLeaf = false;
     this.wasPainted = false;
   }
@@ -55,18 +57,24 @@ class Node{
     node.nodeName = node.data.getAttributes()[bestAttribute.bestAttributeNumber];
 
     let split;
+    let name = [];
     if(node.data.getTypeAttributes()[bestAttribute.bestAttributeNumber] === 'int'
       || node.data.getTypeAttributes()[bestAttribute.bestAttributeNumber] === 'float') {
-      node.parameter = "Разделяем по: " + this.getThreshold(this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber));
+      let parameter = this.getThreshold(this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber));
+        node.parameter = [parameter.toFixed(2) + " <", parameter.toFixed(2) + " >="];
       split = this.splitNumeric(node.data, bestAttribute.bestAttributeNumber);
+        name.push(parameter + " <", parameter + " >=");
     }else{
-      node.parameter = "Разделяем по: " + this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber);
+      node.parameter = this.getValuesAttribute(node.data.getData(), bestAttribute.bestAttributeNumber);
       split = this.splitCategorical(node.data, bestAttribute.bestAttributeNumber);
+      for(let i = 0; i < split.length; i++){
+        name.push(split[i][0][bestAttribute.bestAttributeNumber]);
+      }
     }
 
   for (let i = 0; i < split.length; i++) {
       let branch = new Node(
-        split[i][0][bestAttribute.bestAttributeNumber],
+        name[i],
         bestAttribute.bestAttributeNumber,
         this.createDataSetEntity(split[i], node.data.getAttributes(), node.data.getTypeAttributes()),
         node,
@@ -80,25 +88,87 @@ class Node{
 
   }
 
-  printTree(root){
-    //выведи в виде дерева
-    if(root.wasPainted){
-      return;
-    }
-    root.wasPainted = true;
-    let str = "";
-    for(let i = 0; i < root.depth; i++){
-      str += " ";
-    }
-    str += root.nodeName;
+  predict(root, line){
     if(root.wasLeaf){
-      str += " " + root.nodeName;
+      return root.nodeName;
     }
-    console.log(str);
-    if (root.branches === undefined) return;
-    for(let i = 0; i < root.branches.length; i++){
-      this.printTree(root.branches[i]);
+    if(root.data.getTypeAttributes()[root.attributeNumber] === 'string'){
+        for(let i = 0; i < root.parameter.length; i++){
+            if(root.parameter[i] === line[root.attributeNumber]){
+                return this.predict(root.branches[i], line);
+            }
+        }
+    }else{
+        if(line[root.attributeNumber] < parseFloat(root.parameter[0].split(" ")[0])){
+            return this.predict(root.branches[0], line);
+        }else{
+            return this.predict(root.branches[1], line);
+        }
     }
+  }
+
+  pruningTree(node, dataSetTeaching) {
+      if (node.wasLeaf) {
+          return;
+      }
+      if(node.depth === 0){
+          for(let i = 0; i < node.branches.length; i++){
+              this.pruningTree(node.branches[i], dataSetTeaching);
+          }
+          return;
+      }
+      let averageNodeError = this.getAverageNodeError(node);
+      for (let i = 0; i < node.branches.length; i++) {
+          this.pruningTree(node.branches[i], dataSetTeaching);
+      }
+      let nodeError = this.getNodeError(node, dataSetTeaching);
+      let nodeErrorSwap = this.getNodeErrorSwap(node, dataSetTeaching);
+      if (nodeErrorSwap < nodeError) {
+          this.nodeSwap(node, new Node(this.getMostCommonClass(node.data), undefined, undefined, node.parent, node.depth, undefined, undefined));
+      }
+      if (nodeErrorSwap < averageNodeError) {
+          this.nodeSwap(node, new Node(this.getMostCommonClass(node.data), undefined, undefined, node.parent, node.depth, undefined, undefined));
+      }
+  }
+
+  getAverageNodeError(node) {
+      let error = 0;
+      for (let i = 0; i < node.data.getData().length; i++) {
+          if (this.predict(node.parent, node.data.getData()[i]) !== node.data.getClassData()[i]) {
+              error++;
+          }
+      }
+      return error / node.data.getData().length;
+  }
+
+  nodeSwap(node, newNode) {
+      if (node.parent === undefined) {
+          return;
+      }
+      let index = node.parent.branches.indexOf(node);
+      node.parent.branches[index] = newNode;
+      newNode.parent = node.parent;
+      newNode.wasLeaf = true;
+  }
+
+  getNodeErrorSwap(node, dataSetTeaching) {
+      let error = 0;
+      for (let i = 0; i < dataSetTeaching.getData().length; i++) {
+          if (this.predict(node, dataSetTeaching.getData()[i]) !== dataSetTeaching.getClassData()[i]) {
+              error++;
+          }
+      }
+      return error / dataSetTeaching.getData().length;
+  }
+
+  getNodeError(node, dataSetTeaching) {
+      let error = 0;
+      for (let i = 0; i < dataSetTeaching.getData().length; i++) {
+          if (this.predict(node.parent, dataSetTeaching.getData()[i]) !== dataSetTeaching.getClassData()[i]) {
+              error++;
+          }
+      }
+      return error / dataSetTeaching.getData().length;
   }
 
   splitNumeric(data, attributeNumber) {
@@ -113,7 +183,7 @@ class Node{
         right.push([data.getData()[i], data.getClassData()[i]]);
       }
     }
-    return {left, right};
+    return [left, right];
   }
 
   splitCategorical(data, attributeNumber) {
@@ -249,18 +319,19 @@ class Node{
 
   createDataSetEntity(data, attributes, typeAttributes){
     let array =  [];
+    let tempData = data.map((item) => [item[0].slice(), item[1]]);
     let atr = attributes.slice();
     let typeAtr = typeAttributes.slice();
     array.push(atr);
     array.push(typeAtr);
     array[0].push('class');
     array[1].push('type');
-    for (let i = 0; i < data.length; i++) {
-      array.push(data[i][0]);
-      array[i + 2].push(data[i][1]);
+    for (let i = 0; i < tempData.length; i++) {
+      array.push(tempData[i][0]);
+      array[i + 2].push(tempData[i][1]);
     }
     return new DataSetEntity(array, atr.length - 1, []);
   }
 }
 
-module.exports = { Node };
+export {Node};

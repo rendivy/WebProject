@@ -88,26 +88,6 @@ class Node{
 
   }
 
-  printTree(root){
-    if(root.wasPainted){
-      return;
-    }
-    root.wasPainted = true;
-    let str = "";
-    for(let i = 0; i < root.depth; i++){
-      str += " ";
-    }
-    str += root.nodeName;
-    if(root.wasLeaf){
-      str += " " + root.nodeName;
-    }
-    console.log(str);
-    if (root.branches === undefined) return;
-    for(let i = 0; i < root.branches.length; i++){
-      this.printTree(root.branches[i]);
-    }
-  }
-
   predict(root, line){
     if(root.wasLeaf){
       return root.nodeName;

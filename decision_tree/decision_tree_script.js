@@ -73,7 +73,7 @@ function getDistance(x1, x2, y1, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
-function draw(element, element2, parameter) {
+function draw(element, element2, parameter, color) {
     const line = document.createElement("div");
     const number = document.createElement("div");
     const length = getDistance(element.x, element2.x, element.y, element2.y);
@@ -105,6 +105,10 @@ function draw(element, element2, parameter) {
     number.innerHTML = parameter;
     number.style.left = `${(element.x + element2.x) / 2}px`;
     number.style.top = `${(element.y + element2.y) / 2}px`;
+    if(color !== undefined){
+        line.style.color = color;
+        number.style.color = color;
+    }
     treeBlock.appendChild(line);
     treeBlock.appendChild(number);
 }
@@ -146,21 +150,9 @@ function renderLines(root) {
             if (nodes[i].branches) {
                 queue.push(...nodes[i].branches);
                 for (let j = 0; j < nodes[i].branches.length; j++) {
-                    const parent = document.getElementById(`${nodes[i].nodeID}`)
-                    const child = document.getElementById(`${nodes[i].branches[j].nodeID}`)
-
-                    const element = {
-                        x: parent.offsetLeft + parent.offsetWidth / 2,
-                        y: parent.offsetTop + parent.offsetHeight / 2
-                    };
-                    const element2 = {
-                        x: child.offsetLeft + child.offsetWidth / 2,
-                        y: child.offsetTop + child.offsetHeight / 2
-                    }
-
                     draw(
-                        element,
-                        element2,
+                        getPositionElement(nodes[i].nodeID),
+                        getPositionElement(nodes[i].branches[j].nodeID),
                         nodes[i].parameter[j]
                     );
                 }
@@ -248,7 +240,6 @@ function printTable(){
 
     document.getElementById('predict_button').onclick = function ()
     {
-        debugger;
         let table = document.getElementById("decision_table");
         let tr = table.getElementsByTagName("tr");
         let td = tr[tr.length - 1].getElementsByTagName("td");
@@ -262,7 +253,65 @@ function printTable(){
                 values.push(parseFloat(input[0].value));
             }
         }
-        let prediction = root.predict(root, values);
+        treeBlock.innerHTML = "";
+        renderTree(root, treeBlock);
+        renderLines(root);
+        let prediction = predict(root, values);
         console.log(prediction);
     }
+}
+
+function getPositionElement(elementId){
+    const pos = document.getElementById(`${elementId}`);
+    return {
+        x: pos.offsetLeft + pos.offsetWidth / 2,
+        y: pos.offsetTop + pos.offsetHeight / 2
+    }
+}
+
+function predict(root, values){
+    if (root.wasLeaf) {
+        markNode(root.nodeID, "green");
+        return root.nodeName;
+    }
+    if (root.data.getTypeAttributes()[root.attributeNumber] === 'string') {
+        for (let i = 0; i < root.parameter.length; i++) {
+            if (root.parameter[i] === values[root.attributeNumber]) {
+                draw(
+                    getPositionElement(root.nodeID),
+                    getPositionElement(root.branches[i].nodeID),
+                    root.parameter[i],
+                    "green"
+                )
+                markNode(root.nodeID, "green");
+                return predict(root.branches[i], values);
+            }
+        }
+    }
+    else {
+        if (values[root.attributeNumber] < parseFloat(root.parameter[0].split(" ")[0])) {
+            draw(
+                getPositionElement(root.nodeID),
+                getPositionElement(root.branches[0].nodeID),
+                root.parameter[0],
+                "green"
+            )
+            markNode(root.nodeID, "green");
+            return predict(root.branches[0], values);
+        }
+        else {
+            draw(
+                getPositionElement(root.nodeID),
+                getPositionElement(root.branches[1].nodeID),
+                root.parameter[0],
+                "green"
+            )
+            markNode(root.nodeID, "green");
+            return predict(root.branches[1], values);
+        }
+    }
+}
+
+function markNode(nodeId, color){
+    document.getElementById(nodeId).style.backgroundColor = color;
 }

@@ -16,11 +16,6 @@ document.getElementById('build-tree').onclick = function ()
     renderLines(root);
 }
 
-document.getElementById('predict').onclick = function ()
-{
-    console.log(root.predict(root, ["Выше","Дома","На месте","Нет"]));
-}
-
 document.getElementById('pruning').onclick = function ()
 {
     treeBlock.innerHTML = "";
@@ -31,6 +26,7 @@ document.getElementById('pruning').onclick = function ()
 
 document.getElementById('clear').onclick = function ()
 {
+    document.getElementById('decision_table').innerHTML = "";
     treeBlock.innerHTML = "";
     dataSet = null;
     dataSetTeaching = null;
@@ -68,6 +64,7 @@ document.getElementById('file-upload-input').onchange = function ()
             console.log("DataSet - OK");
         }
         root = new Node("root",null, dataSet, null, -1, null, -1);
+        printTable();
     };
     reader.readAsText(file);
 }
@@ -186,4 +183,86 @@ function splitDataSet(array){
         }
     }
     return {teachingArray, mainArray};
+}
+
+function printTable(){
+    let table = document.createElement("table");
+    let header = document.createElement("thead");
+    let body = document.createElement("tbody");
+    let footer = document.createElement("tfoot");
+
+    for(let i = 0; i < dataSet.getAttributes().length + 1; i++){
+        let th = document.createElement("th");
+        if(i === dataSet.getAttributes().length){
+            th.innerHTML = "Class";
+            header.appendChild(th);
+            continue;
+        }
+        th.innerHTML = dataSet.getAttributes()[i];
+        header.appendChild(th);
+    }
+    table.appendChild(header);
+
+    for(let i = 0; i < ((dataSet.getData().length > 5) ? 5 : dataSet.getData().length); i++){
+        let tr = document.createElement("tr");
+        for(let j = 0; j < dataSet.getData()[i].length; j++){
+            let td = document.createElement("td");
+            td.innerHTML = dataSet.getData()[i][j];
+            tr.appendChild(td);
+        }
+        let td = document.createElement("td");
+        td.innerHTML = dataSet.getClassData()[i];
+        tr.appendChild(td);
+        body.appendChild(tr);
+    }
+    table.appendChild(body);
+
+    let tr = document.createElement("tr");
+    for(let i = 0; i < dataSet.getAttributes().length; i++){
+        let td = document.createElement("td");
+        if(dataSet.getTypeAttributes()[i] === "string"){
+            let selector = document.createElement("select");
+            for(let j = 0; j < root.getValuesAttribute(dataSet.getData(), i).length; j++){
+                let option = document.createElement("option");
+                option.innerHTML = root.getValuesAttribute(dataSet.getData(), i)[j];
+                selector.appendChild(option);
+            }
+            td.appendChild(selector);
+            tr.appendChild(td);
+        }else{
+            let input = document.createElement("input");
+            input.setAttribute("type", "number");
+            td.appendChild(input);
+            tr.appendChild(td);
+        }
+    }
+
+    let td = document.createElement("button");
+    td.classList.add("table__button");
+    td.setAttribute("id", "predict_button");
+    td.innerHTML = "Предсказать";
+    tr.appendChild(td);
+    footer.appendChild(tr);
+    table.appendChild(footer);
+    document.getElementById("decision_table").appendChild(table);
+
+    document.getElementById('predict_button').onclick = function ()
+    {
+        debugger;
+        let table = document.getElementById("decision_table");
+        let tr = table.getElementsByTagName("tr");
+        let td = tr[tr.length - 1].getElementsByTagName("td");
+        let values = [];
+        for(let i = 0; i < td.length; i++){
+            if(dataSet.getTypeAttributes()[i] === "string"){
+                let selector = td[i].getElementsByTagName("select");
+                values.push(selector[0].value);
+            }else{
+                let input = td[i].getElementsByTagName("input");
+                values.push(parseFloat(input[0].value));
+            }
+        }
+        let prediction = root.predict(root, values);
+        console.log(prediction);
+    }
 }

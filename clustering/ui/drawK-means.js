@@ -1,5 +1,5 @@
 const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");
 let dots = [];
 
 canvas.addEventListener("mousedown", handleMouseDown);
@@ -17,11 +17,7 @@ function handleMouseDown(e) {
     const y = e.clientY - rect.top;
     dots.push([x, y]);
     drawDots();
-    drawCircle(x, y);
 }
-
-
-
 function drawDots() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#000000";

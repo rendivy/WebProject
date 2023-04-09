@@ -6,8 +6,10 @@
     left: 45%;
     transform: translate(-50%);
     width: 60vw;
-    height: 80vh;
+    height: 70vh;
 }
+
+
 
 .container {
     display: flex;

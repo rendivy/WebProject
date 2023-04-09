@@ -143,14 +143,9 @@ function centroidsEqual(centroids1, centroids2) {
 function drawDot(x, y, color) {
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.arc(x, y, 11, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.beginPath();
-    ctx.strokeStyle = "#000000";
-    ctx.lineWidth = 4;
-    ctx.arc(x, y, 15, 0, Math.PI * 2);
-    ctx.stroke();
 }
 
 

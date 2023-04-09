@@ -74,7 +74,6 @@ function colorClusters(clusters, noise) {
             }
         }
         if (!inCluster && noise.has(dots[i])) {
-            ctx.fillStyle = noiseColor;
             ctx.strokeStyle = noiseColor;
             drawCircle(dots[i][0], dots[i][1]);
         }
@@ -96,6 +95,11 @@ function dbscanStructClear(){
     noise = new Set();
     clusters = [];
     visited = new Set();
+}
+
+function compare(){
+    clusterMeans()
+    runDBSCAN()
 }
 
 

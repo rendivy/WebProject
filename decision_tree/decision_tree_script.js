@@ -11,6 +11,10 @@ const treeBlock = document.querySelector('.tree');
 
 document.getElementById('build-tree').onclick = function ()
 {
+    if(root === undefined){
+        markButton("build-tree", "red");
+        return;
+    }
     root.buildTree(root);
     renderTree(root, treeBlock);
     renderLines(root);
@@ -18,6 +22,10 @@ document.getElementById('build-tree').onclick = function ()
 
 document.getElementById('pruning').onclick = function ()
 {
+    if(root === undefined){
+        markButton("pruning", "red");
+        return;
+    }
     treeBlock.innerHTML = "";
     root.pruningTree(root, dataSetTeaching);
     renderTree(root, treeBlock);
@@ -35,6 +43,8 @@ document.getElementById('clear').onclick = function ()
 
 document.getElementById('file-upload-input').onchange = function ()
 {
+    treeBlock.innerHTML = "";
+    document.getElementById('decision_table').innerHTML = "";
     let file = document.getElementById('file-upload-input').files[0];
     let reader = new FileReader();
     reader.onload = function(e) {
@@ -57,11 +67,13 @@ document.getElementById('file-upload-input').onchange = function ()
         dataSetTeaching = new DataSetEntity(split.teachingArray, parsed[0].length - 1, []);
         let errors = validateDataSet(dataSet);
         if (errors.length !== 0) {
-            console.log("DataSet - ERROR");
             console.log(errors);
+            markButton("file-upload-input-button", "red");
+            dataSet = undefined;
+            dataSetTeaching = undefined;
             return;
         } else {
-            console.log("DataSet - OK");
+            markButton("file-upload-input-button", "green");
         }
         root = new Node("root",null, dataSet, null, -1, null, -1);
         printTable();
@@ -314,4 +326,12 @@ function predict(root, values){
 
 function markNode(nodeId, color){
     document.getElementById(nodeId).style.backgroundColor = color;
+}
+
+function markButton(buttonId, color){
+    let button = document.getElementById(buttonId);
+    button.style.backgroundColor = color;
+    setTimeout(() => {
+        button.style.backgroundColor = "";
+    }, 1000);
 }

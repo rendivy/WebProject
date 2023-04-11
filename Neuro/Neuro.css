@@ -64,8 +64,8 @@
 .container-buttons {
     display: flex;
     position: fixed;
-    top: 50%;
-    right: 16%;
+    top: 80%;
+    right: 38%;
     transform: translateY(-50%);
     flex-direction: column;
     justify-content: center;

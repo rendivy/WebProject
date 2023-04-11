@@ -1,5 +1,5 @@
 import {generateMaze} from "./mazeGeneration.js"
-import {AStar} from "./algorithm.js";
+import {aStar} from "./algorithm.js";
 
 import {
     table,
@@ -89,7 +89,7 @@ buttons.launch.addEventListener('click', () => {
     buttons.editMaze.classList.remove('active');
 
     if (start.x != null && finish.x != null && !isBuilt) {
-        AStar();
+        aStar();
         isBuilt = true;
     }
 })

@@ -78,7 +78,7 @@ function createGraph(graph) {
 }
 
 
-export async function AStar() {
+export async function aStar() {
 
     for (let i of Object.values(buttons)) {
         i.disabled = true;

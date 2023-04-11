@@ -76,6 +76,7 @@ window.addEventListener("load", function onWindowLoad(){
 
     document.getElementById("clear").onclick = function clear(){
         ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        document.getElementById("result").innerHTML = "Длина пути: <br>Количество итераций:";
         pointList.x = [];
         pointList.y = [];
         numberOfCities = 0;
@@ -122,7 +123,7 @@ window.addEventListener("load", function onWindowLoad(){
         let x2 = pointList.x[j];
         let y2 = pointList.y[j];
         let color = pheromonesEdgesColor;
-        let width = pheromonesEdgesWidth * matrix[i][j].pheromone % 10;
+        let width = pheromonesEdgesWidth * matrix[i][j].pheromone % 20;
         let opacity = matrix[i][j].pheromone * pheromonesEdgesOpacity;
         let blur = true;
         drawLine(x1, y1, x2, y2, color, width, opacity, blur);

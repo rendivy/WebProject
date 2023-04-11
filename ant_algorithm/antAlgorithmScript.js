@@ -8,56 +8,48 @@ window.addEventListener("load", function onWindowLoad(){
             y: []
     }
 
-    let numberOfCities = 0;
-    let otherEdgesOpacity = 0.15;
-    let otherEdgesColor = "#999999";
-    let otherEdgesWidth = 2;
     let townRadius = 7;
     let townColor = "#000000";
     let resultEdgesOpacity = 1;
-    let resultEdgesColor = "#00ff00";
+    let resultEdgesColor = "#05f240";
     let resultEdgesWidth = 4;
-    let mainEdgesWidth = 4;
-    let mainEdgesColor = "#ffff00";
-    let mainEdgesOpacity = 1;
-    let maxNumberOfCities = 50;
+    let tempEdgesWidth = 4;
+    let tempEdgesColor = "#07b7e3";
+    let tempEdgesOpacity = 1;
+    let pheromonesEdgesOpacity = 0.1;
+    let pheromonesEdgesColor = "#979c98";
+    let pheromonesEdgesWidth = 3;
 
-    //------------------------global variables for algorithm--------------------------
+    //------------------------global variables for ant algorithm-----------------------
 
-    let AntVariablesForAlgorithm = {
-        NumberOfIterations : 10000,
-        MaxNumberOfWithoutResultIterations : Math.min(pointList.x.length, 200),
+    let numberOfCities = 0;
+    let maxNumberOfCities = 100;
 
-        NumberOfAnts : Math.min(Math.pow(pointList.x.length, 2), 1000),
-        InitialNumberOfPheromones : 0.2,
+    const Iterations = 10000;
+    const Evaporation = 0.3;
+    const Alfa = 1;
+    const Beta = 3;
+    const PheromoneConst = 10;
+    const PathLengthConst = 10;
+    const InitialPheromones = 0.2;
 
-        Alfa : 1,
-        Beta : 3,
+    //------------------------global flags--------------------------------------------
 
-        PathLengthConst : 10,
-        PheromoneConst : 10,
-        RemainingPheromones : 0.6
-    }
+    let isStart = false;
 
-    //------------------------struct way---------------------------------------------
+    //------------------------struct--------------------------------------------------
 
     let Way = {
         lengthWay : 0,
-        pheromones : 0,
+        pheromone : 0,
         extraPheromones : 0
     }
 
-    let Ant = {
-        path : [],
-        pathLength : 0,
-        unvisitedCities : []
-    }
-
     //----------------------getting user input points---------------------------------
-    myCanvas.onmousedown = function newTown(e){
+    myCanvas.onmousedown = function newCity(e){
         let x = e.offsetX;
         let y = e.offsetY;
-        if (e.buttons === 1 && x >= 0 && y >= 0 && x <= myCanvas.width && y <= myCanvas.height) {
+        if (e.buttons === 1 && x >= 0 && y >= 0 && x <= myCanvas.width && y <= myCanvas.height && !isStart) {
             if(numberOfCities < maxNumberOfCities) {
                 let flag = true;
                 pointList.x.forEach((item, i) => {
@@ -67,18 +59,9 @@ window.addEventListener("load", function onWindowLoad(){
                 });
                 if (flag) {
                     numberOfCities++;
-
-                    //TODO: мб убрать сильно захламляет поле
-                    for (let i = 0; i < pointList.x.length; i++) {
-                        drawLine(pointList.x[i], pointList.y[i], x, y, otherEdgesColor, otherEdgesWidth, otherEdgesOpacity);
-                    }
-
                     pointList.x.push(x);
                     pointList.y.push(y);
-
-                    for(let i = 0; i < pointList.x.length; i++){
-                        drawPoint(pointList.x[i], pointList.y[i], townColor, townRadius, 15);
-                    }
+                    drawPoint(x, y, townColor, townRadius, 15);
                 }
             }
             else {
@@ -86,6 +69,17 @@ window.addEventListener("load", function onWindowLoad(){
             }
         }
     };
+
+    document.getElementById("generate-way").onclick = function start(){
+        initAntAlgorithm();
+    }
+
+    document.getElementById("clear").onclick = function clear(){
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        pointList.x = [];
+        pointList.y = [];
+        numberOfCities = 0;
+    }
 
     //----------------------draw function---------------------------------------------
     function drawPoint(x, y, color, size, lineWidth){
@@ -98,19 +92,45 @@ window.addEventListener("load", function onWindowLoad(){
         ctx.stroke();
     }
 
-    function drawLine(x1, y1, x2, y2, color, width, opacity){
+    function drawLine(x1, y1, x2, y2, color, width, opacity, blur) {
         ctx.globalAlpha = opacity;
         ctx.strokeStyle = color;
         ctx.lineWidth = width;
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
+        if (blur !== undefined && blur) {
+            ctx.shadowBlur = 100;
+        }
         ctx.stroke();
         ctx.globalAlpha = 1;
     }
 
-    function drawWay(way, color, width, opacity){
+    function drawTrackPheromones(matrix){
+        for(let i = 0; i < matrix.length; i++){
+            for(let j = 0; j < matrix.length; j++){
+                if(matrix[i][j].pheromone > 0){
+                    drawLinePheromones(i, j, matrix);
+                }
+            }
+        }
+    }
+
+    function drawLinePheromones(i, j, matrix){
+        let x1 = pointList.x[i];
+        let y1 = pointList.y[i];
+        let x2 = pointList.x[j];
+        let y2 = pointList.y[j];
+        let color = pheromonesEdgesColor;
+        let width = pheromonesEdgesWidth * matrix[i][j].pheromone % 10;
+        let opacity = matrix[i][j].pheromone * pheromonesEdgesOpacity;
+        let blur = true;
+        drawLine(x1, y1, x2, y2, color, width, opacity, blur);
+    }
+
+    function drawWay(way, color, width, opacity, matrix){
         ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        drawTrackPheromones(matrix);
         for(let i = 0; i < pointList.x.length; i++){
             drawPoint(pointList.x[i], pointList.y[i], townColor, townRadius, 15);
         }
@@ -131,18 +151,8 @@ window.addEventListener("load", function onWindowLoad(){
             way : []
         };
 
-        const NumberOfIterations = 10000;
-        const MaxNumberOfWithoutResultIterations = Math.min(Math.pow(pointList.x.length, 1), 200);
-
-        const NumberOfAnts = Math.min(Math.pow(pointList.x.length, 2), 1000);
-        const InitialNumberOfPheromones = 0.2;
-
-        const Alfa = 1;
-        const Beta = 1.5;
-
-        const PathLengthConst = 10;
-        const PheromoneConst = 10;
-        const RemainingPheromones = 0.3;
+        const WithoutChangesOperation = Math.min(pointList.x.length, 200);
+        const CountAnts = Math.min(pointList.x.length ** 2, 1000);
 
         let iteration = 0;
         let numberOfWithoutResultIterations = 0;
@@ -153,29 +163,23 @@ window.addEventListener("load", function onWindowLoad(){
             newBestWay.lengthWay = Infinity;
             newBestWay.way = [];
 
-            if(numberOfWithoutResultIterations > MaxNumberOfWithoutResultIterations || iteration > NumberOfIterations){
-                drawWay(bestWay.way, resultEdgesColor, resultEdgesWidth, resultEdgesOpacity);
+            if(numberOfWithoutResultIterations > WithoutChangesOperation || iteration > Iterations){
+                drawWay(bestWay.way, resultEdgesColor, resultEdgesWidth, resultEdgesOpacity, matrix);
+                printResult(bestWay.lengthWay, iteration);
+                isStart = false;
                 clearInterval(id);
             } else {
-                let unvisitedCities = [];
-                for (let i = 0; i < pointList.x.length; i++) {
-                    unvisitedCities.push(i);
-                }
+                let unvisitedCities = new Array(pointList.x.length).fill(0).map((item, i) => i);
 
-                let ants = [];
-                for (let i = 0; i < NumberOfAnts; i++) {
-                    ants.push({
+                let ants = new Array(CountAnts).fill(0).map(() => {
+                    return {
                         path: [],
                         pathLength: 0,
                         unvisitedCities: unvisitedCities.slice()
-                    });
-                }
+                    };
+                });
 
-                for (let i = 0; i < matrix.length; i++) {
-                    for (let j = 0; j < matrix.length; j++) {
-                        matrix[i][j].extraPheromones = 0;
-                    }
-                }
+                matrix.forEach((item) => { item.forEach((item) => { item.extraPheromones = 0;}); });
 
                 for (let i = 0; i < ants.length; i++) {
 
@@ -187,16 +191,18 @@ window.addEventListener("load", function onWindowLoad(){
                         let probability;
                         let probSum = 0;
                         for (let j = 0; j < ants[i].unvisitedCities.length; j++) {
-                            probability = getProbabilityOfWay(matrix, ants, i, j);
+                            probability = getProbability(matrix, ants, i, j);
                             probSum += probability;
                             probabilities.push(probability);
                         }
+
                         for (let j = 0; j < probabilities.length; j++) {
                             probabilities[j] /= probSum;
                         }
                         for (let j = 1; j < probabilities.length; j++) {
                             probabilities[j] += probabilities[j - 1];
                         }
+
                         let rand = Math.random();
                         let selectedCity;
                         for (let j = 0; j < probabilities.length; j++) {
@@ -221,18 +227,14 @@ window.addEventListener("load", function onWindowLoad(){
                     }
                 }
             }
-            for(let i = 0; i < matrix.length; i++){
-                for(let j = 0; j < matrix.length; j++){
-                    matrix[i][j].pheromone *= RemainingPheromones;
-                    matrix[i][j].pheromone += matrix[i][j].extraPheromones;
-                }
-            }
+
+            matrix.forEach((item) => { item.forEach((item) => { item.pheromone *= Evaporation; item.pheromone += item.extraPheromones}); });
 
             if(newBestWay.lengthWay < bestWay.lengthWay){
                 numberOfWithoutResultIterations = 0;
                 bestWay.lengthWay = newBestWay.lengthWay;
                 bestWay.way = newBestWay.way.slice();
-                drawWay(bestWay.way, mainEdgesColor, mainEdgesWidth, mainEdgesOpacity);
+                drawWay(bestWay.way, tempEdgesColor, tempEdgesWidth, tempEdgesOpacity, matrix);
             }
 
         }, 0);
@@ -240,6 +242,7 @@ window.addEventListener("load", function onWindowLoad(){
 
     function initAntAlgorithm(){
         //--------------------init matrix of ways--------------------------------------
+        isStart = true;
         let matrix = new Array(pointList.x.length);
         for(let i = 0; i < pointList.x.length; i++){
             matrix[i] = new Array(pointList.x.length);
@@ -256,39 +259,33 @@ window.addEventListener("load", function onWindowLoad(){
                 matrix[i][j].lengthWay = getDistance(pointList.x[i], pointList.y[i], pointList.x[j], pointList.y[j]);
             }
         }
-        for(let i = 0; i < pointList.x.length; i++){
-            for(let j = 0; j < pointList.x.length; j++){
-                matrix[i][j].pheromones = AntVariablesForAlgorithm.InitialNumberOfPheromones;
-                matrix[i][j].extraPheromones = 0;
-            }
-        }
-
+        matrix.forEach((item) => { item.forEach((item) => { item.pheromone = InitialPheromones; item.extraPheromones = 0;}); });
         antAlgorithm(matrix);
     }
 
+    function printResult(lengthWay, iteration){
+        let result = document.getElementById("result");
+        result.innerHTML = "Длина пути: " + lengthWay + "<br>Количество итераций: " + iteration;
+    }
+
+    //--------------------------calc metrics--------------------------------------------
     function getDistance(x1, y1, x2, y2){
         return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
     }
 
-    function getProbabilityOfWay(matrix, ants, i, j){
-        let probability = Math.pow(matrix[ants[i].path[ants[i].path.length - 1]][ants[i].unvisitedCities[j]].pheromones, AntVariablesForAlgorithm.Alfa);
-        probability *= Math.pow(AntVariablesForAlgorithm.PathLengthConst / matrix[ants[i].path[ants[i].path.length - 1]][ants[i].unvisitedCities[j]].lengthWay, AntVariablesForAlgorithm.Beta);
+    function getProbability(matrix, ants, i, j){
+        let probability = Math.pow(matrix[ants[i].path[ants[i].path.length - 1]][ants[i].unvisitedCities[j]].pheromone, Alfa);
+        probability *= Math.pow(PathLengthConst / matrix[ants[i].path[ants[i].path.length - 1]][ants[i].unvisitedCities[j]].lengthWay, Beta);
         return probability;
     }
 
     function getRandomInt(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min)) + min;
+        return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min);
     }
 
     function changeExtraPheromones(matrix, ants, i, selectedCity){
-        matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].extraPheromones += AntVariablesForAlgorithm.PheromoneConst / matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].lengthWay;
-        matrix[selectedCity][ants[i].path[ants[i].path.length - 1]].extraPheromones += AntVariablesForAlgorithm.PheromoneConst / matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].lengthWay;
+        matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].extraPheromones += PheromoneConst / matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].lengthWay;
+        matrix[selectedCity][ants[i].path[ants[i].path.length - 1]].extraPheromones += PheromoneConst / matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].lengthWay;
     }
 
-    //----------------------button click----------------------------------------------
-    document.getElementById("generate-way").onclick = function start(){
-        initAntAlgorithm();
-    }
 });

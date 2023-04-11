@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Genetic Algorithm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="genetic.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo_details">
+        <a href="../index.html">
+            <div class="logo_name">Beautiful Algorithm</div>
+        </a>
+        <i class="bx bx-menu" id="btn"></i>
+    </div>
+    <ul class="nav-list">
+        <li>
+            <a href="../A_star/A_star.html">
+                <i class="bx bxs-star"></i>
+                <span class="link_name">A-Star</span>
+            </a>
+            <span class="tooltip">A-Star</span>
+        </li>
+        <li>
+            <a href="../clustering/index.html">
+                <i class="bx bx-exclude"></i>
+                <span class="link_name">Cluster Algorithm</span>
+            </a>
+            <span class="tooltip">Cluster Algorithm</span>
+        </li>
+        <li>
+            <a href="genetic.html">
+                <i class="bx bx-dna"></i>
+                <span class="link_name">Genetic Algorithm</span>
+            </a>
+            <span class="tooltip">Genetic Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-run"></i>
+                <span class="link_name">Ant Algorithm</span>
+            </a>
+            <span class="tooltip">Ant Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bxs-leaf"></i>
+                <span class="link_name">Tree Algorithm</span>
+            </a>
+            <span class="tooltip">Tree Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-math"></i>
+                <span class="link_name">Neuron model</span>
+            </a>
+            <span class="tooltip">Neuron model</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-user"></i>
+                <span class="link_name">Team</span>
+            </a>
+            <span class="tooltip">Team</span>
+        </li>
+    </ul>
+</div>
+
+<div class="container">
+    <canvas id="canvas"></canvas>
+    <div class="buttons">
+        <input type="button" class="button" id="launch" value="Запустить">
+        <input type="button" class="button" id="add-vertex" disabled value="Добавить вершину">
+        <input type="button" class="button" id="remove-vertex" disabled value="Удалить вершину">
+        <input type="button" class="button" id="clear" value="Очистить">
+    </div>
+</div>
+
+<script type="module" src="main.js"></script>
+<script tyoe="module" src="algorithm.js"></script>
+<script type="module" src="../script.js"></script>
+
+</body>
+</html>

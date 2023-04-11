@@ -10,6 +10,7 @@ function runDBSCAN() {
     const {clusters, noise} = dbscan(minPts);
     colorClusters(clusters, noise);
 }
+
 function dbscan(minPts) {
     for (let i = 0; i < dots.length; i++) {
         const point = dots[i];
@@ -42,7 +43,6 @@ function rangeQuery(point) {
 function expandCluster(cluster, point, neighbors, minPts) {
     cluster.add(point);
     visited.add(point);
-
     for (let i = 0; i < neighbors.length; i++) {
         const neighbor = neighbors[i];
         if (!visited.has(neighbor)) {
@@ -67,21 +67,18 @@ function colorClusters(clusters, noise) {
             const cluster = clusters[j];
             if (cluster.has(dots[i])) {
                 inCluster = true;
-                ctx.strokeStyle = clusterColors[j];
-                ctx.lineWidth = 5;
-                drawCircle(dots[i][0], dots[i][1]);
+                ctx2.fillStyle = clusterColors[j];
+                ctx2.lineWidth = 4;
+                drawCircleScan(dots[i][0], dots[i][1]);
                 break;
             }
         }
         if (!inCluster && noise.has(dots[i])) {
-            ctx.strokeStyle = noiseColor;
-            drawCircle(dots[i][0], dots[i][1]);
+            ctx2.fillStyle = noiseColor;
+            drawCircleScan(dots[i][0], dots[i][1]);
         }
     }
 }
-
-
-// Функция для получения случайного цвета
 function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -91,15 +88,12 @@ function getRandomColor() {
     return color;
 }
 
-function dbscanStructClear(){
+function dbscanStructClear() {
     noise = new Set();
     clusters = [];
     visited = new Set();
 }
 
-function compare(){
-    clusterMeans()
-    runDBSCAN()
-}
+
 
 

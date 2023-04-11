@@ -145,7 +145,6 @@ function drawDot(x, y, color) {
     ctx.fillStyle = color;
     ctx.arc(x, y, 11, 0, Math.PI * 2);
     ctx.fill();
-
 }
 
 
@@ -157,7 +156,6 @@ function generateColors(count) {
         const b = Math.floor(Math.random() * 256);
         colors.push(`rgb(${r}, ${g}, ${b})`);
     }
-
     return colors;
 }
 

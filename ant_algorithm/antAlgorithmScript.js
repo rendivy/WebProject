@@ -32,7 +32,7 @@ window.addEventListener("load", function onWindowLoad(){
         InitialNumberOfPheromones : 0.2,
 
         Alfa : 1,
-        Beta : 1.5,
+        Beta : 3,
 
         PathLengthConst : 10,
         PheromoneConst : 10,
@@ -142,7 +142,7 @@ window.addEventListener("load", function onWindowLoad(){
 
         const PathLengthConst = 10;
         const PheromoneConst = 10;
-        const RemainingPheromones = 0.6;
+        const RemainingPheromones = 0.3;
 
         let iteration = 0;
         let numberOfWithoutResultIterations = 0;
@@ -200,7 +200,7 @@ window.addEventListener("load", function onWindowLoad(){
                         let rand = Math.random();
                         let selectedCity;
                         for (let j = 0; j < probabilities.length; j++) {
-                            if (rand < probabilities[j]) {
+                            if (probabilities[j] > rand) {
                                 selectedCity = ants[i].unvisitedCities[j];
                                 break;
                             }
@@ -280,7 +280,6 @@ window.addEventListener("load", function onWindowLoad(){
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min;
-        //Максимум не включается, минимум включается
     }
 
     function changeExtraPheromones(matrix, ants, i, selectedCity){

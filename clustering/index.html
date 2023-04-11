@@ -73,24 +73,32 @@
 
 
 <div class="container">
-    <div class="btn-group">
-        <canvas id="canvas"></canvas>
+    <div class="canvas-container">
         <div class="buttons">
-            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
             <div class="size-display">
                 <span class="change-size">Количество кластеров:&nbsp;<span id="centroid-display">10</span></span>
                 <input type="range" class="change-size" id="centroid-slider" min="1" max="10" value="1" step="1">
             </div>
-            <input type="button" class="button" onclick=clusterMeans(0) value="Алгоритм кластеризации">
+            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
+            <input type="button" class="button" onclick="clusterMeans()" value="Алгоритм кластеризации">
+        </div>
+        <canvas id="canvas1" ></canvas>
+    </div>
+    <div class="canvas-container">
+        <canvas id="canvas2" ></canvas>
+        <div class="buttons">
             <div class="size-display">
-                    <span class="change-size">Выберите кол-во точек, для образования одного кластера:&nbsp;<span
-                        id="dbscan-display">1</span></span>
+                <span class="change-size">Выберите кол-во точек, для образования одного кластера:&nbsp;<span
+                    id="dbscan-display">1</span></span>
                 <input type="range" class="change-size" id="dbscan-slider" min="1" max="10" value="1" step="1">
             </div>
+            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
             <input type="button" class="button" onclick=runDBSCAN() value="Алгоритм DBSCAN">
-            <input type="button" class="button" onclick=compare() value="Иерархический алгоритм">
         </div>
     </div>
+</div>
+<div class="main-button">
+    <input type="button" class="button" onclick="compare()" value="Сравним?">
 </div>
 
 

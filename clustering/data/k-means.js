@@ -1,14 +1,14 @@
 function clusterMeans() {
-    const slider = document.getElementById("centroid-slider");
-    const centroidCount = slider.value;
+    let slider = document.getElementById("centroid-slider");
+    let centroidCount = slider.value;
     drawDots();
 
     if (dots.length < centroidCount) {
         alert('Количество кластеров не может быть больше, чем количество точек');
     } else {
-        const colors = generateColors(centroidCount);
-        const initialCentroids = kMeansPlusPlus(dots, centroidCount);
-        const {dotCentroidMap, centroids} = runKMeans(dots, initialCentroids, colors);
+        let colors = generateColors(centroidCount);
+        let initialCentroids = kMeansPlusPlus(dots, centroidCount);
+        let {dotCentroidMap} = runKMeans(dots, initialCentroids, colors);
         drawDots();
 
         for (let i = 0; i < dotCentroidMap.length; i++) {
@@ -143,14 +143,8 @@ function centroidsEqual(centroids1, centroids2) {
 function drawDot(x, y, color) {
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.arc(x, y, 11, 0, Math.PI * 2);
     ctx.fill();
-
-    ctx.beginPath();
-    ctx.strokeStyle = "#000000";
-    ctx.lineWidth = 4;
-    ctx.arc(x, y, 15, 0, Math.PI * 2);
-    ctx.stroke();
 }
 
 
@@ -162,7 +156,6 @@ function generateColors(count) {
         const b = Math.floor(Math.random() * 256);
         colors.push(`rgb(${r}, ${g}, ${b})`);
     }
-
     return colors;
 }
 

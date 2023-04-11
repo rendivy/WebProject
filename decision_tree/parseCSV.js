@@ -1,6 +1,13 @@
-function parseCSV(str) {
+export function parseCSV(str) {
+    str = str.replace(/\r/g, '');
     return str.split("\n").map(function (line) {
-        return line.split(",");
+        if (line.length > 0) {
+            return line.split(",").filter(function (item) {
+                return item.length > 0;
+            });
+        }
+    }).filter(function (item) {
+        return item !== undefined;
     });
 }
-module.exports = { parseCSV };
+

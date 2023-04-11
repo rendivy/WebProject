@@ -6,10 +6,10 @@ body {
 .container {
     display: flex;
     /*flex-direction: row;*/
-    justify-content: flex-end;
+    /*justify-content: flex-end;*/
     align-items: center;
-    height: 100vh;
     margin-left: 140px;
+    margin-top: 70px;
 }
 
 /*--------- buttons ---------*/
@@ -24,6 +24,15 @@ body {
     margin-right: 5%;
 }
 
+.table__button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: 2px solid #004f83;
+    width: 90px;
+}
 
 .button {
     text-align: center;
@@ -35,11 +44,6 @@ body {
     border-radius: 10px;
     border: 2px solid #004f83;
 }
-
-/*
-file-button сделать в виде кнопки, которая при нажатии открывает файловый менеджер
-*/
-
 
 .button:not(:disabled):active {
     transform: translateY(2px);

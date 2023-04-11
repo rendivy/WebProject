@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 ctx.globalCompositeOperation = 'source-over';
 ctx.globalAlpha = 1;
+ctx.lineWidth = 3;
 ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
 ctx.fillStyle = "#FFFFFF";
 let isDrawing = false;

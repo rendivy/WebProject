@@ -129,9 +129,11 @@ window.addEventListener("load", function onWindowLoad(){
         drawLine(x1, y1, x2, y2, color, width, opacity, blur);
     }
 
-    function drawWay(way, color, width, opacity, matrix){
-        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-        drawTrackPheromones(matrix);
+    function drawWay(way, color, width, opacity, matrix, isResult){
+        if(isResult === undefined){
+            ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+            drawTrackPheromones(matrix);
+        }
         for(let i = 0; i < pointList.x.length; i++){
             drawPoint(pointList.x[i], pointList.y[i], townColor, townRadius, 15);
         }
@@ -165,7 +167,7 @@ window.addEventListener("load", function onWindowLoad(){
             newBestWay.way = [];
 
             if(numberOfWithoutResultIterations > WithoutChangesOperation || iteration > Iterations){
-                drawWay(bestWay.way, resultEdgesColor, resultEdgesWidth, resultEdgesOpacity, matrix);
+                drawWay(bestWay.way, resultEdgesColor, resultEdgesWidth, resultEdgesOpacity, matrix, true);
                 printResult(bestWay.lengthWay, iteration);
                 isStart = false;
                 clearInterval(id);

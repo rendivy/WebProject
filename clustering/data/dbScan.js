@@ -1,10 +1,10 @@
-const eps = 100;
+const eps = 150; // adjust this value
 let noise = new Set();
 let clusters = [];
 let visited = new Set();
 
 function runDBSCAN() {
-    dbscanStructClear()
+    dbscanStructClear();
     let sliderPts = document.getElementById("dbscan-slider");
     let minPts = sliderPts.value;
     const {clusters, noise} = dbscan(minPts);
@@ -31,30 +31,34 @@ function dbscan(minPts) {
     return {clusters, noise};
 }
 
-
 function rangeQuery(point) {
-    return dots.filter(([x, y]) => {
-        const distance = Math.sqrt(Math.pow(x - point[0], 2) + Math.pow(y - point[1], 2));
+    return dots.filter(otherPoint => {
+        const distance = manhattanDistance(otherPoint, point);
         return distance <= eps;
     });
 }
 
+function manhattanDistance(point1, point2) {
+    return Math.abs(point1[0] - point2[0]) + Math.abs(point1[1] - point2[1]);
+}
 
 function expandCluster(cluster, point, neighbors, minPts) {
     cluster.add(point);
     visited.add(point);
-    for (let i = 0; i < neighbors.length; i++) {
+    let i = 0;
+    while (i < neighbors.length) {
         const neighbor = neighbors[i];
         if (!visited.has(neighbor)) {
             visited.add(neighbor);
             const newNeighbors = rangeQuery(neighbor);
             if (newNeighbors.length >= minPts) {
-                neighbors = neighbors.concat(newNeighbors);
+                neighbors.push(...newNeighbors);
             }
         }
-        if (!noise.has(neighbor)) {
+        if (!noise.has(neighbor) && !cluster.has(neighbor)) {
             cluster.add(neighbor);
         }
+        i++;
     }
 }
 
@@ -79,6 +83,7 @@ function colorClusters(clusters, noise) {
         }
     }
 }
+
 function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -93,7 +98,3 @@ function dbscanStructClear() {
     clusters = [];
     visited = new Set();
 }
-
-
-
-

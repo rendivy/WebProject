@@ -4,12 +4,54 @@ const ctx = canvas.getContext("2d");
 const ctx2 = canvas2.getContext("2d");
 const buttons = document.getElementById("button")
 let dots = [];
-
+let dragIndex = -1;
 
 canvas.addEventListener("mousedown", handleMouseDown);
-canvas2.addEventListener("mousedown", handleMouseDownDB)
+canvas.addEventListener("mousemove", handleMouseMove);
+canvas.addEventListener("mouseup", handleMouseUp);
+canvas2.addEventListener("mousedown", handleMouseDownDB);
+canvas2.addEventListener("mousemove", handleMouseMoveDB);
+canvas2.addEventListener("mouseup", handleMouseUpDB);
 window.addEventListener("resize", resizeCanvas);
+canvas.addEventListener("contextmenu", handleContextMenuFirst);
+canvas2.addEventListener("contextmenu", handleContextMenu);
 
+
+
+function handleContextMenu(e) {
+    e.preventDefault();
+    const rect = canvas2.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const index = dots.findIndex(([dotX, dotY]) => {
+        const dx = x - dotX;
+        const dy = y - dotY;
+        return dx * dx + dy * dy <= 225; // 15^2
+    });
+    if (index >= 0) {
+        dots.splice(index, 1);
+        drawDots();
+        drawDotsDB();
+    }
+}
+
+
+function handleContextMenuFirst(e) {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const index = dots.findIndex(([dotX, dotY]) => {
+        const dx = x - dotX;
+        const dy = y - dotY;
+        return dx * dx + dy * dy <= 225; // 15^2
+    });
+    if (index >= 0) {
+        dots.splice(index, 1);
+        drawDots();
+        drawDotsDB();
+    }
+}
 
 function resizeCanvas() {
     canvas.width = canvas.offsetWidth;
@@ -18,22 +60,67 @@ function resizeCanvas() {
     canvas2.height = canvas.offsetHeight;
     drawDots();
 }
+
 function handleMouseDown(e) {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    dots.push([x, y]);
-    drawDots();
-    drawDotsDB()
+    dragIndex = dots.findIndex(([dotX, dotY]) => {
+        const dx = x - dotX;
+        const dy = y - dotY;
+        return dx * dx + dy * dy <= 225; // 15^2
+    });
+    if (dragIndex === -1) {
+        dots.push([x, y]);
+        drawDots();
+        drawDotsDB();
+    }
+}
+
+function handleMouseMove(e) {
+    if (dragIndex >= 0) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        dots[dragIndex] = [x, y];
+        drawDots();
+        drawDotsDB();
+    }
+}
+
+function handleMouseUp() {
+    dragIndex = -1;
 }
 
 function handleMouseDownDB(e) {
     const rect = canvas2.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    dots.push([x, y]);
-    drawDots();
-    drawDotsDB()
+    dragIndex = dots.findIndex(([dotX, dotY]) => {
+        const dx = x - dotX;
+        const dy = y - dotY;
+        return dx * dx + dy * dy <= 225; // 15^2
+    });
+    if (dragIndex === -1) {
+        dots.push([x, y]);
+        drawDots();
+        drawDotsDB();
+    }
+}
+
+function handleMouseMoveDB(e) {
+    if (dragIndex >= 0) {
+        const rect = canvas2.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        dots[dragIndex] = [x, y];
+        drawDots();
+        drawDotsDB();
+    }
+}
+
+function handleMouseUpDB() {
+    dragIndex = -1;
 }
 
 function drawDots() {
@@ -55,6 +142,7 @@ function drawDotsDB() {
         drawCircleScan(x, y);
     });
 }
+
 
 function drawCircleMeans(x, y) {
     ctx.beginPath();

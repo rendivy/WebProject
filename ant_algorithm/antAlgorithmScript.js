@@ -123,7 +123,7 @@ window.addEventListener("load", function onWindowLoad(){
         let x2 = pointList.x[j];
         let y2 = pointList.y[j];
         let color = pheromonesEdgesColor;
-        let width = pheromonesEdgesWidth * matrix[i][j].pheromone % 20;
+        let width = pheromonesEdgesWidth * matrix[i][j].pheromone;
         let opacity = matrix[i][j].pheromone * pheromonesEdgesOpacity;
         let blur = true;
         drawLine(x1, y1, x2, y2, color, width, opacity, blur);

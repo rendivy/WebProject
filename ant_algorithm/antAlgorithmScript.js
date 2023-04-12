@@ -18,7 +18,7 @@ window.addEventListener("load", function onWindowLoad(){
     let tempEdgesOpacity = 1;
     let pheromonesEdgesOpacity = 0.1;
     let pheromonesEdgesColor = "#979c98";
-    let pheromonesEdgesWidth = 3;
+    let pheromonesEdgesWidth = 40;
 
     //------------------------global variables for ant algorithm-----------------------
 
@@ -123,7 +123,7 @@ window.addEventListener("load", function onWindowLoad(){
         let x2 = pointList.x[j];
         let y2 = pointList.y[j];
         let color = pheromonesEdgesColor;
-        let width = pheromonesEdgesWidth * matrix[i][j].pheromone % 20;
+        let width = pheromonesEdgesWidth * matrix[i][j].pheromone / maxPheromone(matrix);
         let opacity = matrix[i][j].pheromone * pheromonesEdgesOpacity;
         let blur = true;
         drawLine(x1, y1, x2, y2, color, width, opacity, blur);
@@ -287,6 +287,18 @@ window.addEventListener("load", function onWindowLoad(){
     function changeExtraPheromones(matrix, ants, i, selectedCity){
         matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].extraPheromones += PheromoneConst / matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].lengthWay;
         matrix[selectedCity][ants[i].path[ants[i].path.length - 1]].extraPheromones += PheromoneConst / matrix[ants[i].path[ants[i].path.length - 1]][selectedCity].lengthWay;
+    }
+
+    function maxPheromone(matrix){
+        let max = 0;
+        for(let i = 0; i < matrix.length; i++){
+            for(let j = 0; j < matrix.length; j++){
+                if(matrix[i][j].pheromone > max){
+                    max = matrix[i][j].pheromone;
+                }
+            }
+        }
+        return max;
     }
 
 });

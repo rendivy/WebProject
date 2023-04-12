@@ -3,13 +3,16 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
-#canvas {
-    background-color: #ffffff;
+canvas {
     border: 5px solid #0067ac;
     border-radius: 25px;
     left: 15%;
     top: 40px;
     position: absolute;
+}
+
+.back-canvas{
+    background: url("1662996158_1-phonoteka-org-p-zemlya-tekstura-pinterest-1.png");
 }
 
 .container {

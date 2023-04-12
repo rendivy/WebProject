@@ -12,21 +12,21 @@
 <body>
 <div class="sidebar">
     <div class="logo_details">
-        <a href="../index.html">
+        <a href="../../index.html">
             <div class="logo_name">Beautiful Algorithm</div>
         </a>
         <i class="bx bx-menu" id="btn"></i>
     </div>
     <ul class="nav-list">
         <li>
-            <a href="../A_star/A_star.html">
+            <a href="../../A_star/A_star.html">
                 <i class="bx bxs-star"></i>
                 <span class="link_name">A-Star</span>
             </a>
             <span class="tooltip">A-Star</span>
         </li>
         <li>
-            <a href="../clustering/index.html">
+            <a href="../../clustering/index.html">
                 <i class="bx bx-exclude"></i>
                 <span class="link_name">Cluster Algorithm</span>
             </a>
@@ -47,14 +47,14 @@
             <span class="tooltip">Ant Algorithm</span>
         </li>
         <li>
-            <a href="../decision_tree/decision_tree.html">
+            <a href="../../decision_tree/decision_tree.html">
                 <i class="bx bxs-leaf"></i>
                 <span class="link_name">Tree Algorithm</span>
             </a>
             <span class="tooltip">Tree Algorithm</span>
         </li>
         <li>
-            <a href="../Neuro/Neuro.html">
+            <a href="../../Neuro/Neuro.html">
                 <i class="bx bx-math"></i>
                 <span class="link_name">Neuron model</span>
             </a>
@@ -71,11 +71,11 @@
 </div>
 
 <div class="container">
-    <canvas id="canvas-map-wall-food" height="1100" width="1100"></canvas>
-    <canvas id="canvas-map-pheromone" height="1100" width="1100"></canvas>
-    <canvas id="canvas-map-ant" height="1100" width="1100"></canvas>
+    <canvas class="back-canvas" id="canvas-map-wall-food" height="1024" width="1024"></canvas>
+    <canvas id="canvas-map-pheromone" height="1024" width="1024"></canvas>
+    <canvas id="canvas-map-ant" height="1024" width="1024"></canvas>
     <div class="buttons">
-        <input type="button" class="button" id="generate-way" value="Построить путь">
+        <input type="button" class="button" id="start" value="Начать">
         <input type="button" class="button" id="generate-anthill" value="Поставить муравейник">
         <input type="button" class="button" id="generate-food" value="Поставить еду">
         <input type="button" class="button" id="generate-wall" value="Поставить стену">
@@ -83,7 +83,7 @@
     </div>
 </div>
 
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 
 </html>

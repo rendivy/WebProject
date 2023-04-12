@@ -1,88 +1,89 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Responsive Sidebar</title>
-  <link rel="stylesheet" href="../style.css">
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="A_star.css">
+    <meta charset="UTF-8">
+    <title>A* algorithm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="A_star.css">
 </head>
+
 <body>
 <div class="sidebar">
-  <div class="logo_details">
-    <a href="../index.html">
-      <div class="logo_name">Beautiful Algorithm</div>
-    </a>
-    <i class="bx bx-menu" id="btn"></i>
-  </div>
-  <ul class="nav-list">
-    <li>
-      <a href="A_star.html">
-        <i class="bx bxs-star"></i>
-        <span class="link_name">A-Star</span>
-      </a>
-      <span class="tooltip">A-Star</span>
-    </li>
-    <li>
-      <a href="../clustering/index.html">
-        <i class="bx bx-exclude"></i>
-        <span class="link_name">Cluster Algorithm</span>
-      </a>
-      <span class="tooltip">Cluster Algorithm</span>
-    </li>
+    <div class="logo_details">
+        <a href="../index.html">
+            <div class="logo_name">Beautiful Algorithm</div>
+        </a>
+        <i class="bx bx-menu" id="btn"></i>
+    </div>
+    <ul class="nav-list">
         <li>
-      <a href="#">
-        <i class="bx bx-dna"></i>
-        <span class="link_name">Genetic Algorithm</span>
-      </a>
-      <span class="tooltip">Genetic Algorithm</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bx-run"></i>
-        <span class="link_name">Ant Algorithm</span>
-      </a>
-      <span class="tooltip">Ant Algorithm</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bxs-leaf"></i>
-        <span class="link_name">Tree Algorithm</span>
-      </a>
-      <span class="tooltip">Tree Algorithm</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bx-math"></i>
-        <span class="link_name">Neuron model</span>
-      </a>
-      <span class="tooltip">Neuron model</span>
-    </li>
-    <li>
-      <a href="#">
-        <i class="bx bx-user"></i>
-        <span class="link_name">Team</span>
-      </a>
-      <span class="tooltip">Team</span>
-    </li>
-  </ul>
+            <a href="A_star.html">
+                <i class="bx bxs-star"></i>
+                <span class="link_name">A-Star</span>
+            </a>
+            <span class="tooltip">A-Star</span>
+        </li>
+        <li>
+            <a href="../clustering/index.html">
+                <i class="bx bx-exclude"></i>
+                <span class="link_name">Cluster Algorithm</span>
+            </a>
+            <span class="tooltip">Cluster Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-dna"></i>
+                <span class="link_name">Genetic Algorithm</span>
+            </a>
+            <span class="tooltip">Genetic Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-run"></i>
+                <span class="link_name">Ant Algorithm</span>
+            </a>
+            <span class="tooltip">Ant Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bxs-leaf"></i>
+                <span class="link_name">Tree Algorithm</span>
+            </a>
+            <span class="tooltip">Tree Algorithm</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-math"></i>
+                <span class="link_name">Neuron model</span>
+            </a>
+            <span class="tooltip">Neuron model</span>
+        </li>
+        <li>
+            <a href="#">
+                <i class="bx bx-user"></i>
+                <span class="link_name">Team</span>
+            </a>
+            <span class="tooltip">Team</span>
+        </li>
+    </ul>
 </div>
 
-
 <div class="container">
-  <div class="table-container"></div>
-  <div class="buttons">
-    <div class="size-display">
-      <span class="change-size">Размерность поля: 10</span>
-      <input type="range" class="change-size" id="slider" min="5" max="50" value="10" step="1">
+    <div class="table-container"></div>
+    <div class="buttons">
+        <div class="size-display">
+            <span class="change-size">Размерность поля: 10</span>
+            <input type="range" class="change-size" id="slider" min="5" max="50" value="10" step="1">
+        </div>
+        <input type="button" class="button" id="generate-maze" value="Сгенерировать лабиринт">
+        <input type="button" class="button" id="launch" value="Запустить">
+        <input type="button" class="button" id="edit-maze" value="Редактировать">
+        <input type="button" class="button" id="change-start" value="Выбрать старт">
+        <input type="button" class="button" id="change-finish" value="Выбрать финиш">
+        <input type="button" class="button" id="clear" value="Очистить">
     </div>
-    <input type="button" class="button" id="generate-maze" value="Сгенерировать лабиринт">
-    <input type="button" class="button" id="launch" value="Запустить">
-    <input type="button" class="button" id="edit-maze" value="Редактировать">
-    <input type="button" class="button" id="change-start" value="Выбрать старт">
-    <input type="button" class="button" id="change-finish" value="Выбрать финиш">
-    <input type="button" class="button" id="clear" value="Очистить">
-  </div>
 </div>
 
 <script type="module" src="main.js"></script>
@@ -95,4 +96,3 @@
 
 </body>
 </html>
-

@@ -48,14 +48,14 @@
             <span class="tooltip">Ant Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="decision_tree/decision_tree.html">
                 <i class="bx bxs-leaf"></i>
                 <span class="link_name">Tree Algorithm</span>
             </a>
             <span class="tooltip">Tree Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="../Neuro/Neuro.html">
                 <i class="bx bx-math"></i>
                 <span class="link_name">Neuron model</span>
             </a>
@@ -72,22 +72,42 @@
 </div>
 
 
-
-<div class="wrapper">
-    <canvas id="canvas" width="800px" height="800px"></canvas>
-    <div class="btn-group">
-        <button class="buttonStyle" onclick="canvas.clear()">Очистить</button>
-        <button class="buttonStyle" onclick=clusterMeans(0)>Кластеризация К-средних</button>
-        <label for="centroid-slider"></label><input type="range" min="1" max="10" value="2" class="slider" id="centroid-slider">
-        <span id="sliderValue"></span>
+<div class="container">
+    <div class="canvas-container">
+        <div class="buttons">
+            <div class="size-display">
+                <span class="change-size">Количество кластеров:&nbsp;<span id="centroid-display">10</span></span>
+                <input type="range" class="change-size" id="centroid-slider" min="1" max="10" value="1" step="1">
+            </div>
+            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
+            <input type="button" class="button" onclick="clusterMeans()" value="Алгоритм кластеризации">
+        </div>
+        <canvas id="canvas1" ></canvas>
     </div>
+    <div class="canvas-container">
+        <canvas id="canvas2" ></canvas>
+        <div class="buttons">
+            <div class="size-display">
+                <span class="change-size">Выберите кол-во точек, для образования одного кластера:&nbsp;<span
+                    id="dbscan-display">1</span></span>
+                <input type="range" class="change-size" id="dbscan-slider" min="1" max="10" value="1" step="1">
+            </div>
+            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
+            <input type="button" class="button" onclick=runDBSCAN() value="Алгоритм DBSCAN">
+        </div>
+    </div>
+</div>
+<div class="main-button">
+    <input type="button" class="button" onclick="compare()" value="Сравним?">
 </div>
 
 
-<script src="ui/drawAlgorithm.js"></script>
-<script src="canvasDrawer.js"></script>
-
+<script src="ui/drawK-means.js"></script>
+<script src="data/k-means.js"></script>
+<script src="data/getSliderValue.js"></script>
+<script src=data/dbScan.js></script>
 <script src="../script.js"></script>
+<script src="data/dbSCANSlider.js"></script>
 </body>
 </html>
 

@@ -14,30 +14,12 @@ body {
 
 /*--------- table ---------*/
 
-
-.table-container {
+#canvas {
     width: 650px;
     height: 650px;
-}
-
-.change-start-hover:hover {
-    background-color: yellow !important;
-    transition: background-color 0.5s ease !important;
-}
-
-.change-finish-hover:hover {
-    background-color: red !important;
-    transition: background-color 0.3s ease !important;
-}
-
-.edit-wall-hover:hover {
-    background-color: white !important;
-    transition: background-color 0.3s ease !important;
-}
-
-.edit-cell-hover:hover {
-    background-color: gray !important;
-    transition: background-color 0.3s ease !important;
+    background-color: #ffffff;
+    border: 5px solid #0067ac;
+    border-radius: 25px;
 }
 
 /*--------- buttons ---------*/
@@ -84,34 +66,5 @@ body {
 
 .active {
     background-color: deepskyblue
-}
-
-/*--------- slider ---------*/
-
-.size-display {
-    text-align: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    background-color: white;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    border: 2px solid #004f83;
-}
-
-.change-size {
-    font-size: 20px;
-    width: 250px;
-    margin-bottom: 20px;
-    background-color: white;
-}
-
-.change-size:disabled {
-    cursor: not-allowed;
-}
-
-span.change-size {
-    margin-top: 20px;
 }
 

@@ -49,20 +49,36 @@ window.addEventListener("load", function onWindowLoad(){
     myCanvas.onmousedown = function newCity(e){
         let x = e.offsetX;
         let y = e.offsetY;
-        if (e.buttons === 1 && x >= 0 && y >= 0 && x <= myCanvas.width && y <= myCanvas.height && !isStart) {
-            if(numberOfCities < maxNumberOfCities) {
-                let flag = true;
-                pointList.x.forEach((item, i) => {
-                    if (Math.sqrt((item - x) ** 2 + (pointList.y[i] - y) ** 2) < townRadius * 2) {
-                        flag = false;
-                    }
-                });
-                if (flag) {
-                    numberOfCities++;
-                    pointList.x.push(x);
-                    pointList.y.push(y);
-                    drawPoint(x, y, townColor, townRadius, 15);
+
+        let isInPoint = false;
+        pointList.x.forEach((item, i) => {
+            if(Math.sqrt((item - x) ** 2 + (pointList.y[i] - y) ** 2) < townRadius * 2){
+                isInPoint = true;
+            }
+        });
+
+        if(!isStart && isInPoint){
+            debugger;
+            ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+            let index = pointList.x.findIndex((item, i) => {
+                if(Math.sqrt((item - x) ** 2 + (pointList.y[i] - y) ** 2) < townRadius * 2){
+                    return true;
                 }
+            });
+            pointList.x.splice(index, 1);
+            pointList.y.splice(index, 1);
+            numberOfCities--;
+            for(let i = 0; i < pointList.x.length; i++){
+                drawPoint(pointList.x[i], pointList.y[i], townColor, townRadius, 15);
+            }
+        }
+
+        else if (e.buttons === 1 && x >= 0 && y >= 0 && x <= myCanvas.width && y <= myCanvas.height && !isStart) {
+            if(numberOfCities < maxNumberOfCities) {
+                numberOfCities++;
+                pointList.x.push(x);
+                pointList.y.push(y);
+                drawPoint(x, y, townColor, townRadius, 15);
             }
             else {
                 alert("You can't add more than " + maxNumberOfCities + " cities");
@@ -71,7 +87,9 @@ window.addEventListener("load", function onWindowLoad(){
     };
 
     document.getElementById("generate-way").onclick = function start(){
-        initAntAlgorithm();
+        if(!isStart) {
+            initAntAlgorithm();
+        }
     }
 
     document.getElementById("clear").onclick = function clear(){

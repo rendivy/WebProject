@@ -14,8 +14,22 @@ window.addEventListener("load", function onWindowLoad() {
     let AnthillSize = 20;
     let AnthillColor = "red";
 
+    let WallColor = "gray";
+
+    let AntColor = "brown";
+    let AntSize = 2;
+
     //-----------------------------Global Variables---------------------------
     let Matrix;
+    let Ants;
+    let AnthillCoordinates = [];
+    let FoodCoordinates = [];
+    let PheromoneCoordinates = [];
+
+    let CountAnt = 100;
+    const RadiusAntVision = 10;
+    const FirstStepLength = 5;
+    const UsualStepLength = 3;
 
     let IsStartButton = false;
     let IsAntHillButton = false;
@@ -24,7 +38,7 @@ window.addEventListener("load", function onWindowLoad() {
 
     let SizeBrush = 5;
 
-    const MaxFood = 32;
+    const MaxFood = 16;
 
     //----------------------Initiate Global Variables-------------------------
     function initStartVar() {
@@ -43,6 +57,71 @@ window.addEventListener("load", function onWindowLoad() {
         }
     }
 
+    function initListCoordinates() {
+        AnthillCoordinates = [];
+        FoodCoordinates = [];
+        PheromoneCoordinates = [];
+        for (let i = 0; i < wallAndFoodCanvas.width; i++) {
+            for (let j = 0; j < wallAndFoodCanvas.height; j++) {
+                if(Matrix[i][j].Food > 0){
+                    FoodCoordinates.push({
+                        x: i,
+                        y: j,
+                    });
+                }
+                if(Matrix[i][j].IsAnthill){
+                    AnthillCoordinates.push({
+                        x: i,
+                        y: j,
+                    });
+                }
+            }
+        }
+    }
+
+    function initAnts() {
+        Ants = new Array(CountAnt * AnthillCoordinates.length);
+        for (let iCordAnthill = 0; iCordAnthill < AnthillCoordinates.length; iCordAnthill++) {
+            for (let iAnt = 0; iAnt < CountAnt; iAnt++) {
+                let r1 = Math.random() * 2 - 1;
+                let r2 = Math.random() * 2 - 1;
+                Ants[iCordAnthill * CountAnt + iAnt] = {
+                    Vx: r1,
+                    Vy: r2,
+                    x: AnthillCoordinates[iCordAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)),
+                    y: AnthillCoordinates[iCordAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)),
+                    IsFood: true, // true - в поисках еды, false - возвращается домой
+                    IsHome: false, //true - в поисках дома, false - возвращается к еде
+                    HaveFood: false, //true - нашел еду, false - не нашел еду
+                    next : function() {
+                        let isInsideAnthill = false;
+                        for (let i = 0; i < AnthillCoordinates.length; i++) {
+                            if (Math.sqrt((this.x - AnthillCoordinates[i].x) ** 2 + (this.y - AnthillCoordinates[i].y) ** 2) <= AnthillSize) {
+                                isInsideAnthill = true;
+                                break;
+                            }
+                        }
+                        if (!inMap(this.x, this.y) || isInsideAnthill) {
+                            let r1 = Math.random() * 2 - 1;
+                            let r2 = Math.random() * 2 - 1;
+                            this.Vx = r1;
+                            this.Vy = r2;
+                            this.IsFood = true;
+                            this.IsHome = false;
+                            this.HaveFood = false;
+                            let randAnthill = Math.floor(Math.random() * AnthillCoordinates.length);
+                            this.x = AnthillCoordinates[randAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2));
+                            this.y = AnthillCoordinates[randAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2));
+                        }
+
+                        this.x += (Math.random() - 0.5) + (this.Vx * UsualStepLength) / (Math.sqrt(this.Vx ** 2 + this.Vy ** 2));
+                        this.y += (Math.random() - 0.5) + (this.Vy * UsualStepLength) / (Math.sqrt(this.Vx ** 2 + this.Vy ** 2));
+                    }
+                }
+            }
+        }
+    }
+
     //-----------------------------Initialization-----------------------------
     initStartVar();
 
@@ -50,13 +129,19 @@ window.addEventListener("load", function onWindowLoad() {
 
     document.getElementById("start").onclick = function() {
         IsStartButton = true;
-        for (let i = 0; i < 50; i++) {
-            let row = [];
-            for (let j = 0; j < 50; j++) {
-                row.push(Matrix[i][j].Food);
+        initListCoordinates();
+        initAnts();
+        drawAnts();
+        let id = setInterval(function() {
+            if (!IsStartButton) {
+                clearInterval(id);
+            } else {
+                for (let i = 0; i < Ants.length; i++) {
+                    Ants[i].next();
+                }
+                drawAnts();
             }
-            console.log(row);
-        }
+        }, 10);
     }
 
     document.getElementById("generate-anthill").onclick = function() {
@@ -80,6 +165,10 @@ window.addEventListener("load", function onWindowLoad() {
 
     document.getElementById("clear").onclick = function() {
         initStartVar();
+        IsStartButton = false;
+        IsAntHillButton = false;
+        IsWallButton = false;
+        IsFoodButton = false;
         wallAndFoodCtx.clearRect(0, 0, wallAndFoodCanvas.width, wallAndFoodCanvas.height);
         mapPheromoneCtx.clearRect(0, 0, mapPheromoneCanvas.width, mapPheromoneCanvas.height);
         mapAntCtx.clearRect(0, 0, mapAntCanvas.width, mapAntCanvas.height);
@@ -124,6 +213,13 @@ window.addEventListener("load", function onWindowLoad() {
         return "rgb(0, " + Math.floor(255 * food / MaxFood) + ", 0)";
     }
 
+    function drawAnts(){
+        mapAntCtx.clearRect(0, 0, mapAntCanvas.width, mapAntCanvas.height);
+        for(let i = 0; i < Ants.length; i++){
+            drawPoint(Ants[i].x, Ants[i].y, AntColor, AntSize, 10, mapAntCtx);
+        }
+    }
+
     //-----------------------------Change Function----------------------------
     function changeAndDrawFood(x, y) {
         for(let i = x - SizeBrush; i <= x + SizeBrush; i++){
@@ -141,7 +237,7 @@ window.addEventListener("load", function onWindowLoad() {
             for(let j = y - SizeBrush; j <= y + SizeBrush; j++){
                 if(inMap(i, j)){
                     Matrix[i][j].IsWall = true;
-                    drawPoint(i, j, "gray", 1, 1, wallAndFoodCtx);
+                    drawPoint(i, j, WallColor, 1, 1, wallAndFoodCtx);
                 }
             }
         }
@@ -158,4 +254,7 @@ window.addEventListener("load", function onWindowLoad() {
         Matrix[x][y].IsAnthill = true;
         drawPoint(x, y, AnthillColor, AnthillSize, 40, wallAndFoodCtx);
     }
+
+    //---------------------------Ant Algorithm----------------------------
+
 });

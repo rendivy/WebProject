@@ -8,6 +8,7 @@ window.addEventListener("load", function onWindowLoad() {
 
     let mapAntCanvas = document.getElementById("canvas-map-ant"),
         mapAntCtx = mapAntCanvas.getContext('2d');
+        mapAntCtx.strokeStyle = "black";
 
     //---------------------global variables for animation---------------------
 
@@ -16,6 +17,10 @@ window.addEventListener("load", function onWindowLoad() {
 
     //-----------------------------Global Variables---------------------------
     let Matrix;
+    let Ants;
+    let heuristicValue = 1.0;
+    let alpha = 1.0;
+    let beta = 1.0;
 
     let IsStartButton = false;
     let IsAntHillButton = false;
@@ -34,10 +39,14 @@ window.addEventListener("load", function onWindowLoad() {
             for (let j = 0; j < wallAndFoodCanvas.height; j++) {
                 Matrix[i][j] = {
                     HomePheromone: 0,
-                    FoodPheromone: 0,
+                    FoodPheromone: 0.1,
                     Food: 0,
                     IsWall: false,
                     IsAnthill: false,
+                }
+                if(i == 0 || j == 0 || i == wallAndFoodCanvas.width-1 || j == wallAndFoodCanvas.height-1)
+                {
+                    Matrix[i][j].IsWall = true;
                 }
             }
         }
@@ -47,15 +56,91 @@ window.addEventListener("load", function onWindowLoad() {
     initStartVar();
 
     //-----------------Map Building and Drawing Button-------------------------
-
-    document.getElementById("start").onclick = function() {
-        IsStartButton = true;
-        for (let i = 0; i < 50; i++) {
-            let row = [];
-            for (let j = 0; j < 50; j++) {
-                row.push(Matrix[i][j].Food);
+    document.getElementById("start").onclick = function() 
+    {
+        while(1)
+        {
+            let kolvo = 0;
+            for(let i = 0;i<30;i = 0)
+            {
+                kolvo+=1;
+                let ant = Ants[i];
+                ant.visited[ant.x][ant.y] = 1;
+                let availableCells = new Array();
+                let temp = 0;
+                for(let j = ant.x-1;j<=ant.x+1;++j)
+                {
+                    for(let k = ant.y-1;k<=ant.y+1;++k)
+                    {
+                        if(ant.position == 1 && k < ant.y && Matrix[j][k].IsWall == false)
+                        {
+                        availableCells[temp] = {
+                            x: j,
+                            y: k,
+                        }
+                        temp++;
+                        }
+                        if(ant.position == 2 && j > ant.x && Matrix[j][k].IsWall == false)
+                        {
+                        availableCells[temp] = {
+                            x: j,
+                            y: k,
+                        }
+                        temp++;
+                        }
+                        if(ant.position == 3 && k > ant.y && Matrix[j][k].IsWall == false)
+                        {
+                        availableCells[temp] = {
+                            x: j,
+                            y: k,
+                        }
+                        temp++;
+                        }
+                        if(ant.position == 4 && j < ant.x && Matrix[j][k].IsWall == false)
+                        {
+                        availableCells[temp] = {
+                            x: j,
+                            y: k,
+                        }
+                        temp++;
+                        }
+                    }
+                }
+                if(temp == 0)
+                {
+                    ant.position = Math.floor(Math.random() * 4) + 1;
+                    continue;
+                }
+                console.log(temp);
+                let probabilities = [];
+                let sum = 0;
+                for (let q = 0; q < temp; q++) {
+                    var cell = availableCells[q];
+                    var pheromoneLevel = Matrix[cell.x][cell.y].FoodPheromone;
+                    var probability = Math.pow(pheromoneLevel, alpha) * Math.pow(heuristicValue, beta);
+                    probabilities.push(probability);
+                    sum += probability;
+                  }
+                  for (let q = 0; q < probabilities.length; q++) {
+                    probabilities[q] = probabilities[q] / sum;
+                  }
+                  var randomValue = Math.random();
+                var index = 0;
+                while (randomValue > 0) {
+                randomValue -= probabilities[index];
+                index++;
+                }
+                index--;
+                Matrix[ant.x][ant.y].FoodPheromone += 0.3;
+                ant.x = availableCells[index].x;
+                ant.y = availableCells[index].y;
+                mapAntCtx.beginPath();
+                setTimeout(mapAntCtx.fillRect(ant.x, ant.y, 3, 3));
             }
-            console.log(row);
+            if(kolvo == 30000)
+            {
+                break;
+            }
         }
     }
 
@@ -98,6 +183,24 @@ window.addEventListener("load", function onWindowLoad() {
     }
 
     mapAntCanvas.onmousedown = function(e) {
+        Ants = new Array(30);
+        for(let i = 0;i<30;++i)
+        {
+            Ants[i] = {
+                x : e.offsetX,
+                y : e.offsetY,
+                position: Math.floor(Math.random() * 4) + 1, //1-top,2-right,3-down,4 - left
+                visited: new Array(wallAndFoodCanvas.width),
+            }
+            for(let j = 0;j<wallAndFoodCanvas.width;++j)
+            {
+                Ants[i].visited[j] = new Array(wallAndFoodCanvas.height);
+                for(let k = 0;k<wallAndFoodCanvas.height;++k)
+                {
+                    Ants[i].visited[j][k] = 0;
+                }
+            }
+        }
         let x = e.offsetX;
         let y = e.offsetY;
         if (e.buttons === 1 && inMap(x, y) && IsAntHillButton) {

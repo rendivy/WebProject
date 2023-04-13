@@ -26,17 +26,18 @@ window.addEventListener("load", function onWindowLoad() {
     let FoodCoordinates = [];
     let PheromoneCoordinates = [];
 
-    let CountAnt = 100;
+    let CountAnt = 10;
     const RadiusAntVision = 10;
     const FirstStepLength = 5;
     const UsualStepLength = 3;
+    const HowOftenWandering = 0.3; //[0,1]
 
     let IsStartButton = false;
     let IsAntHillButton = false;
     let IsFoodButton = false;
     let IsWallButton = false;
 
-    let SizeBrush = 5;
+    let SizeBrush = 10;
 
     const MaxFood = 16;
 
@@ -88,12 +89,12 @@ window.addEventListener("load", function onWindowLoad() {
                 Ants[iCordAnthill * CountAnt + iAnt] = {
                     Vx: r1,
                     Vy: r2,
-                    x: AnthillCoordinates[iCordAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)),
-                    y: AnthillCoordinates[iCordAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)),
+                    x: Math.floor(AnthillCoordinates[iCordAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
+                    y: Math.floor(AnthillCoordinates[iCordAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
                     IsFood: true, // true - в поисках еды, false - возвращается домой
                     IsHome: false, //true - в поисках дома, false - возвращается к еде
                     HaveFood: false, //true - нашел еду, false - не нашел еду
-                    next : function() {
+                    step : function() {
                         let isInsideAnthill = false;
                         for (let i = 0; i < AnthillCoordinates.length; i++) {
                             if (Math.sqrt((this.x - AnthillCoordinates[i].x) ** 2 + (this.y - AnthillCoordinates[i].y) ** 2) <= AnthillSize) {
@@ -110,19 +111,80 @@ window.addEventListener("load", function onWindowLoad() {
                             this.IsHome = false;
                             this.HaveFood = false;
                             let randAnthill = Math.floor(Math.random() * AnthillCoordinates.length);
-                            this.x = AnthillCoordinates[randAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2));
-                            this.y = AnthillCoordinates[randAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2));
+                            this.x = Math.floor(AnthillCoordinates[randAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
+                            this.y = Math.floor(AnthillCoordinates[randAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
+                            return;
                         }
 
-                        this.x += (Math.random() - 0.5) + (this.Vx * UsualStepLength) / (Math.sqrt(this.Vx ** 2 + this.Vy ** 2));
-                        this.y += (Math.random() - 0.5) + (this.Vy * UsualStepLength) / (Math.sqrt(this.Vx ** 2 + this.Vy ** 2));
+                        if (Matrix[this.x][this.y].IsWall) {
+                            let newCord = getNewCordAfterWall(this.x, this.y, this.Vx, this.Vy);
+                            this.x = newCord.x;
+                            this.y = newCord.y;
+                            this.Vx = newCord.Vx;
+                            this.Vy = newCord.Vy;
+                        }
+
+
+                        if(Math.random() < HowOftenWandering){
+                            let newCord = getCordWithWandering(this.x, this.y, this.Vx, this.Vy);
+                            this.x = newCord.x;
+                            this.y = newCord.y;
+                            this.Vx = newCord.Vx;
+                            this.Vy = newCord.Vy;
+                        }else{
+                            let newCord = getCord(this.x, this.y, this.Vx, this.Vy);
+                            this.x = newCord.x;
+                            this.y = newCord.y;
+                        }
                     }
                 }
             }
         }
     }
 
-    //-----------------------------Initialization-----------------------------
+    //-----------------------------Math Functions-----------------------------
+    function getCordWithWandering(x, y, Vx, Vy) {
+        let newX = x + (Vx * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
+        let newY = y + (Vy * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
+        let r1 = Math.random() * 2 - 1;
+        let r2 = Math.random() * 2 - 1;
+        let newVx = Vx + r1 * 0.2;
+        let newVy = Vy + r2 * 0.2;
+        return {
+            x: Math.floor(newX),
+            y: Math.floor(newY),
+            Vx: newVx,
+            Vy: newVy,
+        }
+    }
+
+    function getCord(x, y, Vx, Vy) {
+        let newX = x + (Vx * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
+        let newY = y + (Vy * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
+        return {
+            x: Math.floor(newX),
+            y: Math.floor(newY),
+        }
+    }
+
+    function getNewCordAfterWall(x, y, Vx, Vy) {
+        while (inMap(x, y) && Matrix[x][y].IsWall) {
+            x = Math.floor(x + (Vx * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2)));
+            y = Math.floor(y + (Vy * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2)));
+        }
+        let r1 = Math.random() * 2 - 1;
+        let r2 = Math.random() * 2 - 1;
+        let newVx = (-1) * Vx + r1 * 0.2;
+        let newVy = (-1) * Vy + r2 * 0.2;
+        return {
+            x: Math.floor(x),
+            y: Math.floor(y),
+            Vx: newVx,
+            Vy: newVy,
+        }
+    }
+
+            //-----------------------------Initialization-----------------------------
     initStartVar();
 
     //-----------------Map Building and Drawing Button-------------------------
@@ -137,7 +199,7 @@ window.addEventListener("load", function onWindowLoad() {
                 clearInterval(id);
             } else {
                 for (let i = 0; i < Ants.length; i++) {
-                    Ants[i].next();
+                    Ants[i].step();
                 }
                 drawAnts();
             }
@@ -196,7 +258,7 @@ window.addEventListener("load", function onWindowLoad() {
 
     //-----------------------------Draw Function------------------------------
     function inMap(x, y) {
-        return x >= 0 && y >= 0 && x <= wallAndFoodCanvas.width && y <= wallAndFoodCanvas.height;
+        return x > 0 && y > 0 && x < wallAndFoodCanvas.width && y < wallAndFoodCanvas.height;
     }
 
     function drawPoint(x, y, color, size, lineWidth, ctx){
@@ -255,6 +317,5 @@ window.addEventListener("load", function onWindowLoad() {
         drawPoint(x, y, AnthillColor, AnthillSize, 40, wallAndFoodCtx);
     }
 
-    //---------------------------Ant Algorithm----------------------------
 
 });

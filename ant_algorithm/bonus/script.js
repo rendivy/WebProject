@@ -26,9 +26,9 @@ window.addEventListener("load", function onWindowLoad() {
     let FoodCoordinates = [];
     let PheromoneCoordinates = [];
 
-    let CountAnt = 10;
+    let CountAnt = 300;
     const RadiusAntVision = 10;
-    const FirstStepLength = 5;
+    const FirstStepLength = 20;
     const UsualStepLength = 3;
     const HowOftenWandering = 0.3; //[0,1]
 
@@ -115,7 +115,7 @@ window.addEventListener("load", function onWindowLoad() {
                             this.y = Math.floor(AnthillCoordinates[randAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
                             return;
                         }
-
+                        //-------------------------------Wall------------------------------
                         if (Matrix[this.x][this.y].IsWall) {
                             let newCord = getNewCordAfterWall(this.x, this.y, this.Vx, this.Vy);
                             this.x = newCord.x;
@@ -159,8 +159,8 @@ window.addEventListener("load", function onWindowLoad() {
     }
 
     function getCord(x, y, Vx, Vy) {
-        let newX = x + (Vx * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
-        let newY = y + (Vy * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
+        let newX = x + (Math.random() - 0.5) + (Vx * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
+        let newY = y + (Math.random() - 0.5) + (Vy * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
         return {
             x: Math.floor(newX),
             y: Math.floor(newY),

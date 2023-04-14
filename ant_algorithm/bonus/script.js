@@ -44,10 +44,6 @@ window.addEventListener("load", function onWindowLoad() {
                     IsWall: false,
                     IsAnthill: false,
                 }
-                if(i == 0 || j == 0 || i == wallAndFoodCanvas.width-1 || j == wallAndFoodCanvas.height-1)
-                {
-                    Matrix[i][j].IsWall = true;
-                }
             }
         }
     }
@@ -55,6 +51,14 @@ window.addEventListener("load", function onWindowLoad() {
     //-----------------------------Initialization-----------------------------
     initStartVar();
 
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
+      async function drawAnt(ant) {
+        mapAntCtx.fillRect(ant.x, ant.y, 3, 3);
+        await sleep(100);
+      }
     //-----------------Map Building and Drawing Button-------------------------
     document.getElementById("start").onclick = function() 
     {
@@ -65,7 +69,6 @@ window.addEventListener("load", function onWindowLoad() {
             {
                 kolvo+=1;
                 let ant = Ants[i];
-                ant.visited[ant.x][ant.y] = 1;
                 let availableCells = new Array();
                 let temp = 0;
                 for(let j = ant.x-1;j<=ant.x+1;++j)
@@ -134,10 +137,9 @@ window.addEventListener("load", function onWindowLoad() {
                 Matrix[ant.x][ant.y].FoodPheromone += 0.3;
                 ant.x = availableCells[index].x;
                 ant.y = availableCells[index].y;
-                mapAntCtx.beginPath();
-                setTimeout(mapAntCtx.fillRect(ant.x, ant.y, 3, 3));
+                drawAnt(ant);
             }
-            if(kolvo == 30000)
+            if(kolvo == 1000)
             {
                 break;
             }
@@ -190,15 +192,6 @@ window.addEventListener("load", function onWindowLoad() {
                 x : e.offsetX,
                 y : e.offsetY,
                 position: Math.floor(Math.random() * 4) + 1, //1-top,2-right,3-down,4 - left
-                visited: new Array(wallAndFoodCanvas.width),
-            }
-            for(let j = 0;j<wallAndFoodCanvas.width;++j)
-            {
-                Ants[i].visited[j] = new Array(wallAndFoodCanvas.height);
-                for(let k = 0;k<wallAndFoodCanvas.height;++k)
-                {
-                    Ants[i].visited[j][k] = 0;
-                }
             }
         }
         let x = e.offsetX;

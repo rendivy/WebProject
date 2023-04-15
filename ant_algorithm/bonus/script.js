@@ -26,10 +26,10 @@ window.addEventListener("load", function onWindowLoad() {
     let FoodCoordinates = [];
     let PheromoneCoordinates = [];
 
-    let CountAnt = 300;
+    let CountAnt = 1000;
     const RadiusAntVision = 10;
     const FirstStepLength = 20;
-    const UsualStepLength = 3;
+    const UsualStepLength = 1;
     const HowOftenWandering = 0.3; //[0,1]
 
     let IsStartButton = false;
@@ -89,8 +89,8 @@ window.addEventListener("load", function onWindowLoad() {
                 Ants[iCordAnthill * CountAnt + iAnt] = {
                     Vx: r1,
                     Vy: r2,
-                    x: Math.floor(AnthillCoordinates[iCordAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
-                    y: Math.floor(AnthillCoordinates[iCordAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
+                    x: rounding(AnthillCoordinates[iCordAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
+                    y: rounding(AnthillCoordinates[iCordAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
                     IsFood: true, // true - в поисках еды, false - возвращается домой
                     IsHome: false, //true - в поисках дома, false - возвращается к еде
                     HaveFood: false, //true - нашел еду, false - не нашел еду
@@ -102,6 +102,7 @@ window.addEventListener("load", function onWindowLoad() {
                                 break;
                             }
                         }
+                        //----------------------------crash with anthill-------------------
                         if (!inMap(this.x, this.y) || isInsideAnthill) {
                             let r1 = Math.random() * 2 - 1;
                             let r2 = Math.random() * 2 - 1;
@@ -111,19 +112,24 @@ window.addEventListener("load", function onWindowLoad() {
                             this.IsHome = false;
                             this.HaveFood = false;
                             let randAnthill = Math.floor(Math.random() * AnthillCoordinates.length);
-                            this.x = Math.floor(AnthillCoordinates[randAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
-                            this.y = Math.floor(AnthillCoordinates[randAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
+                            this.x = rounding(AnthillCoordinates[randAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
+                            this.y = rounding(AnthillCoordinates[randAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
                             return;
                         }
                         //-------------------------------Wall------------------------------
-                        if (Matrix[this.x][this.y].IsWall) {
-                            let newCord = getNewCordAfterWall(this.x, this.y, this.Vx, this.Vy);
+                        let gridXY = getCord(this.x, this.y, this.Vx, this.Vy);
+                        if(inMap(gridXY.x, gridXY.y) && Matrix[gridXY.x][gridXY.y].IsWall){
+                            let newCord = getReflectCord(gridXY.x, gridXY.y, this.Vx, this.Vy, this.x, this.y);
                             this.x = newCord.x;
                             this.y = newCord.y;
                             this.Vx = newCord.Vx;
                             this.Vy = newCord.Vy;
+                            return;
                         }
 
+                        if(inVision(this.x, this.y, this.Vx, this.Vy)){
+
+                        }
 
                         if(Math.random() < HowOftenWandering){
                             let newCord = getCordWithWandering(this.x, this.y, this.Vx, this.Vy);
@@ -151,10 +157,39 @@ window.addEventListener("load", function onWindowLoad() {
         let newVx = Vx + r1 * 0.2;
         let newVy = Vy + r2 * 0.2;
         return {
-            x: Math.floor(newX),
-            y: Math.floor(newY),
+            x: rounding(newX),
+            y: rounding(newY),
             Vx: newVx,
             Vy: newVy,
+        }
+    }
+
+    function getReflectCord(newX, newY, Vx, Vy, x, y) {
+        let diffX = newX - x;
+        let diffY = newY - y;
+        if(diffX === 0 && diffY === 0){
+            Vy *= -1;
+        }
+        else if (diffX === 0 && diffY === -1){
+            Vy *= -1;
+        }
+        else if (diffX === -1 && diffY === 0){
+            Vx *= -1;
+        }
+        else if (diffX === 1 && diffY === 0){
+            Vx *= -1;
+        }else {
+            Vy *= -1;
+            Vx *= -1;
+        }
+        let newCord = getCord(x, y, Vx, Vy, UsualStepLength);
+        newX = newCord.x;
+        newY = newCord.y;
+        return {
+            x: newX,
+            y: newY,
+            Vx: Vx,
+            Vy: Vy,
         }
     }
 
@@ -162,26 +197,21 @@ window.addEventListener("load", function onWindowLoad() {
         let newX = x + (Math.random() - 0.5) + (Vx * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
         let newY = y + (Math.random() - 0.5) + (Vy * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2));
         return {
-            x: Math.floor(newX),
-            y: Math.floor(newY),
+            x: rounding(newX),
+            y: rounding(newY),
         }
     }
 
-    function getNewCordAfterWall(x, y, Vx, Vy) {
-        while (inMap(x, y) && Matrix[x][y].IsWall) {
-            x = Math.floor(x + (Vx * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2)));
-            y = Math.floor(y + (Vy * UsualStepLength) / (Math.sqrt(Vx ** 2 + Vy ** 2)));
+    function rounding(float){
+        if (float - Math.floor(float) < 0.5){
+            return Math.floor(float);
+        }else{
+            return Math.ceil(float);
         }
-        let r1 = Math.random() * 2 - 1;
-        let r2 = Math.random() * 2 - 1;
-        let newVx = (-1) * Vx + r1 * 0.2;
-        let newVy = (-1) * Vy + r2 * 0.2;
-        return {
-            x: Math.floor(x),
-            y: Math.floor(y),
-            Vx: newVx,
-            Vy: newVy,
-        }
+    }
+
+    function inVision(x, y, Vx, Vy){
+
     }
 
             //-----------------------------Initialization-----------------------------

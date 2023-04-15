@@ -27,11 +27,12 @@ window.addEventListener("load", function onWindowLoad() {
     let PheromoneCoordinates = [];
 
     //Ant
-    let CountAnt = 400;
+    let CountAnt = 500;
     const RadiusAntVision = 10;
     const FirstStepLength = 20;
     const UsualStepLength = 1;
-    const HowOftenWandering = 0.3; //[0,1]
+    const HowOftenWandering = 0.2; //[0,1]
+    const MaxCountCrash = 30;
 
     //Pheromone
     const MinPheromoneValue = 0.00001;
@@ -107,6 +108,7 @@ window.addEventListener("load", function onWindowLoad() {
                     IsFood: true, // true - в поисках еды, false - возвращается домой
                     IsHome: false, //true - в поисках дома, false - возвращается к еде
                     HaveFood: false, //true - нашел еду, false - не нашел еду
+                    CountCrash: 0,
                     step : function() {
                         let isInsideAnthill = false;
                         for (let i = 0; i < AnthillCoordinates.length; i++) {
@@ -116,7 +118,7 @@ window.addEventListener("load", function onWindowLoad() {
                             }
                         }
                         //----------------------------crash with anthill-------------------
-                        if (!inMap(this.x, this.y) || isInsideAnthill) {
+                        if (!inMap(this.x, this.y) || isInsideAnthill || this.CountCrash > MaxCountCrash) {
                             let r1 = Math.random() * 2 - 1;
                             let r2 = Math.random() * 2 - 1;
                             this.Vx = r1;
@@ -140,6 +142,7 @@ window.addEventListener("load", function onWindowLoad() {
 
                         let gridXY = getCord(this.x, this.y, this.Vx, this.Vy);
                         if(inMap(gridXY.x, gridXY.y) && Matrix[gridXY.x][gridXY.y].IsWall){
+                            this.CountCrash++;
                             let newCord = getReflectCord(gridXY.x, gridXY.y, this.Vx, this.Vy, this.x, this.y);
                             this.x = newCord.x;
                             this.y = newCord.y;
@@ -147,6 +150,7 @@ window.addEventListener("load", function onWindowLoad() {
                             this.Vy = newCord.Vy;
                             return;
                         }
+                        this.CountCrash = 0;
 
                         if(inVision(this.x, this.y, this.Vx, this.Vy)){
 

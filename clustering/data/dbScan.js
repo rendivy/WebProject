@@ -1,14 +1,22 @@
-const eps = 150; // adjust this value
+let sliderEPS = document.getElementById("eps-slider")
+let eps = sliderEPS.value
 let noise = new Set();
 let clusters = [];
 let visited = new Set();
 
 function runDBSCAN() {
     dbscanStructClear();
-    let sliderPts = document.getElementById("dbscan-slider");
-    let minPts = sliderPts.value;
-    const {clusters, noise} = dbscan(minPts);
+    let minPts = 5;
+    shuffleArray(dots);
+    const { clusters, noise } = dbscan(minPts);
     colorClusters(clusters, noise);
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 function dbscan(minPts) {
@@ -32,21 +40,24 @@ function dbscan(minPts) {
 }
 
 function rangeQuery(point) {
-    return dots.filter(otherPoint => {
-        const distance = manhattanDistance(otherPoint, point);
-        return distance <= eps;
-    });
-}
-
-function manhattanDistance(point1, point2) {
-    return Math.abs(point1[0] - point2[0]) + Math.abs(point1[1] - point2[1]);
+    const neighbors = [];
+    for (let i = 0; i < dots.length; i++) {
+        const otherPoint = dots[i];
+        if (point === otherPoint) {
+            continue;
+        }
+        const distance = Math.abs(otherPoint[0] - point[0]) + Math.abs(otherPoint[1] - point[1]);
+        if (distance <= eps) {
+            neighbors.push(otherPoint);
+        }
+    }
+    return neighbors;
 }
 
 function expandCluster(cluster, point, neighbors, minPts) {
     cluster.add(point);
     visited.add(point);
-    let i = 0;
-    while (i < neighbors.length) {
+    for (let i = 0; i < neighbors.length; i++) {
         const neighbor = neighbors[i];
         if (!visited.has(neighbor)) {
             visited.add(neighbor);
@@ -58,9 +69,9 @@ function expandCluster(cluster, point, neighbors, minPts) {
         if (!noise.has(neighbor) && !cluster.has(neighbor)) {
             cluster.add(neighbor);
         }
-        i++;
     }
 }
+
 
 function colorClusters(clusters, noise) {
     const noiseColor = "#000000";

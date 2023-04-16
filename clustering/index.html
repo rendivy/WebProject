@@ -82,15 +82,15 @@
             <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
             <input type="button" class="button" onclick="clusterMeans()" value="Алгоритм кластеризации">
         </div>
-        <canvas id="canvas1" ></canvas>
+        <canvas id="canvas1"></canvas>
     </div>
     <div class="canvas-container">
-        <canvas id="canvas2" ></canvas>
+        <canvas id="canvas2"></canvas>
         <div class="buttons">
             <div class="size-display">
-                <span class="change-size">Выберите кол-во точек, для образования одного кластера:&nbsp;<span
-                    id="dbscan-display">1</span></span>
-                <input type="range" class="change-size" id="dbscan-slider" min="5" max="10" value="5" step="1">
+            <span class="change-size">Выберите расстояние в котором точка будет искать своих соседей:&nbsp;<span
+                id="eps-display">1</span></span>
+                <input type="range" class="change-size" id="eps-slider" min="200" max="700" value="200" step="50">
             </div>
             <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
             <input type="button" class="button" onclick=runDBSCAN() value="Алгоритм DBSCAN">
@@ -102,12 +102,11 @@
 </div>
 
 
-<script src="ui/drawK-means.js"></script>
+<script src="ui/drawer.js"></script>
 <script src="data/k-means.js"></script>
 <script src="data/getSliderValue.js"></script>
 <script src=data/dbScan.js></script>
 <script src="../script.js"></script>
-<script src="data/dbSCANSlider.js"></script>
 </body>
 </html>
 

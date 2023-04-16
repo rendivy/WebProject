@@ -13,32 +13,11 @@ canvas2.addEventListener("mousedown", handleMouseDownDB);
 canvas2.addEventListener("mousemove", handleMouseMoveDB);
 canvas2.addEventListener("mouseup", handleMouseUpDB);
 window.addEventListener("resize", resizeCanvas);
-canvas.addEventListener("contextmenu", handleContextMenuFirst);
 canvas2.addEventListener("contextmenu", handleContextMenu);
-
-
 
 function handleContextMenu(e) {
     e.preventDefault();
     const rect = canvas2.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const index = dots.findIndex(([dotX, dotY]) => {
-        const dx = x - dotX;
-        const dy = y - dotY;
-        return dx * dx + dy * dy <= 225; // 15^2
-    });
-    if (index >= 0) {
-        dots.splice(index, 1);
-        drawDots();
-        drawDotsDB();
-    }
-}
-
-
-function handleContextMenuFirst(e) {
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const index = dots.findIndex(([dotX, dotY]) => {

@@ -27,8 +27,8 @@ window.addEventListener("load", function onWindowLoad() {
     let PheromoneCoordinates = [];
 
     //Ant
-    let CountAnt = 500;
-    const RadiusAntVision = 10;
+    let CountAnt = 200;
+    const RadiusAntVision = 20;
     const FirstStepLength = 20;
     const UsualStepLength = 1;
     const HowOftenWandering = 0.2; //[0,1]
@@ -37,23 +37,24 @@ window.addEventListener("load", function onWindowLoad() {
     //Pheromone
     const MinPheromoneValue = 0.00001;
     const MaxPheromoneValue = 1000;
-    const MinPheromoneToDraw = 50;
-    const PheromoneDecrease = 0.997;
-    const HowMuchPheromoneOneStep = 300;
+    const MinPheromoneToDraw = 600;
+    const PheromoneDecrease = 1;
+    const HowMuchPheromoneOneStep = 20;
     const HowOftenDrawPheromone = 10;
+    const PheromoneInfluence = 0.001;
 
     //UI Flags
     let IsStartButton = false;
     let IsAntHillButton = false;
     let IsFoodButton = false;
-    let IsWallButton = false;
+    let IsWallButton = false
 
     let SizeBrush = 10;
 
     const MaxFood = 16;
 
     //Draw Flags
-    const isDrawPheromone = false;
+    const isDrawPheromone = true;
 
     //----------------------Initiate Global Variables-------------------------
     function initStartVar() {
@@ -62,8 +63,8 @@ window.addEventListener("load", function onWindowLoad() {
             Matrix[i] = new Array(wallAndFoodCanvas.height);
             for (let j = 0; j < wallAndFoodCanvas.height; j++) {
                 Matrix[i][j] = {
-                    HomePheromone: 0,
-                    FoodPheromone: 0,
+                    HomePheromone: Math.random()% 0.2,
+                    FoodPheromone: Math.random()% 0.2,
                     Food: 0,
                     IsWall: false,
                     IsAnthill: false,
@@ -86,6 +87,7 @@ window.addEventListener("load", function onWindowLoad() {
                 }
                 if(Matrix[i][j].IsAnthill){
                     AnthillCoordinates.push({
+                        countFood: 0,
                         x: i,
                         y: j,
                     });
@@ -110,15 +112,22 @@ window.addEventListener("load", function onWindowLoad() {
                     HaveFood: false, //true - нашел еду, false - не нашел еду
                     CountCrash: 0,
                     step : function() {
+                        let numberAnthill;
                         let isInsideAnthill = false;
                         for (let i = 0; i < AnthillCoordinates.length; i++) {
                             if (Math.sqrt((this.x - AnthillCoordinates[i].x) ** 2 + (this.y - AnthillCoordinates[i].y) ** 2) <= AnthillSize) {
                                 isInsideAnthill = true;
+                                numberAnthill = i;
                                 break;
                             }
                         }
                         //----------------------------crash with anthill-------------------
                         if (!inMap(this.x, this.y) || isInsideAnthill || this.CountCrash > MaxCountCrash) {
+                            if(this.CountCrash<=MaxCountCrash && isInsideAnthill)
+                            {
+                                AnthillCoordinates[numberAnthill].countFood += 1;
+                                console.log(AnthillCoordinates[numberAnthill].countFood);
+                            }
                             let r1 = Math.random() * 2 - 1;
                             let r2 = Math.random() * 2 - 1;
                             this.Vx = r1;
@@ -150,12 +159,39 @@ window.addEventListener("load", function onWindowLoad() {
                             this.Vy = newCord.Vy;
                             return;
                         }
+                        if(inMap(gridXY.x, gridXY.y)&& Matrix[gridXY.x][gridXY.y].Food)
+                        {
+                            if(this.IsFood)
+                            {
+                            this.IsFood = !this.IsFood;
+                            this.IsHome = !this.IsHome;
+                            }
+                            this.Vx = (-1) * this.Vx;
+                            this.Vy = (-1) * this.Vy;
+                        }
                         this.CountCrash = 0;
-
-                        if(inVision(this.x, this.y, this.Vx, this.Vy)){
+                        let FoodOrAnthillVisian  = FoodORAnthillInVision(this.x, this.y, this.Vx, this.Vy, this.IsFood);
+                        if(FoodOrAnthillVisian.indexX !== null && FoodOrAnthillVisian.indexY!==null){           
+                            this.Vx = FoodOrAnthillVisian.indexX - this.x;
+                            this.Vy = FoodOrAnthillVisian.indexY - this.y;
 
                         }
-
+                        let PheromoneVisian = PheromonInVision(this.x, this.y, this.Vx, this.Vy,this.IsFood)
+                        if(PheromoneVisian.x !== undefined && PheromoneVisian.y!==undefined)
+                        {
+                            let differenceX = (PheromoneVisian.x-this.x) - this.Vx;
+                            let differenceY = (PheromoneVisian.y-this.y) - this.Vy;
+                            if(this.IsFood)
+                            {
+                                this.Vx += differenceX*(Matrix[PheromoneVisian.x][PheromoneVisian.y].HomePheromone*PheromoneInfluence)
+                                this.Vy += differenceY*(Matrix[PheromoneVisian.x][PheromoneVisian.y].HomePheromone*PheromoneInfluence)
+                            }
+                            else
+                            {
+                                this.Vx += differenceX*(Matrix[PheromoneVisian.x][PheromoneVisian.y].FoodPheromone*PheromoneInfluence)
+                                this.Vy += differenceY*(Matrix[PheromoneVisian.x][PheromoneVisian.y].FoodPheromone*PheromoneInfluence)
+                            }
+                        }
                         if(Math.random() < HowOftenWandering){
                             let newCord = getCordWithWandering(this.x, this.y, this.Vx, this.Vy);
                             this.x = newCord.x;
@@ -175,6 +211,241 @@ window.addEventListener("load", function onWindowLoad() {
 
     //-----------------------------Math Functions-----------------------------
 
+
+    function PheromonInVision(x, y, Vx, Vy, IsFood)
+    {
+        let max = 0;
+        let maxXIndex;
+        let maxYIndex;
+        if(Vx>=0 && Vy >=0)
+        {
+            for(let i = y+RadiusAntVision;i>y;--i)
+            {
+                for(let j = x;j<x+RadiusAntVision;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(IsFood)
+                    if(Matrix[i][j].HomePheromone > max)
+                    {
+                        max = Matrix[i][j].HomePheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                    if(!IsFood)
+                    if(Matrix[i][j].FoodPheromone > max)
+                    {
+                        max = Matrix[i][j].FoodPheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                }
+            }
+        }
+        if(Vx>=0 && Vy <=0)
+        {
+            for(let i = y;i>y-RadiusAntVision;--i)
+            {
+                for(let j = x;j<x+RadiusAntVision;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(IsFood)
+                    if(Matrix[i][j].HomePheromone > max)
+                    {
+                        max = Matrix[i][j].HomePheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                    if(!IsFood)
+                    if(Matrix[i][j].FoodPheromone > max)
+                    {
+                        max = Matrix[i][j].FoodPheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                }
+            }
+        }
+        if(Vx<=0 && Vy >=0)
+        {
+            for(let i = y+RadiusAntVision;i>y;--i)
+            {
+                for(let j = x-RadiusAntVision;j<x;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(IsFood)
+                    if(Matrix[i][j].HomePheromone > max)
+                    {
+                        max = Matrix[i][j].HomePheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                    if(!IsFood)
+                    if(Matrix[i][j].FoodPheromone > max)
+                    {
+                        max = Matrix[i][j].FoodPheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                }
+            }
+        }
+        if(Vx<=0 && Vy <=0)
+        {
+            for(let i = y;i>y-RadiusAntVision;--i)
+            {
+                for(let j = x-RadiusAntVision;j<x;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(IsFood)
+                    if(Matrix[i][j].HomePheromone > max)
+                    {
+                        max = Matrix[i][j].HomePheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                    if(!IsFood)
+                    if(Matrix[i][j].FoodPheromone > max)
+                    {
+                        max = Matrix[i][j].FoodPheromone;
+                        maxXIndex = j;
+                        maxYIndex = i;
+                    }
+                }
+            }
+        }
+        return{
+            x: maxXIndex,
+            y: maxYIndex,
+        }
+    }
+
+    function FoodORAnthillInVision(x, y, Vx, Vy, IsFood)
+    {
+        if(Vx>=0 && Vy >=0)
+        {
+            for(let i = y+RadiusAntVision;i>y;--i)
+            {
+                for(let j = x;j<x+RadiusAntVision;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(Matrix[i][j].Food !==0 && IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                    if(Matrix[i][j].IsAnthill && !IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                }
+            }
+        }
+        if(Vx>=0 && Vy <=0)
+        {
+            for(let i = y;i>y-RadiusAntVision;--i)
+            {
+                for(let j = x;j<x+RadiusAntVision;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(Matrix[i][j].Food && IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                    if(Matrix[i][j].IsAnthill && !IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                }
+            }
+        }
+        if(Vx<=0 && Vy >=0)
+        {
+            for(let i = y+RadiusAntVision;i>y;--i)
+            {
+                for(let j = x-RadiusAntVision;j<x;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(Matrix[i][j].Food && IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                    if(Matrix[i][j].IsAnthill && !IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                }
+            }
+        }
+        if(Vx<=0 && Vy <=0)
+        {
+            for(let i = y;i>y-RadiusAntVision;--i)
+            {
+                for(let j = x-RadiusAntVision;j<x;++j)
+                {
+                    if(!inMap(i,j))
+                    {
+                        break;
+                    }
+                    if(Matrix[i][j].Food && IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                    if(Matrix[i][j].IsAnthill && !IsFood)
+                    {
+                        return {
+                            indexX: j,
+                            indexY: i,
+                        }
+                    }
+                }
+            }
+        }
+        return{
+            indexX:null,
+            indexY:null,
+        }
+    }
     function inMap(x, y) {
         return x > 0 && y > 0 && x < wallAndFoodCanvas.width && y < wallAndFoodCanvas.height;
     }
@@ -240,10 +511,6 @@ window.addEventListener("load", function onWindowLoad() {
         }
     }
 
-    function inVision(x, y, Vx, Vy){
-
-    }
-
     //-----------------------------Initialization-----------------------------
     initStartVar();
 
@@ -263,7 +530,7 @@ window.addEventListener("load", function onWindowLoad() {
                 for (let i = 0; i < Ants.length; i++) {
                     Ants[i].step();
                 }
-                if (isDrawPheromone && iter % HowOftenDrawPheromone === 0) {
+                if (isDrawPheromone && iter % HowOftenDrawPheromone === 0) { 
                     drawPheromone();
                     iter = 0;
                 }
@@ -351,7 +618,15 @@ window.addEventListener("load", function onWindowLoad() {
     function drawAnts(){
         mapAntCtx.clearRect(0, 0, mapAntCanvas.width, mapAntCanvas.height);
         for(let i = 0; i < Ants.length; i++){
-            drawPoint(Ants[i].x, Ants[i].y, AntColor, AntSize, 10, mapAntCtx);
+            if(Ants[i].IsFood)
+            {
+                AntColor = "Red";
+                drawPoint(Ants[i].x, Ants[i].y, AntColor, AntSize, 10, mapAntCtx);
+            }
+            else {
+                AntColor = "Blue";
+                drawPoint(Ants[i].x, Ants[i].y, AntColor, AntSize, 10, mapAntCtx);
+            }
         }
     }
 

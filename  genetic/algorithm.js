@@ -1,6 +1,6 @@
 import {
+    buttons,
     vertexArray,
-    adjacencyMatrix,
     Chromosome,
     drawEdges,
     clearCanvas,
@@ -12,7 +12,14 @@ export {
     startAlgorithm
 };
 
+
+const mutationProbability = 0.65;
+const maximumGenerations = 15000;
+const generationsUnchanged = 250;
+
+
 let population = [];
+let adjacencyMatrix = [];
 
 function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -82,8 +89,9 @@ function mutation(descendant) {
 
 function crossover(firstParent, secondParent) {
     let border = getRandomNumber(1, vertexArray.length - 2);
-    const firstDescendant = firstParent.slice(0,border);
-    const secondDescendant = secondParent.slice(0,border);
+    const firstDescendant = firstParent.slice(0, border);
+    const secondDescendant = secondParent.slice(0, border);
+
     for (let i = 0; i < firstParent.length; i++) {
         if (!secondDescendant.includes(firstParent[i])) {
             secondDescendant.push(firstParent[i]);
@@ -100,44 +108,69 @@ function crossover(firstParent, secondParent) {
             break;
         }
     }
-    mutation(firstDescendant);
-    mutation(secondDescendant);
-    population.push(new Chromosome(firstDescendant,getRouteLength(firstDescendant)));
-    population.push(new Chromosome(secondDescendant,getRouteLength(secondDescendant)));
+
+    if (Math.random() >= mutationProbability) {
+        mutation(firstDescendant);
+    }
+    if (Math.random() >= mutationProbability) {
+        mutation(secondDescendant);
+    }
+
+    population.push(new Chromosome(firstDescendant, getRouteLength(firstDescendant)));
+    population.push(new Chromosome(secondDescendant, getRouteLength(secondDescendant)));
 }
 
 function produceNextGeneration(populationSize) {
     let i = 0;
-    while (i !== Math.floor(populationSize / 2)) {
+
+    while (i < populationSize) {
         let firstParent = getRandomNumber(0, populationSize - 1);
         let secondParent = getRandomNumber(0, populationSize - 1);
-        while (firstParent !== secondParent) {
-            firstParent = getRandomNumber(0, populationSize - 1);
-            secondParent = getRandomNumber(0, populationSize - 1);
-        }
-        crossover(population[firstParent].route,population[secondParent].route);
-        i++;
+        crossover(population[firstParent].route, population[secondParent].route);
+        i += 2;
     }
+
     population.sort((a, b) => a.fitness - b.fitness);
     population.splice(Math.ceil(population.length / 2));
 }
 
-function startAlgorithm() {
-    let populationSize = vertexArray.length * vertexArray.length;
+function startAlgorithm(currentSize) {
+
+    for (let i of Object.values(buttons)) {
+        i.disabled = true;
+    }
+
+    const populationSize = currentSize * currentSize;
+    console.log(adjacencyMatrix);
+    adjacencyMatrix = [];
     population = [];
-    adjMatrixGeneration(vertexArray.length);
+
+    adjMatrixGeneration(currentSize);
     generatePopulation(populationSize);
-    let i = 0;
-    let previous = population[0].fitness;
+
+    let total = 0;
+    let withoutChanges = 0;
+
+    const currentMaxChromosome = population.reduce((max, current) => {
+        return (current.fitness > max.fitness) ? current : max;
+    });
+    clearCanvas();
+    drawEdges(currentMaxChromosome.route, 'gray');
+    drawVertices();
+    let previous = currentMaxChromosome.fitness
+
     const intervalId = setInterval(() => {
 
-        if (i >= 250) {
+        if (total === maximumGenerations || withoutChanges === generationsUnchanged || withoutChanges === populationSize) {
             clearInterval(intervalId);
             clearCanvas();
             drawEdges(population[0].route, 'deepskyblue');
             drawVertices();
-            document.getElementById('launch').disabled = false;
-            document.getElementById('clear').disabled = false;
+
+            for (let i of Object.values(buttons)) {
+                i.disabled = false;
+            }
+
             return;
         }
 
@@ -148,8 +181,10 @@ function startAlgorithm() {
             clearCanvas();
             drawEdges(population[0].route, 'gray');
             drawVertices();
+            withoutChanges = 0
         }
 
-        i++;
-    }, 10);
+        withoutChanges++;
+        total++;
+    }, 0);
 }

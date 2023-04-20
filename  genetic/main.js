@@ -93,6 +93,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 canvas.addEventListener("click", (event) => {
+
+    if (currentSize === 150) {
+        alert("Достигнуто максимальное количество вершин.");
+        return;
+    }
+
     if (isRunning && document.getElementById('launch').disabled !== true) {
         isRunning = false;
         resizeCanvas();

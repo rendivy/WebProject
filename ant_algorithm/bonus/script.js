@@ -9,6 +9,9 @@ window.addEventListener("load", function onWindowLoad() {
     let mapAntCanvas = document.getElementById("canvas-map-ant"),
         mapAntCtx = mapAntCanvas.getContext('2d');
 
+    let infoCanvas = document.getElementById("canvas-info"),
+        infoCtx = infoCanvas.getContext('2d');
+
     //---------------------global variables for animation---------------------
 
     let AnthillSize = 20;
@@ -17,6 +20,7 @@ window.addEventListener("load", function onWindowLoad() {
     let WallColor = "gray";
 
     let AntColor = "brown";
+    let AntColorWithFood = "blue";
     let AntSize = 2;
 
     //-----------------------------Global Variables---------------------------
@@ -27,9 +31,10 @@ window.addEventListener("load", function onWindowLoad() {
     let PheromoneCoordinates = [];
 
     //Ant
-    let CountAnt = 500;
-    const RadiusAntVision = 10;
-    const FirstStepLength = 20;
+    let CountAnt = 100;
+    const RadiusAntVision = 50;
+    const AngleAntVision = 90;
+    const FirstStepLength = 25;
     const UsualStepLength = 1;
     const HowOftenWandering = 0.2; //[0,1]
     const MaxCountCrash = 30;
@@ -38,9 +43,10 @@ window.addEventListener("load", function onWindowLoad() {
     const MinPheromoneValue = 0.00001;
     const MaxPheromoneValue = 1000;
     const MinPheromoneToDraw = 50;
-    const PheromoneDecrease = 0.997;
-    const HowMuchPheromoneOneStep = 300;
+    const PheromoneDecrease = 0.9998;
+    const HowMuchPheromoneOneStep = 20;
     const HowOftenDrawPheromone = 10;
+    const PheromoneInfluence = 0.0009;
 
     //UI Flags
     let IsStartButton = false;
@@ -54,6 +60,7 @@ window.addEventListener("load", function onWindowLoad() {
 
     //Draw Flags
     const isDrawPheromone = false;
+    const isDrawAntVision = false;
 
     //----------------------Initiate Global Variables-------------------------
     function initStartVar() {
@@ -73,9 +80,6 @@ window.addEventListener("load", function onWindowLoad() {
     }
 
     function initListCoordinates() {
-        AnthillCoordinates = [];
-        FoodCoordinates = [];
-        PheromoneCoordinates = [];
         for (let i = 0; i < wallAndFoodCanvas.width; i++) {
             for (let j = 0; j < wallAndFoodCanvas.height; j++) {
                 if(Matrix[i][j].Food > 0){
@@ -84,16 +88,10 @@ window.addEventListener("load", function onWindowLoad() {
                         y: j,
                     });
                 }
-                if(Matrix[i][j].IsAnthill){
-                    AnthillCoordinates.push({
-                        x: i,
-                        y: j,
-                    });
-                }
             }
         }
     }
-
+    //TODO: исправить муравейники
     function initAnts() {
         Ants = new Array(CountAnt * AnthillCoordinates.length);
         for (let iCordAnthill = 0; iCordAnthill < AnthillCoordinates.length; iCordAnthill++) {
@@ -107,31 +105,61 @@ window.addEventListener("load", function onWindowLoad() {
                     y: rounding(AnthillCoordinates[iCordAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
                     IsFood: true, // true - в поисках еды, false - возвращается домой
                     IsHome: false, //true - в поисках дома, false - возвращается к еде
-                    HaveFood: false, //true - нашел еду, false - не нашел еду
                     CountCrash: 0,
+                    Vision: inVision(rounding(AnthillCoordinates[iCordAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
+                        rounding(AnthillCoordinates[iCordAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2))),
+                        r1, r2),
                     step : function() {
+                        let numberAnthill;
                         let isInsideAnthill = false;
-                        for (let i = 0; i < AnthillCoordinates.length; i++) {
-                            if (Math.sqrt((this.x - AnthillCoordinates[i].x) ** 2 + (this.y - AnthillCoordinates[i].y) ** 2) <= AnthillSize) {
-                                isInsideAnthill = true;
-                                break;
+
+                        if(inMap(this.x, this.y) && Matrix[this.x][this.y].IsAnthill){
+                            isInsideAnthill = true;
+                            for(let i = 0; i < AnthillCoordinates.length; i++){
+                                if(Math.sqrt((this.x - AnthillCoordinates[i].x) ** 2 + (this.y - AnthillCoordinates[i].y) ** 2) <= AnthillSize * 2){
+                                    numberAnthill = i;
+                                    break;
+                                }
                             }
                         }
+
+                        if(inMap(this.x, this.y) && Matrix[this.x][this.y].Food > 0 && this.IsFood){
+                            Matrix[this.x][this.y].Food--;
+                            this.IsFood = false;
+                            this.IsHome = true;
+                            this.Vx *= -1;
+                            this.Vy *= -1;
+                            let newCord = getCord(this.x, this.y, this.Vx, this.Vy);
+                            this.x = newCord.x;
+                            this.y = newCord.y;
+                            return;
+                        }
+
                         //----------------------------crash with anthill-------------------
                         if (!inMap(this.x, this.y) || isInsideAnthill || this.CountCrash > MaxCountCrash) {
+                            if(this.CountCrash <= MaxCountCrash && isInsideAnthill){
+                                AnthillCoordinates[numberAnthill].countFood++;
+                                infoCtx.clearRect(0, 0, infoCanvas.width, infoCanvas.height);
+                                drawNumber(AnthillCoordinates[numberAnthill].x - 10,
+                                    AnthillCoordinates[numberAnthill].y - 10,
+                                    AnthillCoordinates[numberAnthill].countFood,
+                                    infoCtx);
+                            }
                             let r1 = Math.random() * 2 - 1;
                             let r2 = Math.random() * 2 - 1;
                             this.Vx = r1;
                             this.Vy = r2;
                             this.IsFood = true;
                             this.IsHome = false;
-                            this.HaveFood = false;
                             let randAnthill = Math.floor(Math.random() * AnthillCoordinates.length);
                             this.x = rounding(AnthillCoordinates[randAnthill].x + (r1 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
                             this.y = rounding(AnthillCoordinates[randAnthill].y + (r2 * (AnthillSize + FirstStepLength)) / (Math.sqrt(r1 ** 2 + r2 ** 2)));
+                            this.Vision = inVision(this.x, this.y, r1, r2);
+                            this.CountCrash = 0;
                             return;
                         }
-                        //-------------------------------Wall------------------------------
+
+                        //---------------------------Pheromone---------------------------
 
                         if(this.IsFood){
                             Matrix[this.x][this.y].FoodPheromone = Math.min(Matrix[this.x][this.y].FoodPheromone + HowMuchPheromoneOneStep, MaxPheromoneValue);
@@ -140,8 +168,9 @@ window.addEventListener("load", function onWindowLoad() {
                             Matrix[this.x][this.y].HomePheromone = Math.min(Matrix[this.x][this.y].HomePheromone + HowMuchPheromoneOneStep, MaxPheromoneValue);
                         }
 
+                        //-------------------------------Wall------------------------------
                         let gridXY = getCord(this.x, this.y, this.Vx, this.Vy);
-                        if(inMap(gridXY.x, gridXY.y) && Matrix[gridXY.x][gridXY.y].IsWall){
+                        if(inMap(gridXY.x, gridXY.y) && (Matrix[gridXY.x][gridXY.y].IsWall || (this.IsHome && Matrix[gridXY.x][gridXY.y].Food))){
                             this.CountCrash++;
                             let newCord = getReflectCord(gridXY.x, gridXY.y, this.Vx, this.Vy, this.x, this.y);
                             this.x = newCord.x;
@@ -152,10 +181,42 @@ window.addEventListener("load", function onWindowLoad() {
                         }
                         this.CountCrash = 0;
 
-                        if(inVision(this.x, this.y, this.Vx, this.Vy)){
-
+                        let vision = inVision(this.x, this.y, this.Vx, this.Vy);
+                        this.Vision = vision;
+                        if(vision.length !== 0 || vision.info.haveFood || vision.info.haveAnthill
+                            || vision.info.haveFoodPheromone || vision.info.haveHomePheromone){
+                            //---------------------------Food or anthill---------------------------
+                            if(this.IsFood && vision.info.haveFood || this.IsHome && vision.info.haveAnthill){
+                                let nearestPoint = getNearestPointToFoodOrAnthill(this.x, this.y, vision.points);
+                                this.Vx = nearestPoint.x - this.x;
+                                this.Vy = nearestPoint.y - this.y;
+                                let newCord = getCord(this.x, this.y, this.Vx, this.Vy);
+                                this.x = newCord.x;
+                                this.y = newCord.y;
+                                return;
+                            }
+                            //---------------------------Pheromone---------------------------
+                            if(this.IsFood && vision.info.haveFoodPheromone || this.IsHome && vision.info.haveHomePheromone){
+                                let biggestPheromonePoint = getBiggestPheromonePoint(this.x, this.y, vision.points, this.IsFood);
+                                let differenceX = (biggestPheromonePoint.x - this.x) - this.Vx;
+                                let differenceY = (biggestPheromonePoint.y - this.y) - this.Vy;
+                                if(this.IsFood) {
+                                    this.Vx += differenceX*(Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].HomePheromone * PheromoneInfluence)
+                                    this.Vy += differenceY*(Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].HomePheromone * PheromoneInfluence)
+                                }
+                                else {
+                                    this.Vx += differenceX*(Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].FoodPheromone * PheromoneInfluence)
+                                    this.Vy += differenceY*(Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].FoodPheromone * PheromoneInfluence)
+                                }
+                                let newCord = getCord(this.x, this.y, this.Vx, this.Vy);
+                                this.x = newCord.x;
+                                this.y = newCord.y;
+                                return;
+                            }
                         }
 
+
+                        //------------------------------Next step---------------------------
                         if(Math.random() < HowOftenWandering){
                             let newCord = getCordWithWandering(this.x, this.y, this.Vx, this.Vy);
                             this.x = newCord.x;
@@ -174,6 +235,108 @@ window.addEventListener("load", function onWindowLoad() {
     }
 
     //-----------------------------Math Functions-----------------------------
+
+    function getBiggestPheromonePoint(x, y, points, isFood){
+        let max = 0;
+        let index = 0;
+        for(let i = 0; i < points.length; i++){
+            if(isFood){
+                if(Matrix[points[i].x][points[i].y].FoodPheromone > max){
+                    max = Matrix[points[i].x][points[i].y].FoodPheromone;
+                    index = i;
+                }
+            }else{
+                if(Matrix[points[i].x][points[i].y].HomePheromone > max){
+                    max = Matrix[points[i].x][points[i].y].HomePheromone;
+                    index = i;
+                }
+            }
+        }
+        return points[index];
+    }
+
+    function getNearestPointToFoodOrAnthill(x, y, points){
+        let min = Infinity;
+        let index = 0;
+        for(let i = 0; i < points.length; i++){
+            if(Matrix[points[i].x][points[i].y].Food || Matrix[points[i].x][points[i].y].IsAnthill) {
+                let dist = getDistance(x, y, points[i].x, points[i].y);
+                if (dist < min) {
+                    min = dist;
+                    index = i;
+                }
+            }
+        }
+        return points[index];
+    }
+
+    function getDistance(x1, y1, x2, y2){
+        return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+    }
+
+    function inVision(x, y, Vx, Vy) {
+        const points = [];
+        let info = {
+            haveFood: false,
+            haveAnthill: false,
+            haveFoodPheromone: false,
+            haveHomePheromone: false,
+        }
+        const r = RadiusAntVision;
+        const angle = AngleAntVision;
+        const angle1 = Math.atan2(Vy, Vx) - (angle / 2) * (Math.PI / 180);
+        const angle2 = Math.atan2(Vy, Vx) + (angle / 2) * (Math.PI / 180);
+        let startX = x - r;
+        let endX = x + r;
+        let startY = y - r;
+        let endY = y + r;
+        if (Vx > 0) {
+            startX = x;
+        } else {
+            endX = x;
+        }
+        if (Vy > 0) {
+            startY = y;
+        } else {
+            endY = y;
+        }
+        for (let i = startX; i <= endX; i++) {
+            for (let j = startY; j <= endY; j++) {
+                if (inMap(i, j) && inSector(x, y, i, j, angle1, angle2) && Math.sqrt((i - x) ** 2 + (j - y) ** 2) <= r) {
+                    const dx = i - x;
+                    const dy = j - y;
+                    const projection = dx * Vx + dy * Vy;
+                    if (projection > 0) {
+                        if(Matrix[i][j].Food) {
+                            info.haveFood = true;
+                        }
+                        if(Matrix[i][j].IsAnthill) {
+                            info.haveAnthill = true;
+                        }
+                        if(Matrix[i][j].FoodPheromone > 0) {
+                            info.haveFoodPheromone = true;
+                        }if(Matrix[i][j].HomePheromone > 0) {
+                            info.haveHomePheromone = true;
+                        }
+                        points.push({ x: i, y: j });
+                    }
+                }
+            }
+        }
+        return {
+            points: points,
+            info: info,
+        }
+    }
+
+    function inSector(x, y, i, j, angle1, angle2) {
+        let angle = Math.atan2(j - y, i - x);
+        if (angle1 < angle2) {
+            return angle >= angle1 && angle <= angle2;
+        } else {
+            return angle >= angle1 || angle <= angle2;
+        }
+    }
 
     function inMap(x, y) {
         return x > 0 && y > 0 && x < wallAndFoodCanvas.width && y < wallAndFoodCanvas.height;
@@ -240,10 +403,6 @@ window.addEventListener("load", function onWindowLoad() {
         }
     }
 
-    function inVision(x, y, Vx, Vy){
-
-    }
-
     //-----------------------------Initialization-----------------------------
     initStartVar();
 
@@ -294,6 +453,9 @@ window.addEventListener("load", function onWindowLoad() {
 
     document.getElementById("clear").onclick = function() {
         initStartVar();
+        AnthillCoordinates = [];
+        FoodCoordinates = [];
+        PheromoneCoordinates = [];
         IsStartButton = false;
         IsAntHillButton = false;
         IsWallButton = false;
@@ -350,8 +512,19 @@ window.addEventListener("load", function onWindowLoad() {
 
     function drawAnts(){
         mapAntCtx.clearRect(0, 0, mapAntCanvas.width, mapAntCanvas.height);
+        if(isDrawAntVision){
+            for(let i = 0; i < Ants.length; i++){
+                for (let j = 0; j < Ants[i].Vision.points.length; j++){
+                    drawPoint(Ants[i].Vision.points[j].x, Ants[i].Vision.points[j].y, "yellow", 1, 1, mapAntCtx);
+                }
+            }
+        }
         for(let i = 0; i < Ants.length; i++){
-            drawPoint(Ants[i].x, Ants[i].y, AntColor, AntSize, 10, mapAntCtx);
+            if(Ants[i].IsFood){
+                drawPoint(Ants[i].x, Ants[i].y, AntColor, AntSize, 10, mapAntCtx);
+            }else{
+                drawPoint(Ants[i].x, Ants[i].y, AntColorWithFood, AntSize, 10, mapAntCtx);
+            }
         }
     }
 
@@ -366,11 +539,18 @@ window.addEventListener("load", function onWindowLoad() {
         }
     }
 
+    function drawNumber(x, y, number, ctx){
+        ctx.fillStyle = "#000000";
+        ctx.font = "20px Arial";
+        ctx.fillText(number, x, y);
+    }
+
     //-----------------------------Change Function----------------------------
     function changeAndDrawFood(x, y) {
         for(let i = x - SizeBrush; i <= x + SizeBrush; i++){
             for(let j = y - SizeBrush; j <= y + SizeBrush; j++){
-                if(inMap(i, j) && Matrix[i][j].Food < MaxFood && !Matrix[i][j].IsWall){
+                if(inMap(i, j) && Matrix[i][j].Food < MaxFood &&
+                    !Matrix[i][j].IsWall && Math.sqrt((i - x) * (i - x) + (j - y) * (j - y)) <= SizeBrush){
                     Matrix[i][j].Food += 1;
                     drawPoint(i, j, selectColorFood(Matrix[i][j].Food), 1, 1, wallAndFoodCtx);
                 }
@@ -381,7 +561,8 @@ window.addEventListener("load", function onWindowLoad() {
     function changeAndDrawWall(x, y) {
         for(let i = x - SizeBrush; i <= x + SizeBrush; i++){
             for(let j = y - SizeBrush; j <= y + SizeBrush; j++){
-                if(inMap(i, j)){
+                //круговая кисть
+                if(inMap(i, j) && Math.sqrt((i - x) * (i - x) + (j - y) * (j - y)) <= SizeBrush){
                     Matrix[i][j].IsWall = true;
                     drawPoint(i, j, WallColor, 1, 1, wallAndFoodCtx);
                 }
@@ -397,8 +578,15 @@ window.addEventListener("load", function onWindowLoad() {
                 }
             }
         }
-        Matrix[x][y].IsAnthill = true;
+        AnthillCoordinates.push({x: x, y: y, countFood: 0});
         drawPoint(x, y, AnthillColor, AnthillSize, 40, wallAndFoodCtx);
+        for(let i = x - AnthillSize * 2; i <= x + AnthillSize * 2; i++){
+            for(let j = y - AnthillSize * 2; j <= y + AnthillSize * 2; j++){
+                if(inMap(i, j) && Math.sqrt((i - x) * (i - x) + (j - y) * (j - y)) <= AnthillSize * 2){
+                    Matrix[i][j].IsAnthill = true;
+                }
+            }
+        }
     }
 
     function changePheromone(){

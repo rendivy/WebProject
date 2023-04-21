@@ -43,12 +43,22 @@ body {
     align-items: center;
 }
 
+.main_buttons{
+    text-align: center;
+    font-size: 20px;
+    width: 20%;
+    height: 15vh;
+    background-color: white;
+    border-radius: 10px;
+    flex-grow: 1;
+    border: 3px solid #004f83;
+}
 
 .button {
     text-align: center;
     font-size: 20px;
-    width: 270px;
-    height: 150px;
+    width: 100%;
+    height: 10vh;
     background-color: white;
     border-radius: 10px;
     flex-grow: 1;

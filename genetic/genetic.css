@@ -15,8 +15,8 @@ body {
 /*--------- table ---------*/
 
 #canvas {
-    width: 650px;
-    height: 650px;
+    width: 750px;
+    height: 750px;
     background-color: #ffffff;
     border: 5px solid #0067ac;
     border-radius: 25px;
@@ -27,7 +27,7 @@ body {
 .buttons {
     display: flex;
     flex-direction: column;
-    height: 650px;
+    height: 750px;
     justify-content: center;
     align-items: center;
     margin-left: 90px;

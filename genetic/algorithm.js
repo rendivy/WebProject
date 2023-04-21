@@ -13,9 +13,9 @@ export {
 };
 
 
-const mutationProbability = 0.65;
+const mutationProbability = 0.7;
 const maximumGenerations = 15000;
-const generationsUnchanged = 250;
+const generationsUnchanged = 450;
 
 
 let population = [];
@@ -39,14 +39,13 @@ function getRouteLength(route) {
 }
 
 function shuffle(array) {
-    let currentIndex = array.length;
-    let temporary, randomIndex;
-    while (currentIndex !== 0) {
-        randomIndex = getRandomNumber(0, currentIndex - 1);
-        currentIndex -= 1;
-        temporary = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporary;
+    let firstIndex, secondIndex, temporary;
+    for (let i = 0; i < array.length; i++) {
+        firstIndex = getRandomNumber(0, array.length - 1);
+        secondIndex = getRandomNumber(0, array.length - 1);
+        temporary = array[firstIndex];
+        array[firstIndex] = array[secondIndex];
+        array[secondIndex] = temporary;
     }
     return array;
 }
@@ -92,20 +91,20 @@ function crossover(firstParent, secondParent) {
     const firstDescendant = firstParent.slice(0, border);
     const secondDescendant = secondParent.slice(0, border);
 
-    for (let i = 0; i < firstParent.length; i++) {
-        if (!secondDescendant.includes(firstParent[i])) {
-            secondDescendant.push(firstParent[i]);
-        }
-        if (secondDescendant.length === firstParent.length) {
-            break;
-        }
-    }
-    for (let i = 0; i < secondParent.length; i++) {
+    for (let i = border; i < firstParent.length; i++) {
         if (!firstDescendant.includes(secondParent[i])) {
             firstDescendant.push(secondParent[i]);
         }
-        if (firstDescendant.length === secondParent.length) {
-            break;
+        if (!secondDescendant.includes(firstParent[i])) {
+            secondDescendant.push(firstParent[i]);
+        }
+    }
+    for (let i = border; i < firstParent.length; i++) {
+        if (!firstDescendant.includes(firstParent[i])) {
+            firstDescendant.push(firstParent[i]);
+        }
+        if (!secondDescendant.includes(secondParent[i])) {
+            secondDescendant.push(secondParent[i]);
         }
     }
 
@@ -141,7 +140,6 @@ function startAlgorithm(currentSize) {
     }
 
     const populationSize = currentSize * currentSize;
-    console.log(adjacencyMatrix);
     adjacencyMatrix = [];
     population = [];
 

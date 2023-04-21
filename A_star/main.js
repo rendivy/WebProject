@@ -10,8 +10,9 @@ import {
 } from "./fieldCreation.js";
 
 let isBuilt = false;
+export const delay = {value: 60};
 const tableContainer = document.querySelector('.table-container');
-
+const speedChange = document.getElementById('speed-change')
 
 export const buttons = {
     generateMaze: document.getElementById('generate-maze'),
@@ -20,7 +21,7 @@ export const buttons = {
     clear: document.getElementById('clear'),
     editMaze: document.getElementById('edit-maze'),
     launch: document.getElementById('launch'),
-    slider: document.getElementById("slider")
+    fieldResizing: document.getElementById("field-resizing"),
 }
 
 function setInactive() {
@@ -31,11 +32,14 @@ function setInactive() {
 }
 
 
-buttons.slider.addEventListener("input", () => {
-    document.querySelector(".size-display span").textContent = `Размерность поля: ${buttons.slider.value}`;
+speedChange.addEventListener("input", () => {
+    document.querySelector(".delay").textContent = `Задержка: ${speedChange.value}`;
+    delay.value = speedChange.value * 3;
+});
+buttons.fieldResizing.addEventListener("input", () => {
     setInactive();
     tableContainer.removeChild(table);
-    createTable(buttons.slider.value);
+    createTable(buttons.fieldResizing.value);
 });
 
 

@@ -16,8 +16,8 @@ body {
 
 
 .table-container {
-    width: 650px;
-    height: 650px;
+    width: 750px;
+    height: 750px;
 }
 
 .change-start-hover:hover {
@@ -45,7 +45,7 @@ body {
 .buttons {
     display: flex;
     flex-direction: column;
-    height: 650px;
+    height: 750px;
     justify-content: center;
     align-items: center;
     margin-left: 90px;
@@ -58,7 +58,6 @@ body {
     background-color: white;
     border-radius: 10px;
     flex-grow: 1;
-    border-radius: 10px;
     border: 2px solid #004f83;
 }
 
@@ -88,7 +87,7 @@ body {
 
 /*--------- slider ---------*/
 
-.size-display {
+.dimension {
     text-align: center;
     align-items: center;
     display: flex;
@@ -112,6 +111,17 @@ body {
 }
 
 span.change-size {
+    margin-top: 20px;
+}
+
+.delay {
+    font-size: 20px;
+    width: 250px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+span.delay {
     margin-top: 20px;
 }
 

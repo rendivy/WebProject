@@ -30,22 +30,25 @@ window.addEventListener("load", function onWindowLoad() {
     let PheromoneCoordinates = [];
 
     //Ant
-    let CountAnt = 100;
+    let CountAnt = 200;
     const RadiusAntVision = 50;
     const AngleAntVision = 90;
     const FirstStepLength = 25;
-    const UsualStepLength = 1;
+    const UsualStepLength = 3 // 1
     const HowOftenWandering = 0.4; //[0,1]
+    const HowOftenChangeDirectionByPheromone = 0.2; //[0,1]
     const MaxCountCrash = 30;
 
     //Pheromone
     const MinPheromoneValue = 0.00001;
     const MaxPheromoneValue = 1000;
-    const MinPheromoneToDraw = 100;
+    const MinPheromoneToDraw = 800;
     const PheromoneDecrease = 0.9995;
-    const HowMuchPheromoneOneStep = 30;
-    const HowOftenDrawPheromone = 10;
+    const HowMuchPheromoneOneStep = 80;
     const PheromoneInfluence = 0.0009;
+
+    //Cave
+    const SizeOneBlock = 32;
 
     //UI Flags
     let IsStartButton = false;
@@ -60,6 +63,9 @@ window.addEventListener("load", function onWindowLoad() {
     //Draw Flags
     const isDrawPheromone = true;
     const isDrawAntVision = false;
+    const isDrawFood = true;
+    const HowOftenDrawPheromone = 10;
+    const HowOftenDrawFood = 100;
 
     //----------------------Initiate Global Variables-------------------------
     function initStartVar() {
@@ -149,8 +155,7 @@ window.addEventListener("load", function onWindowLoad() {
 
                         if(this.IsFood){
                             Matrix[this.x][this.y].FoodPheromone = Math.min(Matrix[this.x][this.y].FoodPheromone + HowMuchPheromoneOneStep, MaxPheromoneValue);
-                        }
-                        if(this.IsHome){
+                        }else{
                             Matrix[this.x][this.y].HomePheromone = Math.min(Matrix[this.x][this.y].HomePheromone + HowMuchPheromoneOneStep, MaxPheromoneValue);
                         }
 
@@ -182,30 +187,30 @@ window.addEventListener("load", function onWindowLoad() {
                                 return;
                             }
                             //---------------------------Pheromone---------------------------
-                            if((this.IsFood && vision.info.haveHomePheromone) || (this.IsHome && vision.info.haveFoodPheromone)){
-                                let biggestPheromonePoint = getBiggestPheromonePoint(this.x, this.y, vision.points, !this.IsFood);
-                                let differenceX = (biggestPheromonePoint.x - this.x) - this.Vx;
-                                let differenceY = (biggestPheromonePoint.y - this.y) - this.Vy;
-                                if(this.IsFood) {
-                                    this.Vx += differenceX * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].HomePheromone * PheromoneInfluence);
-                                    this.Vy += differenceY * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].HomePheromone * PheromoneInfluence);
-                                }
-                                else {
-                                    this.Vx += differenceX * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].FoodPheromone * PheromoneInfluence);
-                                    this.Vy += differenceY * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].FoodPheromone * PheromoneInfluence);
+                            if(!vision.info.haveWall && ((this.IsFood && vision.info.haveHomePheromone) || (this.IsHome && vision.info.haveFoodPheromone))){
+                                if(Math.random() < HowOftenChangeDirectionByPheromone){
+                                    let biggestPheromonePoint = getBiggestPheromonePoint(this.x, this.y, vision.points, !this.IsFood);
+                                    let differenceX = (biggestPheromonePoint.x - this.x) - this.Vx;
+                                    let differenceY = (biggestPheromonePoint.y - this.y) - this.Vy;
+                                    if(this.IsFood) {
+                                        this.Vx += differenceX * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].HomePheromone * PheromoneInfluence);
+                                        this.Vy += differenceY * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].HomePheromone * PheromoneInfluence);
+                                    }
+                                    else {
+                                        this.Vx += differenceX * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].FoodPheromone * PheromoneInfluence);
+                                        this.Vy += differenceY * (Matrix[biggestPheromonePoint.x][biggestPheromonePoint.y].FoodPheromone * PheromoneInfluence);
+                                    }
                                 }
                             }
                             //---------------------------Try get around wall---------------------------
                             if(vision.info.haveWall){
-                                let nearestWallPoint = getNearestWall(this.x, this.y, vision.points);
-                                //нужно что-то дописать
 
                             }
                         }
 
 
                         //------------------------------Next step---------------------------
-                        if(Math.random() < HowOftenWandering){
+                        if(Math.random() < HowOftenWandering && this.IsFood){
                             let newCord = getCordWithWandering(this.x, this.y, this.Vx, this.Vy);
                             this.x = newCord.x;
                             this.y = newCord.y;
@@ -224,6 +229,7 @@ window.addEventListener("load", function onWindowLoad() {
 
     //-----------------------------Math Functions-----------------------------
 
+
     function getNearestWall(x, y, points){
         let min = Infinity;
         let index = 0;
@@ -238,6 +244,7 @@ window.addEventListener("load", function onWindowLoad() {
         }
         return points[index];
     }
+
     function getBiggestPheromonePoint(x, y, points, isFood){
         let max = 0;
         let index = 0;
@@ -429,6 +436,11 @@ window.addEventListener("load", function onWindowLoad() {
                 }
                 if (isDrawPheromone && iter % HowOftenDrawPheromone === 0) {
                     drawPheromone();
+                }
+                if(isDrawFood && iter % HowOftenDrawFood === 0) {
+                    drawFood();
+                }
+                if(iter === HowOftenDrawFood){
                     iter = 0;
                 }
                 drawAnts();
@@ -468,6 +480,10 @@ window.addEventListener("load", function onWindowLoad() {
         mapPheromoneCtx.clearRect(0, 0, mapPheromoneCanvas.width, mapPheromoneCanvas.height);
         mapAntCtx.clearRect(0, 0, mapAntCanvas.width, mapAntCanvas.height);
         infoCtx.clearRect(0, 0, infoCanvas.width, infoCanvas.height);
+    }
+
+    document.getElementById("generate-cave").onclick = function (){
+        generateCave();
     }
 
     //-----------------------------Map Building-------------------------------
@@ -544,6 +560,16 @@ window.addEventListener("load", function onWindowLoad() {
         }
     }
 
+    function drawFood(){
+        for (let i = 0; i < Matrix.length; i++) {
+            for(let j = 0; j < Matrix[i].length; j++){
+                if(Matrix[i][j].Food){
+                    drawPoint(i, j, selectColorFood(Matrix[i][j].Food), 1, 1, wallAndFoodCtx);
+                }
+            }
+        }
+    }
+
     function drawNumber(x, y, number, ctx){
         ctx.fillStyle = "#000000";
         ctx.font = "30px Arial";
@@ -603,6 +629,296 @@ window.addEventListener("load", function onWindowLoad() {
                 }
                 if(Matrix[i][j].HomePheromone > MinPheromoneValue){
                     Matrix[i][j].HomePheromone = Math.max(MinPheromoneValue, Matrix[i][j].HomePheromone * PheromoneDecrease)
+                }
+            }
+        }
+    }
+
+    //----------------------------Generate Cave-------------------------------
+
+    function generateCave(){
+        let hScaled = wallAndFoodCanvas.height / SizeOneBlock;
+        let wScaled = wallAndFoodCanvas.width / SizeOneBlock;
+        let cave = new CaveGenerator(wScaled, hScaled);
+        cave.generate();
+    }
+
+    class CaveGenerator {
+        constructor(width, height) {
+            this.width = width;
+            this.height = height;
+            this.map = [];
+            this.map = this.createMap();
+        }
+
+        createMap() {
+            let map = [];
+            for (let i = 0; i < this.width; i++) {
+                map[i] = [];
+                for (let j = 0; j < this.height; j++) {
+                    map[i][j] = 0;
+                }
+            }
+
+            for (let i = 0; i < this.width; i++) {
+                map[i][0] = 1;
+                map[i][this.height - 1] = 1;
+            }
+            for (let j = 0; j < this.height; j++) {
+                map[0][j] = 1;
+                map[this.width - 1][j] = 1;
+            }
+
+            return map;
+        }
+
+        generate() {
+            this.generateCave();
+            this.generateBranches();
+            this.smoothMap();
+            this.connectCaves();
+            this.drawCave();
+        }
+
+        generateBranches() {
+            const branchDensity = 30;
+            const numBranches = Math.floor((this.width * this.height) / branchDensity);
+            const branchLength = 20;
+            const branchRadius = 5;
+
+            for (let i = 0; i < numBranches; i++) {
+                let x = Math.floor(Math.random() * (this.width - branchLength * 2)) + branchLength;
+                let y = Math.floor(Math.random() * (this.height - branchLength * 2)) + branchLength;
+                for (let j = 0; j < branchLength; j++) {
+                    let rx = Math.floor(Math.random() * (branchRadius * 2 + 1)) - branchRadius;
+                    let ry = Math.floor(Math.random() * (branchRadius * 2 + 1)) - branchRadius;
+                    let nx = x + rx;
+                    let ny = y + ry;
+                    if (nx >= 0 && nx < this.width && ny >= 0 && ny < this.height) {
+                        this.map[nx][ny] = 1;
+                    }
+                }
+            }
+        }
+
+        connectCaves() {
+            let visited = [];
+            for (let i = 0; i < this.width; i++) {
+                visited[i] = [];
+            }
+
+            for (let i = 1; i < this.width - 1; i++) {
+                for (let j = 1; j < this.height - 1; j++) {
+                    if (!visited[i][j] && this.map[i][j] === 0) {
+                        let component = this.getConnectedComponent(i, j);
+                        this.connectConnectedComponent(component);
+                    }
+                    visited[i][j] = true;
+                }
+            }
+        }
+
+        getConnectedComponent(x, y) {
+            let visited = [];
+            for (let i = 0; i < this.width; i++) {
+                visited[i] = [];
+            }
+
+            let component = [];
+
+            let dfs = (i, j) => {
+                if (i < 0 || i >= this.width || j < 0 || j >= this.height) {
+                    return;
+                }
+                if (visited[i][j]) {
+                    return;
+                }
+                if (this.map[i][j] !== 0) {
+                    return;
+                }
+                visited[i][j] = true;
+                component.push({x: i, y: j});
+                dfs(i - 1, j);
+                dfs(i + 1, j);
+                dfs(i, j - 1);
+                dfs(i, j + 1);
+            };
+
+            dfs(x, y);
+
+            return component;
+        }
+
+        connectConnectedComponent(component) {
+            let minDist = 1000000;
+            let minI = 0;
+            let minJ = 0;
+
+            for (let i = 0; i < component.length; i++) {
+                let dist = this.getDistanceToBorder(component[i].x, component[i].y);
+                if (dist < minDist) {
+                    minDist = dist;
+                    minI = component[i].x;
+                    minJ = component[i].y;
+                }
+            }
+
+            for (let i = 1; i < this.width - 1; i++) {
+                for (let j = 1; j < this.height - 1; j++) {
+                    if (this.map[i][j] === 1) {
+                        let dist = Math.abs(i - minI) + Math.abs(j - minJ);
+                        if (dist <= minDist) {
+                            let path = this.getPath({x: i, y: j}, {x: minI, y: minJ});
+                            for (let tile of path) {
+                                this.map[tile.x][tile.y] = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        getPath(start, end) {
+            let visited = [];
+            for (let i = 0; i < this.width; i++) {
+                visited[i] = [];
+            }
+
+            let queue = [];
+            queue.push(start);
+
+            let cameFrom = [];
+            for (let i = 0; i < this.width; i++) {
+                cameFrom[i] = [];
+            }
+
+            while (queue.length > 0) {
+                let current = queue.shift();
+                if (current.x === end.x && current.y === end.y) {
+                    break;
+                }
+                let neighbours = this.getNeighbours(current.x, current.y);
+                for (let neighbour of neighbours) {
+                    if (!visited[neighbour.x][neighbour.y]) {
+                        visited[neighbour.x][neighbour.y] = true;
+                        cameFrom[neighbour.x][neighbour.y] = current;
+                        queue.push(neighbour);
+                    }
+                }
+            }
+
+            let path = [];
+            let current = end;
+            while (current.x !== start.x || current.y !== start.y) {
+                path.push(current);
+                current = cameFrom[current.x][current.y];
+            }
+            path.push(start);
+            path.reverse();
+            return path;
+        }
+
+        getNeighbours(x, y) {
+            let neighbours = [];
+            if (x - 1 >= 0) {
+                neighbours.push({x: x - 1, y: y});
+            }
+            if (x + 1 < this.width) {
+                neighbours.push({x: x + 1, y: y});
+            }
+            if (y - 1 >= 0) {
+                neighbours.push({x: x, y: y - 1});
+            }
+            if (y + 1 < this.height) {
+                neighbours.push({x: x, y: y + 1});
+            }
+            return neighbours;
+        }
+
+        getDistanceToBorder(x, y) {
+            let dist = 0;
+            while (x - dist >= 0 && this.map[x - dist][y] === 0) {
+                dist++;
+            }
+            return dist;
+        }
+
+        generateCave() {
+            for (let i = 1; i < this.width - 1; i++) {
+                for (let j = 1; j < this.height - 1; j++) {
+                    if (Math.random() < 0.45) {
+                        this.map[i][j] = 1;
+                    }
+                }
+            }
+
+            let visited = [];
+            for (let i = 0; i < this.width; i++) {
+                visited[i] = [];
+            }
+
+            let queue = [];
+            for (let i = 1; i < this.width - 1; i++) {
+                for (let j = 1; j < this.height - 1; j++) {
+                    if (!visited[i][j] && this.map[i][j] === 1) {
+                        let component = this.getConnectedComponent(i, j);
+                        this.fillConnectedComponent(component);
+                    }
+                    visited[i][j] = true;
+                }
+            }
+
+            for (let i = 0; i < 10; i++) {
+                this.smoothMap();
+            }
+        }
+
+        smoothMap() {
+            for (let i = 1; i < this.width - 1; i++) {
+                for (let j = 1; j < this.height - 1; j++) {
+                    let count = 0;
+                    for (let ii = i - 1; ii <= i + 1; ii++) {
+                        for (let jj = j - 1; jj <= j + 1; jj++) {
+                            if (ii < 0 || jj < 0 || ii >= this.width || jj >= this.height) {
+                                continue;
+                            }
+                            if (this.map[ii][jj] === 1) {
+                                count++;
+                            }
+                        }
+                    }
+                    if (count >= 5) {
+                        this.map[i][j] = 1;
+                    } else {
+                        this.map[i][j] = 0;
+                    }
+                }
+            }
+        }
+
+        fillConnectedComponent(component) {
+            for (let [i, j] of component) {
+                this.map[i][j] = 1;
+            }
+        }
+
+        drawCave() {
+            for (let i = 0; i < this.width; i++) {
+                for (let j = 0; j < this.height; j++) {
+                    if (this.map[i][j] === 1) {
+                        this.drawOneBlock(i, j, WallColor, wallAndFoodCtx);
+                    }
+                }
+            }
+        }
+
+        drawOneBlock(x, y, color, ctx) {
+            for (let i = x * SizeOneBlock; i < (x + 1) * SizeOneBlock; i++) {
+                for (let j = y * SizeOneBlock; j < (y + 1) * SizeOneBlock; j++) {
+                    if (inMap(i, j)) {
+                        Matrix[i][j].IsWall = true;
+                        drawPoint(i, j, color, 1, 1, ctx);
+                    }
                 }
             }
         }

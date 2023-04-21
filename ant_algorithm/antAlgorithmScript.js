@@ -23,7 +23,7 @@ window.addEventListener("load", function onWindowLoad(){
     //------------------------global variables for ant algorithm-----------------------
 
     let numberOfCities = 0;
-    let maxNumberOfCities = 100;
+    let maxNumberOfCities = 50;
 
     const Iterations = 10000;
     const Evaporation = 0.3;

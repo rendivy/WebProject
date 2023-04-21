@@ -30,6 +30,16 @@ class Node{
   buildTree(node) {
     const classes = this.getClasses(node.data);
 
+    if(classes.length === 0){
+        node.wasLeaf = true;
+        node.parameter = undefined;
+        node.gain = undefined;
+        node.branches = undefined;
+        node.attributeNumber = undefined;
+        node.nodeName = this.getMostCommonClass(node.parent.data);
+        return;
+    }
+
     if (classes.length === 1) {
       node.wasLeaf = true;
       node.parameter = undefined;

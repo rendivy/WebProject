@@ -48,15 +48,16 @@ window.addEventListener("load", function onWindowLoad() {
     const PheromoneInfluence = 0.0009;
 
     //Cave
-    const SizeOneBlock = 16;
+    const SizeOneBlock = 16; //2^n
 
     //UI Flags
     let IsStartButton = false;
     let IsAntHillButton = false;
     let IsFoodButton = false;
     let IsWallButton = false;
+    let IsEraserButton = false;
 
-    let SizeBrush = 10;
+    let SizeBrush = 20;
 
     const MaxFood = 16;
 
@@ -229,21 +230,6 @@ window.addEventListener("load", function onWindowLoad() {
 
     //-----------------------------Math Functions-----------------------------
 
-
-    function getNearestWall(x, y, points){
-        let min = Infinity;
-        let index = 0;
-        for(let i = 0; i < points.length; i++){
-            if(Matrix[points[i].x][points[i].y].IsWall){
-                let distance = getDistance(x, y, points[i].x, points[i].y);
-                if(distance < min){
-                    min = distance;
-                    index = i;
-                }
-            }
-        }
-        return points[index];
-    }
 
     function getBiggestPheromonePoint(x, y, points, isFood){
         let max = 0;
@@ -453,19 +439,21 @@ window.addEventListener("load", function onWindowLoad() {
         IsAntHillButton = true;
         IsFoodButton = false;
         IsWallButton = false;
-
+        IsEraserButton = false;
     }
 
     document.getElementById("generate-food").onclick = function() {
         IsFoodButton = true;
         IsAntHillButton = false;
         IsWallButton = false;
+        IsEraserButton = false;
     }
 
     document.getElementById("generate-wall").onclick = function() {
         IsWallButton = true;
         IsFoodButton = false;
         IsAntHillButton = false;
+        IsEraserButton = false;
     }
 
     document.getElementById("clear").onclick = function() {
@@ -476,6 +464,7 @@ window.addEventListener("load", function onWindowLoad() {
         IsAntHillButton = false;
         IsWallButton = false;
         IsFoodButton = false;
+        IsEraserButton = false;
         wallAndFoodCtx.clearRect(0, 0, wallAndFoodCanvas.width, wallAndFoodCanvas.height);
         mapPheromoneCtx.clearRect(0, 0, mapPheromoneCanvas.width, mapPheromoneCanvas.height);
         mapAntCtx.clearRect(0, 0, mapAntCanvas.width, mapAntCanvas.height);
@@ -483,7 +472,16 @@ window.addEventListener("load", function onWindowLoad() {
     }
 
     document.getElementById("generate-cave").onclick = function (){
-        generateCave();
+        if(!IsStartButton){
+            generateCave();
+        }
+    }
+
+    document.getElementById("eraser").onclick = function (){
+        IsEraserButton = true;
+        IsFoodButton = false;
+        IsWallButton = false;
+        IsAntHillButton = false;
     }
 
     //-----------------------------Map Building-------------------------------
@@ -495,6 +493,8 @@ window.addEventListener("load", function onWindowLoad() {
             changeAndDrawFood(x, y);
         }else if (e.buttons === 1 && inMap(x, y) && IsWallButton){
             changeAndDrawWall(x, y);
+        }else if(e.buttons === 1 && inMap(x, y) && IsEraserButton){
+            changeAndDrawEraser(x, y);
         }
     }
 
@@ -616,6 +616,18 @@ window.addEventListener("load", function onWindowLoad() {
             for(let j = y - AnthillSize * 2; j <= y + AnthillSize * 2; j++){
                 if(inMap(i, j) && Math.sqrt((i - x) * (i - x) + (j - y) * (j - y)) <= AnthillSize * 2){
                     Matrix[i][j].IsAnthill = true;
+                }
+            }
+        }
+    }
+
+    function changeAndDrawEraser(x, y){
+        for(let i = x - SizeBrush; i <= x + SizeBrush; i++){
+            for(let j = y - SizeBrush; j <= y + SizeBrush; j++){
+                if(inMap(i, j) && Math.sqrt((i - x) * (i - x) + (j - y) * (j - y)) <= SizeBrush){
+                    Matrix[i][j].IsWall = false;
+                    Matrix[i][j].Food = 0;
+                    wallAndFoodCtx.clearRect(i, j, 1, 1);
                 }
             }
         }

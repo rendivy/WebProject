@@ -75,6 +75,14 @@ canvas {
     margin-bottom: 20px;
 }
 
+.redirect {
+    position: absolute;
+    width: 200px;
+    height: 100px;
+    top: 30px;
+    right: 30px;
+}
+
 .active {
     background-color: deepskyblue
 }

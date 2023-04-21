@@ -16,14 +16,10 @@ export const buttons = {
 
 export let vertexArray = [];
 export let isRunning = false;
-
-
 const text = document.getElementById("change-size");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-
 const radius = 14;
-
 let currentSize = 0;
 
 class Chromosome {
@@ -94,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 canvas.addEventListener("click", (event) => {
 
-    if (currentSize === 150) {
+    if (currentSize === 100) {
         alert("Достигнуто максимальное количество вершин.");
         return;
     }

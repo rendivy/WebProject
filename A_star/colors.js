@@ -4,4 +4,4 @@ export const startColor = 'yellow';
 export const finishColor = 'red';
 export const pathColor = 'violet';
 export const bypassableColor = 'orange';
-export const currentColor = 'black'
+export const currentColor = 'deepskyblue'

@@ -1,4 +1,7 @@
-import {buttons} from "./main.js";
+import {
+    buttons,
+    delay
+} from "./main.js";
 
 import {
     table,
@@ -20,14 +23,14 @@ function heuristic(a, b) {
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
-function getLowestFValue(set, map) {
-    let lowest = set[0];
-    for (let i = 1; i < set.length; i++) {
-        if (map.get(set[i]) < map.get(lowest)) {
-            lowest = set[i];
+function getMinFValue(queue, map) {
+    let mn = queue[0];
+    for (let i = 1; i < queue.length; i++) {
+        if (map.get(queue[i]) < map.get(mn)) {
+            mn = queue[i];
         }
     }
-    return lowest;
+    return mn;
 }
 
 function addEdges(graph, i, j) {
@@ -97,7 +100,9 @@ export async function aStar() {
     queue.push(start);
 
     while (queue.length) {
-        let current = getLowestFValue(queue, fValues);
+
+
+        let current = getMinFValue(queue, fValues);
         queue.splice(queue.indexOf(current), 1);
 
         for (let i = 0; i < graph[current.x][current.y].length; i++) {
@@ -117,7 +122,7 @@ export async function aStar() {
                                 (route[i].x === finish.x && route[i].y === finish.y))
                         )
                             table.rows[route[i].x].cells[route[i].y].style.background = pathColor;
-                        await new Promise(resolve => setTimeout(resolve, 30));
+                        await new Promise(resolve => setTimeout(resolve, delay.value));
                     }
 
                     for (let i of Object.values(buttons)) {
@@ -129,7 +134,7 @@ export async function aStar() {
 
                 fValues.set(neighbor, ways[current.x * size + current.y].length + 1 + heuristic(neighbor, finish));
                 table.rows[neighbor.x].cells[neighbor.y].style.background = currentColor;
-                await new Promise(resolve => setTimeout(resolve, 60));
+                await new Promise(resolve => setTimeout(resolve, delay.value));
                 table.rows[neighbor.x].cells[neighbor.y].style.background = bypassableColor;
             }
         }

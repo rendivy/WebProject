@@ -27,6 +27,16 @@ export function generateMaze(table, size) {
     let x = getRandomNumber(0, size - 1);
     let y = getRandomNumber(0, size - 1);
 
+    if (x % 2 !== 0) {
+        if (x + 1 < size) x++;
+        else x--;
+    }
+    if (y % 2 !== 0) {
+        if (y + 1 < size) y++;
+        else y--;
+    }
+
+
     table.rows[x].cells[y].style.background = passColor;
     const followingCells = [];
     if (y - 2 >= 0) {

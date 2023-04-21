@@ -8,7 +8,7 @@ import {
 } from "./mazeTransformations.js";
 
 export let table = null;
-export let size = 10;
+export let size = 9;
 export let start = {x: null, y: null};
 export let finish = {x: null, y: null}
 
@@ -33,7 +33,7 @@ export function createTable(sizeTable) {
             cell.style.background = passColor;
             cell.style.width = `${100 / size}%`;
             cell.style.height = `${100 / size}%`;
-            cell.style.border = '2px solid black';
+            cell.style.border = '1px solid gray';
 
             cell.addEventListener('click', () => {
                 if (buttons.changeStart.classList.contains('active')) {

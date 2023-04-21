@@ -33,35 +33,35 @@
             <span class="tooltip">Cluster Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="../genetic/genetic.html">
                 <i class="bx bx-dna"></i>
                 <span class="link_name">Genetic Algorithm</span>
             </a>
             <span class="tooltip">Genetic Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="../ant_algorithm/ant_algorithm.html">
                 <i class="bx bx-run"></i>
                 <span class="link_name">Ant Algorithm</span>
             </a>
             <span class="tooltip">Ant Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="../decision_tree/decision_tree.html">
                 <i class="bx bxs-leaf"></i>
                 <span class="link_name">Tree Algorithm</span>
             </a>
             <span class="tooltip">Tree Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="../Neuro/Neuro.html">
                 <i class="bx bx-math"></i>
                 <span class="link_name">Neuron model</span>
             </a>
             <span class="tooltip">Neuron model</span>
         </li>
         <li>
-            <a href="#">
+            <a href="../team.html">
                 <i class="bx bx-user"></i>
                 <span class="link_name">Team</span>
             </a>
@@ -73,9 +73,13 @@
 <div class="container">
     <div class="table-container"></div>
     <div class="buttons">
-        <div class="size-display">
-            <span class="change-size">Размерность поля: 10</span>
-            <input type="range" class="change-size" id="slider" min="5" max="50" value="10" step="1">
+        <div class="dimension">
+            <span class="change-size">Размер поля</span>
+            <input type="range" class="change-size" id="field-resizing" min="5" max="49" value="9" step="2">
+        </div>
+        <div class="dimension">
+            <span class="delay">Задержка: 20</span>
+            <input type="range" class="delay" id="speed-change" min="1" max="50" value="20" step="1">
         </div>
         <input type="button" class="button" id="generate-maze" value="Сгенерировать лабиринт">
         <input type="button" class="button" id="launch" value="Запустить">

@@ -1,95 +1,113 @@
 #canvas {
     background-color: #000000;
-    border-radius: 0%;
-    position: absolute;
+    grid-area: canvas;
+    border: 2px solid #ccc;
     margin: auto;
-    margin-top: -150px;
-    vertical-align: middle;
-    left: 50%;
     display: flex;
+    position: relative;
+    left: 20%;
+    top: 20%;
     transform: scale(7);
     border: 2px solid #ccc; /* толщина, цвет и стиль рамки */
 }
 
 .answer{
-  display: inline;
-  position: relative;
-  top: 50%;
-  left:46%;
-  transform: translateY(115px);
+  grid-area: answer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+
+body {
+  background-color: #e4e9f7;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "canvas buttons"
+    "answer answer";
+  height: 100vh;
+}
+
+/*--------- buttons ---------*/
+
+.buttons {
+  grid-area: buttons;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .button {
   text-align: center;
   font-size: 20px;
-  margin: 10px;
-  width: 300px;
-  height: 100px;
+  position: relative;
+  top:30%;
+  right: 30%;
+  width: 40%;
+  height: 25%;
   background-color: white;
   border-radius: 10px;
-  flex-grow: 1;
-  border-radius: 10px;
-  border: 2px solid blueviolet;
+  margin-bottom: 20px;
+  border: 2px solid #004f83;
 }
 
+.button:not(:disabled):active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+}
+
+.button:hover {
+  background-color: deepskyblue;
+  transition: background-color 0.6s ease;
+}
+
+.button:disabled {
+  background-color: white;
+  transition: none;
+  cursor: not-allowed;
+}
+
+.button:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.active {
+  background-color: deepskyblue
+}
+
+/****** *****/
 
 .numberCircle {
-  display: inline-block;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  padding: 14px;
-
-  background: #fff;
-  border: 2px solid #666;
-  color: #666;
-  text-align: center;
-
-  font: 32px Arial, sans-serif;
-}
-
-.home-section-neuro{
-    position: relative;
-    display: flex;
-    align-items: center;
-    background-color: var(--color-body);
-    min-height: 100vh;
-    top:0;
-    left:78px;
-    width: calc(100% - 78px);
-    transition: all .5s ease;
-    z-index: 2;
-  }
-
-.container-buttons {
-    display: flex;
-    position: fixed;
-    top: 80%;
-    right: 38%;
-    transform: translateY(-50%);
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.buttonStyle{
-    border-radius: 25px;
-    font-family: "Open Sans", serif;
-    font-size: 24px;
-    background: #004f83;
-    color: white;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.faq{
+  background-color: #ccc;
+  margin: 10px;
   display: flex;
-  flex-direction: column;
-  margin-left: 100px;
-  border-color:  #1f7e7e;
-  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-
-
+#change-size{
+  font-size: 20px;
+  width: 300px;
+  background-color: white;
+  border-radius: 10px;
+  flex-grow: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #004f83;
+  margin-bottom: 20px;
+}
 

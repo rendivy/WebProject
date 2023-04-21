@@ -3,16 +3,16 @@ function clusterMeans() {
     let centroidCount = slider.value;
     drawDots();
 
-    if (dots.length < centroidCount) {
+    if (points.length < centroidCount) {
         alert('Количество кластеров не может быть больше, чем количество точек');
     } else {
         let colors = generateColors(centroidCount);
-        let initialCentroids = kMeansPlusPlus(dots, centroidCount);
-        let {dotCentroidMap} = runKMeans(dots, initialCentroids, colors);
+        let initialCentroids = kMeansPlusPlus(points, centroidCount);
+        let {dotCentroidMap} = runKMeans(points, initialCentroids, colors);
         drawDots();
 
         for (let i = 0; i < dotCentroidMap.length; i++) {
-            drawDot(dots[i][0], dots[i][1], colors[dotCentroidMap[i]]);
+            drawDot(points[i][0], points[i][1], colors[dotCentroidMap[i]]);
         }
     }
 }
@@ -141,10 +141,10 @@ function centroidsEqual(centroids1, centroids2) {
 
 
 function drawDot(x, y, color) {
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.arc(x, y, 11, 0, Math.PI * 2);
-    ctx.fill();
+    firstContext.beginPath();
+    firstContext.fillStyle = color;
+    firstContext.arc(x, y, 10, 0, Math.PI * 2);
+    firstContext.fill();
 }
 
 

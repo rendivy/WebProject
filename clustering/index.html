@@ -74,16 +74,17 @@
 
 <div class="container">
     <div class="canvas-container">
+        <canvas id="canvas1"></canvas>
         <div class="buttons">
             <div class="size-display">
-                <span class="change-size">Количество кластеров:&nbsp;<span id="centroid-display">10</span></span>
+                <span class="change-size">Количество кластеров для алгоритма k-средних:&nbsp;<span id="centroid-display">10</span></span>
                 <input type="range" class="change-size" id="centroid-slider" min="1" max="10" value="1" step="1">
             </div>
-            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick="clusterMeans()" value="Алгоритм кластеризации">
+            <input type="button" class="button" onclick="firstCanvas.clear()" value="Очистить холст">
+            <input type="button" class="button" onclick="clusterMeans()" value="Алгоритм K-Means++">
         </div>
-        <canvas id="canvas1"></canvas>
     </div>
+
     <div class="canvas-container">
         <canvas id="canvas2"></canvas>
         <div class="buttons">
@@ -92,21 +93,34 @@
                 id="eps-display">1</span></span>
                 <input type="range" class="change-size" id="eps-slider" min="200" max="700" value="200" step="50">
             </div>
-            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick=runDBSCAN() value="Алгоритм DBSCAN">
+            <input type="button" class="button" onclick="firstCanvas.clear()" value="Очистить холст">
+            <input type="button" class="button" onclick= runDBSCAN() value="Алгоритм DBSCAN">
+            <input type="button" class="main_buttons" onclick="compare()" value="Сравним?">
         </div>
     </div>
-</div>
-<div class="main-button">
-    <input type="button" class="main_buttons" onclick="compare()" value="Сравним?">
+
+    <div class="canvas-container">
+        <canvas id="canvas3"></canvas>
+        <div class="buttons">
+            <div class="size-display">
+            <span class="change-size">Выберите кол-во кластеров для иерархиического: &nbsp;<span
+                id="hierarchy-display">1</span></span>
+                <input type="range" class="change-size" id="hierarchy-slider" min="1" max="10" value="1" step="1">
+            </div>
+            <input type="button" class="button" onclick="firstCanvas.clear()" value="Очистить холст">
+            <input type="button" class="button" onclick= runHierarchyAlgorithm() value="Алгоритм иерархии">
+        </div>
+    </div>
 </div>
 
 
 <script src="ui/drawer.js"></script>
 <script src="data/k-means.js"></script>
-<script src="data/getSliderValue.js"></script>
-<script src=data/dbScan.js></script>
+<script src="ui/getSliderValue.js"></script>
+<script src=data/dbscan-algorithm.js></script>
 <script src="../script.js"></script>
+<script src="data/hierarchy-algorithm.js"></script>
+<script src="ui/hierarchyDrawer.js"></script>
 </body>
 </html>
 

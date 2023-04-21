@@ -1,69 +1,120 @@
-const canvas = document.getElementById("canvas1");
-const canvas2 = document.getElementById("canvas2");
-const ctx = canvas.getContext("2d");
-const ctx2 = canvas2.getContext("2d");
+const firstCanvas = document.getElementById("canvas1")
+const firstContext = firstCanvas.getContext("2d")
+
+const secondCanvas = document.getElementById("canvas2")
+const secondContext = secondCanvas.getContext("2d")
+
+
+const thirdCanvas = document.getElementById("canvas3")
+const thirdContext = thirdCanvas.getContext("2d")
+
 const buttons = document.getElementById("button")
-let dots = [];
-let dragIndex = -1;
+let points = []
+let dragIndex = -1
 
-canvas.addEventListener("mousedown", handleMouseDown);
-canvas.addEventListener("mousemove", handleMouseMove);
-canvas.addEventListener("mouseup", handleMouseUp);
-canvas2.addEventListener("mousedown", handleMouseDownDB);
-canvas2.addEventListener("mousemove", handleMouseMoveDB);
-canvas2.addEventListener("mouseup", handleMouseUpDB);
-window.addEventListener("resize", resizeCanvas);
-canvas2.addEventListener("contextmenu", handleContextMenu);
+firstCanvas.addEventListener("mousedown", handleMouseDown)
+firstCanvas.addEventListener("mousemove", handleMouseMove)
+firstCanvas.addEventListener("mouseup", handleMouseUp)
+firstCanvas.addEventListener("contextmenu", handleContextMenu)
 
-function handleContextMenu(e) {
+secondCanvas.addEventListener("mousedown", handleMouseDownDB)
+secondCanvas.addEventListener("mousemove", handleMouseMoveDB)
+secondCanvas.addEventListener("mouseup", handleMouseUpDB);
+secondCanvas.addEventListener("contextmenu", handleContextMenu)
+
+thirdCanvas.addEventListener("mousedown", handleMouseDownHierarchy)
+thirdCanvas.addEventListener("mousemove", handleMouseMoveHierarchy)
+thirdCanvas.addEventListener("mouseup", handleMouseUpDB);
+thirdCanvas.addEventListener("contextmenu", handleContextMenu)
+
+
+window.addEventListener("resize", resizeCanvas)
+
+function handleContextMenu(e, canvas) {
     e.preventDefault();
-    const rect = canvas2.getBoundingClientRect();
+    const rect = secondCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const index = dots.findIndex(([dotX, dotY]) => {
+    const index = points.findIndex(([dotX, dotY]) => {
         const dx = x - dotX;
         const dy = y - dotY;
         return dx * dx + dy * dy <= 225; // 15^2
     });
     if (index >= 0) {
-        dots.splice(index, 1);
+        points.splice(index, 1);
         drawDots();
         drawDotsDB();
+        drawDotsHierarchy()
     }
 }
 
 function resizeCanvas() {
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    canvas2.width = canvas.offsetWidth;
-    canvas2.height = canvas.offsetHeight;
+    firstCanvas.width = firstCanvas.offsetWidth;
+    firstCanvas.height = firstCanvas.offsetHeight;
+    secondCanvas.width = firstCanvas.offsetWidth;
+    secondCanvas.height = firstCanvas.offsetHeight;
+    thirdCanvas.width = firstCanvas.offsetWidth;
+    thirdCanvas.height = firstCanvas.offsetHeight;
     drawDots();
 }
 
-function handleMouseDown(e) {
-    const rect = canvas.getBoundingClientRect();
+
+
+function handleMouseDownHierarchy(e) {
+    const rect = thirdCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    dragIndex = dots.findIndex(([dotX, dotY]) => {
+    dragIndex = points.findIndex(([dotX, dotY]) => {
+        const dx = x - dotX;
+        const dy = y - dotY;
+        return dx * dx + dy * dy <= 225;
+    });
+    if (dragIndex === -1) {
+        points.push([x, y]);
+        drawDots();
+        drawDotsDB();
+        drawDotsHierarchy()
+    }
+}
+
+function handleMouseMoveHierarchy(e) {
+    if (dragIndex >= 0) {
+        const rect = thirdCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        points[dragIndex] = [x, y];
+        drawDots();
+        drawDotsDB();
+        drawDotsHierarchy();
+    }
+}
+
+function handleMouseDown(e) {
+    const rect = firstCanvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    dragIndex = points.findIndex(([dotX, dotY]) => {
         const dx = x - dotX;
         const dy = y - dotY;
         return dx * dx + dy * dy <= 225; // 15^2
     });
     if (dragIndex === -1) {
-        dots.push([x, y]);
-        drawDots();
-        drawDotsDB();
+        points.push([x, y])
+        drawDots()
+        drawDotsDB()
+        drawDotsHierarchy()
     }
 }
 
 function handleMouseMove(e) {
     if (dragIndex >= 0) {
-        const rect = canvas.getBoundingClientRect();
+        const rect = firstCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        dots[dragIndex] = [x, y];
-        drawDots();
-        drawDotsDB();
+        points[dragIndex] = [x, y];
+        drawDots()
+        drawDotsDB()
+        drawDotsHierarchy()
     }
 }
 
@@ -72,29 +123,31 @@ function handleMouseUp() {
 }
 
 function handleMouseDownDB(e) {
-    const rect = canvas2.getBoundingClientRect();
+    const rect = secondCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    dragIndex = dots.findIndex(([dotX, dotY]) => {
+    dragIndex = points.findIndex(([dotX, dotY]) => {
         const dx = x - dotX;
         const dy = y - dotY;
-        return dx * dx + dy * dy <= 225; // 15^2
+        return dx * dx + dy * dy <= 225;
     });
     if (dragIndex === -1) {
-        dots.push([x, y]);
+        points.push([x, y]);
         drawDots();
         drawDotsDB();
+        drawDotsHierarchy()
     }
 }
 
 function handleMouseMoveDB(e) {
     if (dragIndex >= 0) {
-        const rect = canvas2.getBoundingClientRect();
+        const rect = secondCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        dots[dragIndex] = [x, y];
+        points[dragIndex] = [x, y];
         drawDots();
         drawDotsDB();
+        drawDotsHierarchy();
     }
 }
 
@@ -103,50 +156,74 @@ function handleMouseUpDB() {
 }
 
 function drawDots() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#000000";
-    ctx.strokeStyle = "#000000";
-    dots.forEach(([x, y]) => {
-        drawCircleMeans(x, y);
-        drawCircleScan(x, y);
+    firstContext.clearRect(0, 0, firstCanvas.width, firstCanvas.height);
+    firstContext.fillStyle = "#000000";
+    firstContext.strokeStyle = "#000000";
+    points.forEach(([x, y]) => {
+        drawCircleMeans(x, y)
+        drawCircleScan(x, y)
+        drawCircleHierarchy(x, y)
+
+    });
+}
+
+function drawDotsHierarchy() {
+    thirdContext.clearRect(0, 0, thirdCanvas.width, thirdCanvas.height);
+    thirdContext.fillStyle = "#000000";
+    thirdContext.strokeStyle = "#000000";
+    points.forEach(([x, y]) => {
+        drawCircleMeans(x, y)
+        drawCircleScan(x, y)
+        drawCircleHierarchy(x, y)
     });
 }
 
 function drawDotsDB() {
-    ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
-    ctx2.fillStyle = "#000000";
-    ctx2.strokeStyle = "#000000";
-    dots.forEach(([x, y]) => {
-        drawCircleMeans(x, y);
-        drawCircleScan(x, y);
+    secondContext.clearRect(0, 0, secondCanvas.width, secondCanvas.height);
+    secondContext.fillStyle = "#000000";
+    secondContext.strokeStyle = "#000000";
+    points.forEach(([x, y]) => {
+        drawCircleMeans(x, y)
+        drawCircleScan(x, y)
+        drawCircleHierarchy(x, y)
     });
 }
 
 
 function drawCircleMeans(x, y) {
-    ctx.beginPath();
-    ctx.arc(x, y, 15, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
+    firstContext.beginPath();
+    firstContext.arc(x, y, 10, 0, Math.PI * 2);
+    firstContext.fill();
+    firstContext.stroke();
 }
 
 function drawCircleScan(x, y) {
-    ctx2.beginPath();
-    ctx2.arc(x, y, 15, 0, Math.PI * 2);
-    ctx2.fill();
-    ctx2.stroke();
+    secondContext.beginPath();
+    secondContext.arc(x, y, 10, 0, Math.PI * 2);
+    secondContext.fill();
+    secondContext.stroke();
 }
 
-canvas.clear = function () {
-    ctx.clearRect(0, 0, 15000, 15000);
-    ctx2.clearRect(0, 0, 15000, 15000);
-    dots.length = 0;
+function drawCircleHierarchy(x, y) {
+    thirdContext.beginPath();
+    thirdContext.arc(x, y, 10, 0, Math.PI * 2);
+    thirdContext.fill();
+    thirdContext.stroke();
 }
 
 
-function compare(){
+firstCanvas.clear = function () {
+    firstContext.clearRect(0, 0, 15000, 15000);
+    secondContext.clearRect(0, 0, 15000, 15000);
+    thirdContext.clearRect(0, 0, 15000, 15000);
+    points.length = 0;
+}
+
+
+function compare() {
     clusterMeans()
     runDBSCAN()
+    runHierarchyAlgorithm()
 }
 
 

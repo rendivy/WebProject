@@ -7,8 +7,8 @@ let visited = new Set();
 function runDBSCAN() {
     dbscanStructClear();
     let minPts = 5;
-    shuffleArray(dots);
-    const { clusters, noise } = dbscan(minPts);
+    shuffleArray(points);
+    const { clusters, noise } = dbscanAlgorithm(minPts);
     colorClusters(clusters, noise);
 }
 
@@ -19,9 +19,9 @@ function shuffleArray(array) {
     }
 }
 
-function dbscan(minPts) {
-    for (let i = 0; i < dots.length; i++) {
-        const point = dots[i];
+function dbscanAlgorithm(minPts) {
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
         if (visited.has(point)) {
             continue;
         }
@@ -41,8 +41,8 @@ function dbscan(minPts) {
 
 function rangeQuery(point) {
     const neighbors = [];
-    for (let i = 0; i < dots.length; i++) {
-        const otherPoint = dots[i];
+    for (let i = 0; i < points.length; i++) {
+        const otherPoint = points[i];
         if (point === otherPoint) {
             continue;
         }
@@ -72,25 +72,24 @@ function expandCluster(cluster, point, neighbors, minPts) {
     }
 }
 
-
 function colorClusters(clusters, noise) {
     const noiseColor = "#000000";
     const clusterColors = clusters.map(() => getRandomColor());
-    for (let i = 0; i < dots.length; i++) {
+    for (let i = 0; i < points.length; i++) {
         let inCluster = false;
         for (let j = 0; j < clusters.length; j++) {
             const cluster = clusters[j];
-            if (cluster.has(dots[i])) {
+            if (cluster.has(points[i])) {
                 inCluster = true;
-                ctx2.fillStyle = clusterColors[j];
-                ctx2.lineWidth = 4;
-                drawCircleScan(dots[i][0], dots[i][1]);
+                secondContext.fillStyle = clusterColors[j];
+                secondContext.lineWidth = 4;
+                drawCircleScan(points[i][0], points[i][1]);
                 break;
             }
         }
-        if (!inCluster && noise.has(dots[i])) {
-            ctx2.fillStyle = noiseColor;
-            drawCircleScan(dots[i][0], dots[i][1]);
+        if (!inCluster && noise.has(points[i])) {
+            secondContext.fillStyle = noiseColor;
+            drawCircleScan(points[i][0], points[i][1]);
         }
     }
 }

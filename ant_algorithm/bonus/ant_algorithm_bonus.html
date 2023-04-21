@@ -4,64 +4,64 @@
     <meta charset="UTF-8">
     <title>Ant Algorithm</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="ant_algorithm.css">
+    <link rel="stylesheet" href="ant_algorithm_bonus.css">
 </head>
 
 <body>
 <div class="sidebar">
     <div class="logo_details">
-        <a href="../index.html">
+        <a href="../../index.html">
             <div class="logo_name">Beautiful Algorithm</div>
         </a>
         <i class="bx bx-menu" id="btn"></i>
     </div>
     <ul class="nav-list">
         <li>
-            <a href="../A_star/A_star.html">
+            <a href="../../A_star/A_star.html">
                 <i class="bx bxs-star"></i>
                 <span class="link_name">A-Star</span>
             </a>
             <span class="tooltip">A-Star</span>
         </li>
         <li>
-            <a href="../clustering/index.html">
+            <a href="../../clustering/index.html">
                 <i class="bx bx-exclude"></i>
                 <span class="link_name">Cluster Algorithm</span>
             </a>
             <span class="tooltip">Cluster Algorithm</span>
         </li>
         <li>
-            <a href="../genetic/genetic.html">
+            <a href="#">
                 <i class="bx bx-dna"></i>
                 <span class="link_name">Genetic Algorithm</span>
             </a>
             <span class="tooltip">Genetic Algorithm</span>
         </li>
         <li>
-            <a href="ant_algorithm.html">
+            <a href="ant_algorithm_bonus.html">
                 <i class="bx bx-run"></i>
                 <span class="link_name">Ant Algorithm</span>
             </a>
             <span class="tooltip">Ant Algorithm</span>
         </li>
         <li>
-            <a href="../decision_tree/decision_tree.html">
+            <a href="../../decision_tree/decision_tree.html">
                 <i class="bx bxs-leaf"></i>
                 <span class="link_name">Tree Algorithm</span>
             </a>
             <span class="tooltip">Tree Algorithm</span>
         </li>
         <li>
-            <a href="../Neuro/Neuro.html">
+            <a href="../../Neuro/Neuro.html">
                 <i class="bx bx-math"></i>
                 <span class="link_name">Neuron model</span>
             </a>
             <span class="tooltip">Neuron model</span>
         </li>
         <li>
-            <a href="../team.html">
+            <a href="#">
                 <i class="bx bx-user"></i>
                 <span class="link_name">Team</span>
             </a>
@@ -71,20 +71,24 @@
 </div>
 
 <div class="container">
-    <canvas id="canvas" height="1100" width="1100"></canvas>
-    <div class="buttons">
-        <div class="output-result" id="result">
+    <canvas class="back-canvas" id="canvas-map-wall-food" height="1024" width="1024"></canvas>
+    <canvas id="canvas-info" height="1024" width="1024"></canvas>
+    <canvas id="canvas-map-pheromone" height="1024" width="1024"></canvas>
+    <canvas id="canvas-map-ant" height="1024" width="1024"></canvas>
 
-            Длина пути: <br>Количество итераций:
-        </div>
-        <input type="button" class="button" id="generate-way" value="Построить путь">
+    <div class="buttons">
+        <input type="button" class="button" id="start" value="Начать">
+        <input type="button" class="button" id="generate-cave" value="Создать пещеру">
+        <input type="button" class="button" id="generate-anthill" value="Поставить муравейник">
+        <input type="button" class="button" id="generate-food" value="Поставить еду">
+        <input type="button" class="button" id="generate-wall" value="Поставить стену">
+        <input type="button" class="button" id="eraser" value="Ластик">
         <input type="button" class="button" id="clear" value="Очистить">
-        <input type="button" class="button redirect" onclick="window.location.href = './bonus/ant_algorithm_bonus.html'" value="Бонусный">
+        <input type="button" class="button redirect" onclick="window.location.href = '../ant_algorithm.html'" value="Базовый">
     </div>
 </div>
 
-<script type="module" src="../script.js"></script>
-<script src="antAlgorithmScript.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 
 </html>

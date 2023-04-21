@@ -48,7 +48,7 @@ window.addEventListener("load", function onWindowLoad() {
     const PheromoneInfluence = 0.0009;
 
     //Cave
-    const SizeOneBlock = 32;
+    const SizeOneBlock = 16;
 
     //UI Flags
     let IsStartButton = false;
@@ -651,261 +651,178 @@ window.addEventListener("load", function onWindowLoad() {
             this.map = this.createMap();
         }
 
+        generate() {
+            this.prim();
+            this.removeDeadEnds(6);
+            this.vegetate(4);
+            this.removeDeadEnds(2);
+            this.removeLonelyWalls();
+            this.drawCave();
+        }
+
         createMap() {
             let map = [];
             for (let i = 0; i < this.width; i++) {
                 map[i] = [];
                 for (let j = 0; j < this.height; j++) {
-                    map[i][j] = 0;
+                    map[i][j] = -2;
                 }
             }
-
-            for (let i = 0; i < this.width; i++) {
-                map[i][0] = 1;
-                map[i][this.height - 1] = 1;
-            }
-            for (let j = 0; j < this.height; j++) {
-                map[0][j] = 1;
-                map[this.width - 1][j] = 1;
-            }
-
             return map;
         }
 
-        generate() {
-            this.generateCave();
-            this.generateBranches();
-            this.smoothMap();
-            this.connectCaves();
-            this.drawCave();
-        }
+        prim(){
+            let start = {x: 0, y: 0};
+            let toCheck = [];
+            this.map[start.x][start.y] = -1;
+            let directions = [];
+            directions = this.getDirection(start, directions);
+            for (let i = 0; i < directions.length; i++) {
+                toCheck.push({
+                    x: start.x + directions[i].x,
+                    y: start.y + directions[i].y
+                });
+            }
+            while (toCheck.length > 0) {
+                let randomIndex = Math.floor(Math.random() * toCheck.length);
+                let chosenCell = toCheck[randomIndex];
+                toCheck.splice(randomIndex, 1);
+                if (this.map[chosenCell.x][chosenCell.y] === -2) {
+                    this.map[chosenCell.x][chosenCell.y] = -1;
+                    directions = [];
+                    directions = this.getDirection(chosenCell, directions);
+                    let edges  = directions.slice();
 
-        generateBranches() {
-            const branchDensity = 30;
-            const numBranches = Math.floor((this.width * this.height) / branchDensity);
-            const branchLength = 20;
-            const branchRadius = 5;
-
-            for (let i = 0; i < numBranches; i++) {
-                let x = Math.floor(Math.random() * (this.width - branchLength * 2)) + branchLength;
-                let y = Math.floor(Math.random() * (this.height - branchLength * 2)) + branchLength;
-                for (let j = 0; j < branchLength; j++) {
-                    let rx = Math.floor(Math.random() * (branchRadius * 2 + 1)) - branchRadius;
-                    let ry = Math.floor(Math.random() * (branchRadius * 2 + 1)) - branchRadius;
-                    let nx = x + rx;
-                    let ny = y + ry;
-                    if (nx >= 0 && nx < this.width && ny >= 0 && ny < this.height) {
-                        this.map[nx][ny] = 1;
+                    while(edges.length > 0){
+                        let i = Math.floor(Math.random() * edges.length);
+                        let connectedCell = {
+                            x: chosenCell.x + edges[i].x,
+                            y: chosenCell.y + edges[i].y
+                        }
+                        if (this.map[connectedCell.x][connectedCell.y] === -1) {
+                            let valX = connectedCell.x - edges[i].x / 2;
+                            let valY = connectedCell.y - edges[i].y / 2;
+                            this.map[valX][valY] = -1;
+                            edges.splice(0, directions.length);
+                            break;
+                        }
+                        edges.splice(i, 1);
                     }
-                }
-            }
-        }
 
-        connectCaves() {
-            let visited = [];
-            for (let i = 0; i < this.width; i++) {
-                visited[i] = [];
-            }
+                    for (let i = 0; i < directions.length; i++) {
+                        let nextCell = {
+                            x: chosenCell.x + directions[i].x,
+                            y: chosenCell.y + directions[i].y,
+                        };
 
-            for (let i = 1; i < this.width - 1; i++) {
-                for (let j = 1; j < this.height - 1; j++) {
-                    if (!visited[i][j] && this.map[i][j] === 0) {
-                        let component = this.getConnectedComponent(i, j);
-                        this.connectConnectedComponent(component);
-                    }
-                    visited[i][j] = true;
-                }
-            }
-        }
-
-        getConnectedComponent(x, y) {
-            let visited = [];
-            for (let i = 0; i < this.width; i++) {
-                visited[i] = [];
-            }
-
-            let component = [];
-
-            let dfs = (i, j) => {
-                if (i < 0 || i >= this.width || j < 0 || j >= this.height) {
-                    return;
-                }
-                if (visited[i][j]) {
-                    return;
-                }
-                if (this.map[i][j] !== 0) {
-                    return;
-                }
-                visited[i][j] = true;
-                component.push({x: i, y: j});
-                dfs(i - 1, j);
-                dfs(i + 1, j);
-                dfs(i, j - 1);
-                dfs(i, j + 1);
-            };
-
-            dfs(x, y);
-
-            return component;
-        }
-
-        connectConnectedComponent(component) {
-            let minDist = 1000000;
-            let minI = 0;
-            let minJ = 0;
-
-            for (let i = 0; i < component.length; i++) {
-                let dist = this.getDistanceToBorder(component[i].x, component[i].y);
-                if (dist < minDist) {
-                    minDist = dist;
-                    minI = component[i].x;
-                    minJ = component[i].y;
-                }
-            }
-
-            for (let i = 1; i < this.width - 1; i++) {
-                for (let j = 1; j < this.height - 1; j++) {
-                    if (this.map[i][j] === 1) {
-                        let dist = Math.abs(i - minI) + Math.abs(j - minJ);
-                        if (dist <= minDist) {
-                            let path = this.getPath({x: i, y: j}, {x: minI, y: minJ});
-                            for (let tile of path) {
-                                this.map[tile.x][tile.y] = 0;
-                            }
+                        if (this.map[nextCell.x][nextCell.y] === -2) {
+                            toCheck.push(nextCell);
                         }
                     }
                 }
             }
         }
 
-        getPath(start, end) {
-            let visited = [];
-            for (let i = 0; i < this.width; i++) {
-                visited[i] = [];
+        getDirection(cell, list) {
+            if (cell.x > 1) {
+                list.push({x: -2, y: 0});
             }
-
-            let queue = [];
-            queue.push(start);
-
-            let cameFrom = [];
-            for (let i = 0; i < this.width; i++) {
-                cameFrom[i] = [];
+            if (cell.x < this.width - 2) {
+                list.push({x: 2, y: 0});
             }
-
-            while (queue.length > 0) {
-                let current = queue.shift();
-                if (current.x === end.x && current.y === end.y) {
-                    break;
-                }
-                let neighbours = this.getNeighbours(current.x, current.y);
-                for (let neighbour of neighbours) {
-                    if (!visited[neighbour.x][neighbour.y]) {
-                        visited[neighbour.x][neighbour.y] = true;
-                        cameFrom[neighbour.x][neighbour.y] = current;
-                        queue.push(neighbour);
-                    }
-                }
+            if (cell.y > 1) {
+                list.push({x: 0, y: -2});
             }
-
-            let path = [];
-            let current = end;
-            while (current.x !== start.x || current.y !== start.y) {
-                path.push(current);
-                current = cameFrom[current.x][current.y];
+            if (cell.y < this.height - 2) {
+                list.push({x: 0, y: 2});
             }
-            path.push(start);
-            path.reverse();
-            return path;
+            return list;
         }
 
-        getNeighbours(x, y) {
-            let neighbours = [];
-            if (x - 1 >= 0) {
-                neighbours.push({x: x - 1, y: y});
-            }
-            if (x + 1 < this.width) {
-                neighbours.push({x: x + 1, y: y});
-            }
-            if (y - 1 >= 0) {
-                neighbours.push({x: x, y: y - 1});
-            }
-            if (y + 1 < this.height) {
-                neighbours.push({x: x, y: y + 1});
-            }
-            return neighbours;
-        }
-
-        getDistanceToBorder(x, y) {
-            let dist = 0;
-            while (x - dist >= 0 && this.map[x - dist][y] === 0) {
-                dist++;
-            }
-            return dist;
-        }
-
-        generateCave() {
-            for (let i = 1; i < this.width - 1; i++) {
-                for (let j = 1; j < this.height - 1; j++) {
-                    if (Math.random() < 0.45) {
-                        this.map[i][j] = 1;
-                    }
-                }
-            }
-
-            let visited = [];
-            for (let i = 0; i < this.width; i++) {
-                visited[i] = [];
-            }
-
-            let queue = [];
-            for (let i = 1; i < this.width - 1; i++) {
-                for (let j = 1; j < this.height - 1; j++) {
-                    if (!visited[i][j] && this.map[i][j] === 1) {
-                        let component = this.getConnectedComponent(i, j);
-                        this.fillConnectedComponent(component);
-                    }
-                    visited[i][j] = true;
-                }
-            }
-
-            for (let i = 0; i < 10; i++) {
-                this.smoothMap();
-            }
-        }
-
-        smoothMap() {
-            for (let i = 1; i < this.width - 1; i++) {
-                for (let j = 1; j < this.height - 1; j++) {
-                    let count = 0;
-                    for (let ii = i - 1; ii <= i + 1; ii++) {
-                        for (let jj = j - 1; jj <= j + 1; jj++) {
-                            if (ii < 0 || jj < 0 || ii >= this.width || jj >= this.height) {
-                                continue;
+        removeDeadEnds(iterations) {
+            for (let i = 0; i < iterations; i++) {
+                let deadEnds = [];
+                for (let x = 0; x < this.width; x++) {
+                    for (let y = 0; y < this.height; y++) {
+                        if (this.map[x][y] === -1) {
+                            let neighbors = 0;
+                            if (x - 1 >= 0 && this.map[x - 1][y] === -1) {
+                                neighbors++;
                             }
-                            if (this.map[ii][jj] === 1) {
-                                count++;
+                            if (x + 1 < this.width && this.map[x + 1][y] === -1) {
+                                neighbors++;
+                            }
+                            if (y - 1 >= 0 && this.map[x][y - 1] === -1) {
+                                neighbors++;
+                            }
+                            if (y + 1 < this.height && this.map[x][y + 1] === -1) {
+                                neighbors++;
+                            }
+                            if (neighbors <= 1) {
+                                deadEnds.push({x: x, y: y});
                             }
                         }
                     }
-                    if (count >= 5) {
-                        this.map[i][j] = 1;
-                    } else {
-                        this.map[i][j] = 0;
+                    for(let i = 0; i < deadEnds.length; i++){
+                        this.map[deadEnds[i].x][deadEnds[i].y] = -2;
                     }
                 }
             }
         }
 
-        fillConnectedComponent(component) {
-            for (let [i, j] of component) {
-                this.map[i][j] = 1;
+        vegetate(iterations) {
+            for (let i = 0; i < iterations; i++) {
+                let points = [];
+                for (let x = 0; x < this.width; x++) {
+                    for (let y = 0; y < this.height; y++) {
+                        if(this.map[x][y] === -2){
+                            let neighbors = 0;
+                            for(let a = 0; a < 3; a++){
+                                for(let b = 0; b < 3; b++){
+                                    let neighborX = x - a;
+                                    let neighborY = y - b;
+                                    if(neighborX >= 0 && neighborX < this.width && neighborY >= 0 && neighborY < this.height){
+                                        if(this.map[neighborX][neighborY] === -1){
+                                            neighbors++;
+                                        }
+                                    }
+                                }
+                            }
+                            if(neighbors >= 4){
+                                points.push({x: x, y: y});
+                            }
+                        }
+                    }
+                }
+                for (let point of points) {
+                    this.map[point.x][point.y] = -1;
+                }
+            }
+        }
+
+        removeLonelyWalls() {
+            for (let x = 0; x < this.width; x++) {
+                for (let y = 0; y < this.height; y++) {
+                    if(this.map[x][y] === -2){
+                        if(x - 1 >= 0 && this.map[x - 1][y] === -2 ||
+                            x + 1 < this.width && this.map[x + 1][y] === -2 ||
+                            y - 1 >= 0 && this.map[x][y - 1] === -2 ||
+                            y + 1 < this.height && this.map[x][y + 1] === -2){
+                            continue;
+                        }
+                        this.map[x][y] = -1;
+                    }
+                }
             }
         }
 
         drawCave() {
             for (let i = 0; i < this.width; i++) {
                 for (let j = 0; j < this.height; j++) {
-                    if (this.map[i][j] === 1) {
+                    if (i === 0 || j === 0 || i === this.width - 1 || j === this.height - 1) {
+                        this.map[i][j] = -2;
+                    }
+                    if (this.map[i][j] === -2) {
                         this.drawOneBlock(i, j, WallColor, wallAndFoodCtx);
                     }
                 }

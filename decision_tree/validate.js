@@ -35,7 +35,7 @@ function validateDataSet(dataSet){
     return errors;
   }
 
-  for(let i = 0; i < typeAttributes.length; i++){
+/*  for(let i = 0; i < typeAttributes.length; i++){
     if(typeAttributes[i] === "int"){
       for (let j = 0; j < data.length; j++) {
         if(!Number.isInteger(parseInt(data[j][i]))){
@@ -61,7 +61,7 @@ function validateDataSet(dataSet){
     }else{
       errors.push("typeAttributes is not int, float or string. It is " + typeAttributes[i] + ". Attribute number is " + (i + 1));
     }
-  }
+  }*/
   if(errors.length === 0){
     dataSet.isValidate = true;
     convertDataSet(dataSet);

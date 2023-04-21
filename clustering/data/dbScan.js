@@ -1,15 +1,24 @@
-const eps = 100;
+let sliderEPS = document.getElementById("eps-slider")
+let eps = sliderEPS.value
 let noise = new Set();
 let clusters = [];
 let visited = new Set();
 
 function runDBSCAN() {
-    dbscanStructClear()
-    let sliderPts = document.getElementById("dbscan-slider");
-    let minPts = sliderPts.value;
-    const {clusters, noise} = dbscan(minPts);
+    dbscanStructClear();
+    let minPts = 5;
+    shuffleArray(dots);
+    const { clusters, noise } = dbscan(minPts);
     colorClusters(clusters, noise);
 }
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 function dbscan(minPts) {
     for (let i = 0; i < dots.length; i++) {
         const point = dots[i];
@@ -30,33 +39,39 @@ function dbscan(minPts) {
     return {clusters, noise};
 }
 
-
 function rangeQuery(point) {
-    return dots.filter(([x, y]) => {
-        const distance = Math.sqrt(Math.pow(x - point[0], 2) + Math.pow(y - point[1], 2));
-        return distance <= eps;
-    });
+    const neighbors = [];
+    for (let i = 0; i < dots.length; i++) {
+        const otherPoint = dots[i];
+        if (point === otherPoint) {
+            continue;
+        }
+        const distance = Math.abs(otherPoint[0] - point[0]) + Math.abs(otherPoint[1] - point[1]);
+        if (distance <= eps) {
+            neighbors.push(otherPoint);
+        }
+    }
+    return neighbors;
 }
-
 
 function expandCluster(cluster, point, neighbors, minPts) {
     cluster.add(point);
     visited.add(point);
-
     for (let i = 0; i < neighbors.length; i++) {
         const neighbor = neighbors[i];
         if (!visited.has(neighbor)) {
             visited.add(neighbor);
             const newNeighbors = rangeQuery(neighbor);
             if (newNeighbors.length >= minPts) {
-                neighbors = neighbors.concat(newNeighbors);
+                neighbors.push(...newNeighbors);
             }
         }
-        if (!noise.has(neighbor)) {
+        if (!noise.has(neighbor) && !cluster.has(neighbor)) {
             cluster.add(neighbor);
         }
     }
 }
+
 
 function colorClusters(clusters, noise) {
     const noiseColor = "#000000";
@@ -67,21 +82,19 @@ function colorClusters(clusters, noise) {
             const cluster = clusters[j];
             if (cluster.has(dots[i])) {
                 inCluster = true;
-                ctx.strokeStyle = clusterColors[j];
-                ctx.lineWidth = 5;
-                drawCircle(dots[i][0], dots[i][1]);
+                ctx2.fillStyle = clusterColors[j];
+                ctx2.lineWidth = 4;
+                drawCircleScan(dots[i][0], dots[i][1]);
                 break;
             }
         }
         if (!inCluster && noise.has(dots[i])) {
-            ctx.strokeStyle = noiseColor;
-            drawCircle(dots[i][0], dots[i][1]);
+            ctx2.fillStyle = noiseColor;
+            drawCircleScan(dots[i][0], dots[i][1]);
         }
     }
 }
 
-
-// Функция для получения случайного цвета
 function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -91,15 +104,8 @@ function getRandomColor() {
     return color;
 }
 
-function dbscanStructClear(){
+function dbscanStructClear() {
     noise = new Set();
     clusters = [];
     visited = new Set();
 }
-
-function compare(){
-    clusterMeans()
-    runDBSCAN()
-}
-
-

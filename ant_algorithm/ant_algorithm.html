@@ -2,14 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Cluster Algorithm</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Algorithm</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="cluster-style.css"/>
+    <link rel="stylesheet" href="ant_algorithm.css">
 </head>
+
 <body>
 <div class="sidebar">
     <div class="logo_details">
@@ -27,28 +26,28 @@
             <span class="tooltip">A-Star</span>
         </li>
         <li>
-            <a href="index.html">
+            <a href="../clustering/index.html">
                 <i class="bx bx-exclude"></i>
                 <span class="link_name">Cluster Algorithm</span>
             </a>
             <span class="tooltip">Cluster Algorithm</span>
         </li>
         <li>
-            <a href="clustering/index.html">
+            <a href="#">
                 <i class="bx bx-dna"></i>
                 <span class="link_name">Genetic Algorithm</span>
             </a>
             <span class="tooltip">Genetic Algorithm</span>
         </li>
         <li>
-            <a href="#">
+            <a href="ant_algorithm.html">
                 <i class="bx bx-run"></i>
                 <span class="link_name">Ant Algorithm</span>
             </a>
             <span class="tooltip">Ant Algorithm</span>
         </li>
         <li>
-            <a href="decision_tree/decision_tree.html">
+            <a href="../decision_tree/decision_tree.html">
                 <i class="bx bxs-leaf"></i>
                 <span class="link_name">Tree Algorithm</span>
             </a>
@@ -71,42 +70,20 @@
     </ul>
 </div>
 
-
 <div class="container">
-    <div class="canvas-container">
-        <div class="buttons">
-            <div class="size-display">
-                <span class="change-size">Количество кластеров:&nbsp;<span id="centroid-display">10</span></span>
-                <input type="range" class="change-size" id="centroid-slider" min="1" max="10" value="1" step="1">
-            </div>
-            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick="clusterMeans()" value="Алгоритм кластеризации">
+    <canvas id="canvas" height="1100" width="1100"></canvas>
+    <div class="buttons">
+        <div class="output-result" id="result">
+
+            Длина пути: <br>Количество итераций:
         </div>
-        <canvas id="canvas1"></canvas>
-    </div>
-    <div class="canvas-container">
-        <canvas id="canvas2"></canvas>
-        <div class="buttons">
-            <div class="size-display">
-            <span class="change-size">Выберите расстояние в котором точка будет искать своих соседей:&nbsp;<span
-                id="eps-display">1</span></span>
-                <input type="range" class="change-size" id="eps-slider" min="200" max="700" value="200" step="50">
-            </div>
-            <input type="button" class="button" onclick="canvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick=runDBSCAN() value="Алгоритм DBSCAN">
-        </div>
+        <input type="button" class="button" id="generate-way" value="Построить путь">
+        <input type="button" class="button" id="clear" value="Очистить">
     </div>
 </div>
-<div class="main-button">
-    <input type="button" class="button" onclick="compare()" value="Сравним?">
-</div>
 
-
-<script src="ui/drawer.js"></script>
-<script src="data/k-means.js"></script>
-<script src="data/getSliderValue.js"></script>
-<script src=data/dbScan.js></script>
-<script src="../script.js"></script>
+<script type="module" src="../script.js"></script>
+<script src="antAlgorithmScript.js"></script>
 </body>
-</html>
 
+</html>

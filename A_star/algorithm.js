@@ -120,8 +120,9 @@ export async function aStar() {
                         if (
                             !((route[i].x === start.x && route[i].y === start.y) ||
                                 (route[i].x === finish.x && route[i].y === finish.y))
-                        )
+                        ) {
                             table.rows[route[i].x].cells[route[i].y].style.background = pathColor;
+                        }
                         await new Promise(resolve => setTimeout(resolve, delay.value));
                     }
 

@@ -52,7 +52,7 @@ export function generateMaze(table, size) {
         followingCells.push({x: x + 2, y: y});
     }
 
-    while (followingCells.length > 0) {
+    while (followingCells.length) {
         let index = getRandomNumber(0, followingCells.length - 1);
         let cell = followingCells[index];
 

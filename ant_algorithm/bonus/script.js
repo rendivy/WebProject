@@ -17,11 +17,7 @@ window.addEventListener("load", function onWindowLoad() {
     let AnthillSize = 20;
     let AnthillColor = "red";
 
-    let WallColor = "gray";
-
-    let AntColor = "brown";
-    let AntColorWithFood = "blue";
-    let AntSize = 2;
+    let WallColor = "#944407";
 
     //-----------------------------Global Variables---------------------------
     let Matrix;
@@ -36,7 +32,7 @@ window.addEventListener("load", function onWindowLoad() {
     const FirstStepLength = 25;
     const UsualStepLength = 3 // 1
     const HowOftenWandering = 0.4; //[0,1]
-    const HowOftenChangeDirectionByPheromone = 0.2; //[0,1]
+    const HowOftenChangeDirectionByPheromone = 0.8; //[0,1]
     const MaxCountCrash = 30;
 
     //Pheromone
@@ -45,7 +41,7 @@ window.addEventListener("load", function onWindowLoad() {
     const MinPheromoneToDraw = 800;
     const PheromoneDecrease = 0.9995;
     const HowMuchPheromoneOneStep = 80;
-    const PheromoneInfluence = 0.0009;
+    const PheromoneInfluence = 0.00085;
 
     //Cave
     const SizeOneBlock = 16; //2^n
@@ -67,6 +63,12 @@ window.addEventListener("load", function onWindowLoad() {
     const isDrawFood = true;
     const HowOftenDrawPheromone = 10;
     const HowOftenDrawFood = 100;
+
+    let ImgAntFood = new Image();
+    ImgAntFood.src = "antFood.png";
+
+    let ImgAntHome = new Image();
+    ImgAntHome.src = "antHome.png";
 
     //----------------------Initiate Global Variables-------------------------
     function initStartVar() {
@@ -190,7 +192,7 @@ window.addEventListener("load", function onWindowLoad() {
                             //---------------------------Pheromone---------------------------
                             if(!vision.info.haveWall && ((this.IsFood && vision.info.haveHomePheromone) || (this.IsHome && vision.info.haveFoodPheromone))){
                                 if(Math.random() < HowOftenChangeDirectionByPheromone){
-                                    let biggestPheromonePoint = getBiggestPheromonePoint(this.x, this.y, vision.points, !this.IsFood);
+                                    let biggestPheromonePoint = getBiggestPheromonePoint(vision.points, !this.IsFood);
                                     let differenceX = (biggestPheromonePoint.x - this.x) - this.Vx;
                                     let differenceY = (biggestPheromonePoint.y - this.y) - this.Vy;
                                     if(this.IsFood) {
@@ -231,7 +233,7 @@ window.addEventListener("load", function onWindowLoad() {
     //-----------------------------Math Functions-----------------------------
 
 
-    function getBiggestPheromonePoint(x, y, points, isFood){
+    function getBiggestPheromonePoint(points, isFood){
         let max = 0;
         let index = 0;
         for(let i = 0; i < points.length; i++){
@@ -541,11 +543,7 @@ window.addEventListener("load", function onWindowLoad() {
             }
         }
         for(let i = 0; i < Ants.length; i++){
-            if(Ants[i].IsFood){
-                drawPoint(Ants[i].x, Ants[i].y, AntColor, AntSize, 10, mapAntCtx);
-            }else{
-                drawPoint(Ants[i].x, Ants[i].y, AntColorWithFood, AntSize, 10, mapAntCtx);
-            }
+            drawAnt(Ants[i]);
         }
     }
 
@@ -575,6 +573,19 @@ window.addEventListener("load", function onWindowLoad() {
         ctx.font = "30px Arial";
         ctx.textAlign = "center";
         ctx.fillText(number, x, y);
+    }
+
+    function drawAnt(ant){
+        let angle = Math.atan2(ant.Vy, ant.Vx);
+        mapAntCtx.save();
+        mapAntCtx.translate(ant.x, ant.y);
+        mapAntCtx.rotate(Math.PI + angle);
+        if(ant.IsFood){
+            mapAntCtx.drawImage(ImgAntFood, -15, -15, 30, 30);
+        }else{
+            mapAntCtx.drawImage(ImgAntHome, -15, -15, 30, 30);
+        }
+        mapAntCtx.restore();
     }
 
     //-----------------------------Change Function----------------------------

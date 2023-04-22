@@ -9,7 +9,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin-left: 140px;
+    margin-left: 10%;
 }
 
 /*--------- table ---------*/
@@ -22,7 +22,7 @@ body {
 
 .change-start-hover:hover {
     background-color: yellow !important;
-    transition: background-color 0.5s ease !important;
+    transition: background-color 0.3s ease !important;
 }
 
 .change-finish-hover:hover {
@@ -114,14 +114,4 @@ span.change-size {
     margin-top: 20px;
 }
 
-.delay {
-    font-size: 20px;
-    width: 250px;
-    margin-bottom: 20px;
-    background-color: white;
-}
-
-span.delay {
-    margin-top: 20px;
-}
 

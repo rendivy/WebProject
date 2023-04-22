@@ -33,7 +33,7 @@ function setInactive() {
 
 
 speedChange.addEventListener("input", () => {
-    document.querySelector(".delay").textContent = `Задержка: ${speedChange.value}`;
+    document.getElementById("delay").textContent= `Задержка: ${speedChange.value}`;
     delay.value = speedChange.value * 3;
 });
 buttons.fieldResizing.addEventListener("input", () => {

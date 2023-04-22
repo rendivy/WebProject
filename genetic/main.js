@@ -134,8 +134,6 @@ canvas.addEventListener("click", (event) => {
 buttons.launch.addEventListener("click", () => {
     if (currentSize < 2) return;
     isRunning = true;
-    document.getElementById('launch').disabled = true;
-    document.getElementById('clear').disabled = true;
     startAlgorithm(currentSize);
 });
 

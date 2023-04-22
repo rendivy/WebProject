@@ -1,3 +1,4 @@
+//Запускаем наш алгоритм
 function clusterMeans() {
     let slider = document.getElementById("centroid-slider");
     let centroidCount = slider.value;
@@ -17,6 +18,9 @@ function clusterMeans() {
     }
 }
 
+
+//Перерасчитываем центроиды и назначем точки кластерам до тех пор, пока пока центроиды не перестанут изменяться
+//На каждый перерасчёт вызываем assignDotsToCentroids, обновляя карту центроидов
 function runKMeans(dots, centroids, colors) {
     let oldCentroids = [];
     let dotCentroidMap = assignDotsToCentroids(dots, centroids);
@@ -67,9 +71,10 @@ function updateCentroids(dots, dotCentroidMap, centroidCount) {
     return centroids;
 }
 
+//Вычисляем дистанцию от каждой точки, до ближайшего центройда, а после выбираем точку с максимальным расстоянием-
+//она становится новым центроидом
 function kMeansPlusPlus(dots, k) {
     const centroids = [dots[Math.floor(Math.random() * dots.length)]];
-
     while (centroids.length < k) {
         let maxDistance = 0;
         let nextCentroid = null;
@@ -85,10 +90,10 @@ function kMeansPlusPlus(dots, k) {
 
         centroids.push(nextCentroid);
     }
-
     return centroids;
 }
 
+//Присваиваее каждую точку данных из массива dots ближайшему центроиду из массива centroids. Возвращает массив индексов ближайших центроидов для каждой точки.
 function distanceToClosestCentroid(dot, centroids) {
     let minDistance = Infinity;
 

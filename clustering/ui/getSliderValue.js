@@ -2,10 +2,9 @@ const slider = document.getElementById("centroid-slider");
 const display = document.getElementById("centroid-display");
 display.textContent = slider.value;
 
-slider.oninput = function() {
+slider.oninput = function () {
     display.textContent = this.value;
 };
-
 
 
 const epsSlider = document.getElementById("eps-slider");
@@ -13,7 +12,7 @@ const displayEPS = document.getElementById("eps-display");
 
 displayEPS.textContent = epsSlider.value;
 
-epsSlider.oninput = function() {
+epsSlider.oninput = function () {
     displayEPS.textContent = this.value;
 };
 
@@ -24,6 +23,6 @@ const hierarchyDisplay = document.getElementById("hierarchy-display")
 
 hierarchyDisplay.textContent = hierarchySlider.value;
 
-hierarchySlider.oninput = function() {
+hierarchySlider.oninput = function () {
     hierarchyDisplay.textContent = this.value;
 };

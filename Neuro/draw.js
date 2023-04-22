@@ -17,24 +17,24 @@ canvas.addEventListener("mouseout", stopDrawing);
 
 
 function startDrawing(e) {
-  isDrawing = true;
-  lastX = e.offsetX;
-  lastY = e.offsetY;
+    isDrawing = true;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
 }
 
 function draw(e) {
-  if (!isDrawing) return;
+    if (!isDrawing) return;
 
-  ctx.beginPath();
-  ctx.moveTo(lastX, lastY);
-  ctx.lineTo(e.offsetX, e.offsetY);
-  ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
 
-  lastX = e.offsetX;
-  lastY = e.offsetY;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
 }
 
 function stopDrawing() {
-  isDrawing = false;
+    isDrawing = false;
 }
 

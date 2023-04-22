@@ -80,8 +80,8 @@
                 <span class="change-size">Количество кластеров для алгоритма k-средних:&nbsp;<span id="centroid-display">10</span></span>
                 <input type="range" class="change-size" id="centroid-slider" min="1" max="10" value="1" step="1">
             </div>
-            <input type="button" class="button" onclick="firstCanvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick="clusterMeans()" value="Алгоритм K-Means++">
+            <input type="button" id="clear-buttonFirst" class="button"  value="Очистить холст">
+            <input type="button" id="kmeansButton" class="button"  value="Алгоритм K-Means++">
         </div>
     </div>
 
@@ -93,9 +93,9 @@
                 id="eps-display">1</span></span>
                 <input type="range" class="change-size" id="eps-slider" min="200" max="700" value="200" step="50">
             </div>
-            <input type="button" class="button" onclick="firstCanvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick= runDBSCAN() value="Алгоритм DBSCAN">
-            <input type="button" class="main_buttons" onclick="compare()" value="Сравним?">
+            <input type="button" id="clear-buttonSecond" class="button"  value="Очистить холст">
+            <input type="button" id="dbScanButton" class="button"  value="Алгоритм DBSCAN">
+            <input type="button" id="compareButton" class="main_buttons" value="Сравним?">
         </div>
     </div>
 
@@ -107,8 +107,8 @@
                 id="hierarchy-display">1</span></span>
                 <input type="range" class="change-size" id="hierarchy-slider" min="1" max="10" value="1" step="1">
             </div>
-            <input type="button" class="button" onclick="firstCanvas.clear()" value="Очистить холст">
-            <input type="button" class="button" onclick= runHierarchyAlgorithm() value="Алгоритм иерархии">
+            <input type="button" id="clear-buttonThird" class="button" value="Очистить холст">
+            <input type="button" id="hierarchyButton" class="button"  value="Алгоритм иерархии">
         </div>
     </div>
 </div>

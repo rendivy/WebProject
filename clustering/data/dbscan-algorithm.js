@@ -12,6 +12,7 @@ function runDBSCAN() {
     colorClusters(clusters, noise);
 }
 
+//Перемешиваем массив точек, чтобы рандомно выбирать стартовый кластер
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -19,6 +20,7 @@ function shuffleArray(array) {
     }
 }
 
+//Запускаем алгоритм и проходимся по всем точкам. Если точка не посещена, то запускаем rangeQuery.
 function dbscanAlgorithm(minPts) {
     for (let i = 0; i < points.length; i++) {
         const point = points[i];
@@ -39,6 +41,7 @@ function dbscanAlgorithm(minPts) {
     return {clusters, noise};
 }
 
+//Находим все точки, которые находятся на eps от нашей выбранной точки.
 function rangeQuery(point) {
     const neighbors = [];
     for (let i = 0; i < points.length; i++) {
@@ -54,6 +57,7 @@ function rangeQuery(point) {
     return neighbors;
 }
 
+//Расширяем наши кластеры точками, которые находятся от нашей точки в радиусе eps и не является шумными
 function expandCluster(cluster, point, neighbors, minPts) {
     cluster.add(point);
     visited.add(point);

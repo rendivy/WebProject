@@ -9,28 +9,44 @@ const thirdCanvas = document.getElementById("canvas3")
 const thirdContext = thirdCanvas.getContext("2d")
 
 const buttons = document.getElementById("button")
+const kMeansButton = document.getElementById("kmeansButton")
+const clearButtonFirst = document.getElementById("clear-buttonFirst")
+const clearButtonSecond = document.getElementById("clear-buttonSecond")
+const clearButtonThird = document.getElementById("clear-buttonThird")
+const dbScanButton = document.getElementById("dbScanButton")
+const hierarchyButton = document.getElementById("hierarchyButton")
+const compareButton = document.getElementById("compareButton")
+
 let points = []
 let dragIndex = -1
+
 
 firstCanvas.addEventListener("mousedown", handleMouseDown)
 firstCanvas.addEventListener("mousemove", handleMouseMove)
 firstCanvas.addEventListener("mouseup", handleMouseUp)
-firstCanvas.addEventListener("contextmenu", handleContextMenu)
 
+firstCanvas.addEventListener("contextmenu", handleContextMenu)
 secondCanvas.addEventListener("mousedown", handleMouseDownDB)
 secondCanvas.addEventListener("mousemove", handleMouseMoveDB)
 secondCanvas.addEventListener("mouseup", handleMouseUpDB);
-secondCanvas.addEventListener("contextmenu", handleContextMenu)
 
+secondCanvas.addEventListener("contextmenu", handleContextMenu)
 thirdCanvas.addEventListener("mousedown", handleMouseDownHierarchy)
 thirdCanvas.addEventListener("mousemove", handleMouseMoveHierarchy)
-thirdCanvas.addEventListener("mouseup", handleMouseUpDB);
 thirdCanvas.addEventListener("contextmenu", handleContextMenu)
+thirdCanvas.addEventListener("mouseup", handleMouseUpDB);
 
+dbScanButton.addEventListener("click", ()=>{runDBSCAN()})
+kMeansButton.addEventListener("click", ()=>{clusterMeans()})
+compareButton.addEventListener("click", ()=>{compare()})
+hierarchyButton.addEventListener("click", ()=>{runHierarchyAlgorithm()})
+clearButtonFirst.addEventListener("click", ()=>{firstCanvas.clear()})
+clearButtonSecond.addEventListener("click", ()=>{firstCanvas.clear()})
+clearButtonThird.addEventListener("click", ()=>{firstCanvas.clear()})
 
 window.addEventListener("resize", resizeCanvas)
 
-function handleContextMenu(e, canvas) {
+function handleContextMenu(e) {
     e.preventDefault();
     const rect = secondCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;

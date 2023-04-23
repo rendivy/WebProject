@@ -42,7 +42,6 @@
 
 
 - [Нейросеть](https://en.wikipedia.org/wiki/Artificial_neural_network)
-    + Базовый вариант
     + Бонусный вариант
 
 
